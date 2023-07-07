@@ -1,8 +1,8 @@
-
+import Test_form from "@/components/test_form"
 export default function Home() {
   return (
     <main>
-      <p>test</p>
+      <Test_form />
     </main>
   )
 }

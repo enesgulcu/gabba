@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 // tableName: eşleşecek tablonun ismi
 // where:     eşleşecek tablodaki verinin anahtar değeri örn: {email: "enes.gulcu@hotmail.com"} (mail) değeri oluyor.
 // newData:   yeni eklenecek veya güncellenecek veri
