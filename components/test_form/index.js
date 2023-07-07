@@ -2,12 +2,23 @@
 import React from 'react'
 import {postAPI} from '@/services/fetchAPI';
 import { Formik, Form } from "formik";
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 
  const Test_form = () => {
 
+
+
     const [testData, setTestData] = useState()
 
+
+    useEffect(() => {
+        if(testData){
+            console.log(testData);
+        }
+    
+      
+    }, [testData])
+    
 
   return (
     <div className='h-full flex justify-center items-center'>
@@ -29,7 +40,6 @@ import { useState } from 'react';
                 }
                 else{
                     setTestData(data.user)
-                    console.log(testData);
                 }
             });
         }}

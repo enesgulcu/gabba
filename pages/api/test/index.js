@@ -13,7 +13,7 @@ const handler = async (req, res) => {
     }
 
     const user = await createNewData("user", { email: email, password: password });
-    console.log(user);
+    user && console.log("veri iletildi");
     if (user.error || !user) {
       throw new Error(user);
     }
