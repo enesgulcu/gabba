@@ -2,8 +2,13 @@
 import React from 'react'
 import {postAPI} from '@/services/fetchAPI';
 import { Formik, Form } from "formik";
+import { useState } from 'react';
 
  const Test_form = () => {
+
+    const [testData, setTestData] = useState()
+
+
   return (
     <div className='h-full flex justify-center items-center'>
         <Formik
@@ -23,7 +28,8 @@ import { Formik, Form } from "formik";
                     console.log("hata var")
                 }
                 else{
-                    console.log(data);
+                    setTestData(data.user)
+                    console.log(testData);
                 }
             });
         }}
@@ -35,6 +41,18 @@ import { Formik, Form } from "formik";
                     <input  onChange={props.handleChange}  className='bg-white p-2 w-1/2 rounded-xl' id='email' type="email" name="email" />
                     <input  onChange={props.handleChange}  className='bg-white p-2 w-1/2 rounded-xl' id='password' type="password" name="password" />
                     <button onChange={props.handleChange} className='bg-white p-2 w-1/2 rounded-xl' id='submit' type="submit">Test verisi gönder</button>
+                    {
+                        testData && testData != "" && (
+                            <div className='bg-white p-4 rounded-xl'>
+                                <h2 className='text-green-600 font-bold'>Veriler veri tabanına başarılı bir şekilde gönderildi</h2>
+                                <div className='bg-gray-100 p-2 rounded-xl'>
+                                    <p>email:<span className='text-red-600'> {testData.email}</span></p>
+                                    <p>password:<span className='text-red-600'> {testData.password}</span></p>
+                                </div>
+                            </div>
+                        )
+                        
+                    }
                 </Form>
             )}
             
@@ -45,6 +63,7 @@ import { Formik, Form } from "formik";
         <div className='absolute top-0 left-0 bg-black rounded-xl p-2 m-4'>
             <p><span className='text-yellow-600 font-bold'>Gabba Home</span></p>
         </div>
+        
 
     </div>
   )
