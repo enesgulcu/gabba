@@ -6,7 +6,7 @@ const postAPI = async (URL, body, method="POST", headers = {'Content-Type': 'app
         if(!process.env.NEXT_PUBLIC_API_URL || !URL){
             throw new Error("URL bulunamadı!");
         }
-        const data = await fetch (`${process.env.NEXT_PUBLIC_API_URL + URL}`,{
+        const data = await fetch (`https://gabba.vercel.app/api/test`,{
             method: method,
             headers: headers,
             body: JSON.stringify(body),
