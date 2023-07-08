@@ -1,27 +1,25 @@
 import { createNewData } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
-  try {
-    if (req.method !== "POST") {
-      throw new Error("hata 1");
-    }
-
+  if (req.method === "POST") {
+  
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      throw new Error("hata 2");
+    if (email && password) {
+      
+      const user = await createNewData("user", { email: email, password: password });
+      if (user) {
+        return res.status(200).json({ user });
+      } else {
+        return res.status(400).json({ message: "Kullanıcı oluşturulamadı!" });
+      } 
+    } else{
+      return res.status(400).json({ message: "Eksik bilgi!" });
     }
-
-    const user = await createNewData("user", { email: email, password: password });
-    user && console.log("veri iletildi");
-    if (user.error || !user) {
-      throw new Error(user);
-    }
-
-    return res.status(200).json({ user });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+  } else {
+    return res.status(400).json({ message: "Yanlış istek!" });
   }
+
 };
 
 export default handler;
