@@ -6,11 +6,11 @@ const postAPI = async (URL, body, method="POST", headers = {'Content-Type': 'app
         if(!process.env.NEXT_PUBLIC_API_URL || !URL){
             throw new Error("URL bulunamadı!");
         }
-        const data = await fetch (`${process.env.NEXT_PUBLIC_API_URL + URL}`,{
+        const data = await fetch (`${"api" + URL}`,{
             method: method,
             headers: headers,
             body: JSON.stringify(body),
-            //cache: 'no-store' ,
+            cache: 'no-store' ,
 
             // cache önemli! her çalıştığında cache'deki veri yerine -> güncel veriyi almasını sağlar. 
             // bu olmaz ise üncel veriyi almayabiliyor dikkat et.
