@@ -11,7 +11,6 @@ const postAPI = async (URL, body, method="POST", headers = {'Content-Type': 'app
             headers: headers,
             body: JSON.stringify(body),
             cache: 'no-store' ,
-            mode: 'no-cors' // bu olmaz ise cors hatası alırsın.
 
             // cache önemli! her çalıştığında cache'deki veri yerine -> güncel veriyi almasını sağlar. 
             // bu olmaz ise üncel veriyi almayabiliyor dikkat et.
