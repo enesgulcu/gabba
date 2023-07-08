@@ -10,7 +10,9 @@ const postAPI = async (URL, body, method="POST", headers = {'Content-Type': 'app
             method: method,
             headers: headers,
             body: JSON.stringify(body),
-            cache: 'no-store' 
+            cache: 'no-store' ,
+            mode: 'no-cors' // bu olmaz ise cors hatası alırsın.
+
             // cache önemli! her çalıştığında cache'deki veri yerine -> güncel veriyi almasını sağlar. 
             // bu olmaz ise üncel veriyi almayabiliyor dikkat et.
             // Dinamik sayfalarda burası kullanılıyorsa o sayfalara -> export const dynamic = 'force-dynamic' ekle! 
