@@ -1,6 +1,8 @@
 import { createNewData } from "@/services/serviceOperations";
+import cors from 'cors';
 
 const handler = async (req, res) => {
+  await cors()(req, res);
   try {
     if (req.method !== "POST") {
       throw new Error("hata 1");
