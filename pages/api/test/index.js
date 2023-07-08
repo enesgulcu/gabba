@@ -3,24 +3,26 @@ import { createNewData } from "@/services/serviceOperations";
 const handler = async (req, res) => {
   try {
     if (req.method !== "POST") {
-      throw new Error("hata 1");
+      throw "Hatalı istek yöntemi";
     }
 
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new Error("hata 2");
+      throw "E-posta veya şifre eksik";
     }
 
-    const user = await createNewData("user", { email: email, password: password });
-    user && console.log("veri iletildi");
+    const user = await createNewData("user", { email, password });
+
     if (user.error || !user) {
-      throw new Error(user);
+      throw "Kullanıcı oluşturulurken bir hata oluştu";
     }
-    return res.status(200).json({status: "success",user: user , message: "Veri iletildi!"});
+
+    console.log("Veri iletildi");
+    return res.status(200).json({ status: "success", user, message: "Veri iletildi!" });
 
   } catch (error) {
-    return res.status(500).json({status: "error", error: error.message});
+    return res.status(500).json({ status: "error", error });
   }
 };
 
