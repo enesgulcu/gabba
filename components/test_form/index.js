@@ -7,12 +7,7 @@ import { MdOutlineCancel } from "react-icons/md";
 
  const Test_form = () => {
 
-  const [listData, setListData] = useState();
-
-  useEffect(() => {
-    console.log(listData);
-  }, [listData])
-  
+  const [listData, setListData] = useState();  
 
   useEffect(() => {
     const fetchData = async () => {

@@ -1,4 +1,4 @@
-import { createNewData, getAllData } from "@/services/serviceOperations";
+import { createNewData, getAllData, createNewDataMany } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
   try {
@@ -9,17 +9,8 @@ const handler = async (req, res) => {
         throw "Veri alınamadı";
       }   
 
-
-      
-
-      const createdNewData = await createNewData("measurements", data[0]);
-
-      
-      // await data.map( async (item) => {
-
-      //   createdNewData = await createNewData("measurements", item);
-
-      // });
+      console.log(data);
+      const createdNewData = await createNewDataMany("measurements", data);
 
       if(!createdNewData || createdNewData.error){
         throw createdNewData;
