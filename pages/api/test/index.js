@@ -14,12 +14,12 @@ const handler = async (req, res) => {
 
         createdNewData = await createNewData("measurements", item);
 
-        if (!createdNewData || createdNewData.error) {
-          throw createdNewData;
-        }
-
       });
-    
+
+      if(!createdNewData || createdNewData.error){
+        throw createdNewData;
+      }
+
       return res.status(200).json({ status: "success", data:data, message: "Veri iletildi!" });
     }
 
