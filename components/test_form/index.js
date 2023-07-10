@@ -76,7 +76,7 @@ import { MdOutlineCancel } from "react-icons/md";
           const data = measurements;
 
           const responseData = await postAPI("/test", data);
-          if (res.status !== "success" || res.status == "error") {
+          if (responseData.status !== "success" || responseData.status == "error") {
             console.log(responseData.error);
           } else {
             console.log("işlem başarılı!");
