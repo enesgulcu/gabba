@@ -7,17 +7,12 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  email       String     @unique
-  password    String 
+model Measurements {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstValue    String
+  secondValue   String?
+  unit          String
+  isRangeEnabled Boolean
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
 }
-
-

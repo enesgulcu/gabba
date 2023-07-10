@@ -1,25 +1,35 @@
-import { createNewData } from "@/services/serviceOperations";
+import { createNewData, getAllData } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
   try {
-    if (req.method !== "POST") {
-      throw "Hatalı istek yöntemi";
+    if (req.method === "POST") {
+      
+      const data = req.body;
+      if(!data){
+        throw "Veri alınamadı";
+      }   
+
+      let createdNewData;
+      await data.map( async (item) => {
+
+        createdNewData = await createNewData("measurements", item);
+
+        if (!createdNewData || createdNewData.error) {
+          throw createdNewData;
+        }
+
+      });
+    
+      return res.status(200).json({ status: "success", data:data, message: "Veri iletildi!" });
     }
 
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw "E-posta veya şifre eksik";
+    else if(req.method === "GET"){
+      const data = await getAllData("measurements");
+      if (!data || data.error) {
+        throw "Veri alınamadı";
+      }
+      return res.status(200).json({ status: "success", data: data });
     }
-
-    const user = await createNewData("user", { email, password });
-
-    if (user.error || !user) {
-      throw "Kullanıcı oluşturulurken bir hata oluştu";
-    }
-
-    console.log("Veri iletildi");
-    return res.status(200).json({ status: "success", user, message: "Veri iletildi!" });
 
   } catch (error) {
     return res.status(500).json({ status: "error", error });
