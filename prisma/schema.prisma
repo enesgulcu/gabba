@@ -7,6 +7,11 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model Measurements {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   firstValue    String

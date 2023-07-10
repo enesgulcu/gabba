@@ -16,11 +16,11 @@ import { MdOutlineCancel } from "react-icons/md";
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getAPI("/test");
-      if (res.status !== "success" || res.status == "error") {
-        return res.error;
+      const responseData = await getAPI("/test");
+      if (!responseData || responseData.status !== "success" || responseData.status == "error") {
+        return "VERİ YOK!";
       } else {
-        setListData(res.data);
+        setListData(responseData.data);
       }
     }
 
