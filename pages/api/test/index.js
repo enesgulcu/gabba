@@ -9,12 +9,17 @@ const handler = async (req, res) => {
         throw "Veri alınamadı";
       }   
 
-      let createdNewData;
-      await data.map( async (item) => {
 
-        createdNewData = await createNewData("measurements", item);
+      
 
-      });
+      const createdNewData = await createNewData("measurements", data[0]);
+
+      
+      // await data.map( async (item) => {
+
+      //   createdNewData = await createNewData("measurements", item);
+
+      // });
 
       if(!createdNewData || createdNewData.error){
         throw createdNewData;
