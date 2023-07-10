@@ -23,7 +23,7 @@ const handler = async (req, res) => {
       return res.status(200).json({ status: "success", data:data, message: "Veri iletildi!" });
     }
 
-    else if(req.method === "GET"){
+    if(req.method === "GET"){
       const data = await getAllData("measurements");
       if (!data || data.error) {
         throw "Veri alınamadı";
