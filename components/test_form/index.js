@@ -6,7 +6,7 @@ import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import Table from '@/components/table';
 
- const Test_form = () => {
+ const MeasurementsFormComponent = () => {
 
   // veri tabanından çekilen verilerin tutulacağı state.
   const [listData, setListData] = useState();  
@@ -74,7 +74,7 @@ import Table from '@/components/table';
         onSubmit={async () => {
           const data = measurements;
           console.log(data);
-            const responseData = await postAPI("/test", data);
+            const responseData = await postAPI("/createProduct/measurements", data);
             if (responseData.status !== "success" || responseData.status == "error") {
               console.log(responseData.error);
             } else {
@@ -314,4 +314,4 @@ import Table from '@/components/table';
   );
 }
 
-export default Test_form;
+export default MeasurementsFormComponent;
