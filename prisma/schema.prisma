@@ -12,6 +12,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
+
+
 model Measurements {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -28,6 +31,6 @@ model Measurements {
   ukrainian       String?
   english         String?
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }

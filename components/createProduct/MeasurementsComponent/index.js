@@ -1,12 +1,13 @@
 "use client"
 import React from 'react'
 import {postAPI, getAPI} from '@/services/fetchAPI';
-import { Formik, Form, FieldArray, Field } from "formik";
+import { Formik, Form,Field, FieldArray } from "formik";
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import Table from '@/components/table';
+import MeasurementsValidationSchema from './formikData';
 
- const MeasurementsFormComponent = () => {
+ const MeasurementsComponent = () => {
 
   // veri tabanından çekilen verilerin tutulacağı state.
   const [listData, setListData] = useState();  
@@ -67,13 +68,14 @@ import Table from '@/components/table';
     <div className='w-full'>
       <Formik
         initialValues={{
-          data: measurements,
+          measurements: [],
         }}
-        //validationSchema={resetPasswordValidationSchema}
 
-        onSubmit={async () => {
+        validationSchema={MeasurementsValidationSchema}
+
+        onSubmit={async (value) => {
+          console.log(measurements);
           const data = measurements;
-          console.log(data);
             const responseData = await postAPI("/createProduct/measurements", data);
             if (responseData.status !== "success" || responseData.status == "error") {
               console.log(responseData.error);
@@ -85,8 +87,11 @@ import Table from '@/components/table';
         }}
       >
         {(props) => (
+          //console.log(props.errors.measurements),
           <Form onSubmit={props.handleSubmit}>
-
+             <FieldArray name="measurements">
+            {({ push, remove }) => (
+                <div>
                   <div>
                     {measurements.map((measurement, index) => (
                       <div
@@ -111,27 +116,33 @@ import Table from '@/components/table';
                           </label>
 
                         <div className=' flex flex-row flex-wrap lg:flex-nowrap gap-4 justify-center items-center'>
-                          <input
-                            id={`measurements.${index}.firstValue`}
-                            name={`measurements.${index}.firstValue`}
+                                  <div className='p-2 bg-red-500'>
+                                    {props.errors.measurements && props.errors.measurements[index] && props.errors.measurements[index].firstValue}
+                                  </div>
+                          <Field 
+                            id={`measurements[${index}].firstValue`}
+                            name={`measurements[${index}].firstValue`}
                             type={`${measurements[index].manuelDefined ? "text" : "number"}`}
                             className={`border border-gray-300 rounded-md p-2 `}
                             placeholder={`${
                               measurements[index].manuelDefined ? "örnek: Soldan Kapak Çıkar" : "örnek: 124"   
                             } `}
-                            value={measurements[index].firstValue || ""}
-                            
+                            //value={measurements[index].firstValue || ""}
+                            value={props.values.firstValue}
                             onChange={(e) => {
+                              console.log(e);
+                              props.handleChange(e);
                               const newMeasurements = [...measurements];
-                              newMeasurements[index].firstValue =
-                                e.target.value;
+                              newMeasurements[index].firstValue = e.target.value;
                               setMeasurements(newMeasurements);
                             }}
                           />
-
-                          <input
-                            id={`measurements.${index}.secondValue`}
-                            name={`measurements.${index}.secondValue`}
+                                  <div className='p-2 bg-green-500'>
+                                    {props.errors.measurements && props.errors.measurements[index] && props.errors.measurements[index].secondValue}
+                                  </div>
+                          <Field 
+                            id={`measurements[${index}].secondValue`}
+                            name={`measurements[${index}].secondValue`}
                             type="number"
                             className={`border border-gray-300 rounded-md p-2 ${
                               measurements[index].twoRangeEnabled
@@ -139,8 +150,10 @@ import Table from '@/components/table';
                                 : "hidden"
                             }`}
                             placeholder="örnek: 238"
-                            value={measurements[index].secondValue || ""}
+                            //value={measurements[index].secondValue || ""}
+                            value={props.values.secondValue}
                             onChange={(e) => {
+                              props.handleChange(e);
                               const newMeasurements = [...measurements];
                               newMeasurements[index].secondValue =
                                 e.target.value;
@@ -150,9 +163,10 @@ import Table from '@/components/table';
                         </div>
                           <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-4 items-center cursor-pointer">
                             
-                            <select
-                                id={`measurements.${index}.unit`}
-                                name={`measurements.${index}.unit`}
+                            <Field 
+                                as="select"
+                                id={`measurements[${index}].unit`}
+                                name={`measurements[${index}].unit`}
                                 disabled={measurements[index].manuelDefined}
                                 defaultValue="cm"
                                 className={`${measurements[index].manuelDefined ? " opacity-30" : "block"} cursor-pointer  p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
@@ -165,7 +179,7 @@ import Table from '@/components/table';
                                 <option value="cm">cm</option>
                                 <option value="mm">mm</option>
                                 <option value="m">m</option>
-                            </select>
+                            </Field>
                             <div 
                               onClick={() => {
                                 if(!measurement[index]?.oneRangeEnabled){
@@ -186,10 +200,10 @@ import Table from '@/components/table';
                                   Tek Ölçü:
                               </label>
 
-                                <input
+                                <Field 
                                   type="checkbox"
-                                  id={`measurements.${index}.oneRangeEnabled`}
-                                  name={`measurements.${index}.oneRangeEnabled`}
+                                  id={`measurements[${index}].oneRangeEnabled`}
+                                  name={`measurements[${index}].oneRangeEnabled`}
                                   className="border border-gray-300 rounded-md p-2 w-6 h-6 cursor-pointer"
                                   checked={measurement.oneRangeEnabled}
                                   readOnly={true}
@@ -215,10 +229,10 @@ import Table from '@/components/table';
                                 Ölçü Aralığı:
                               </label>
 
-                              <input
+                              <Field 
                                 type="checkbox"
-                                id={`measurements.${index}.twoRangeEnabled`}
-                                name={`measurements.${index}.twoRangeEnabled`}
+                                id={`measurements[${index}].twoRangeEnabled`}
+                                name={`measurements[${index}].twoRangeEnabled`}
                                 className="border border-gray-300 rounded-md p-2 w-6 h-6 cursor-pointer"
                                 checked={measurement.twoRangeEnabled}
                                 readOnly={true}
@@ -243,10 +257,10 @@ import Table from '@/components/table';
                                 Özel Ölçü
                               </label>
 
-                              <input
+                              <Field 
                                 type="checkbox"
-                                id={`measurements.${index}.manuelDefined`}
-                                name={`measurements.${index}.manuelDefined`}
+                                id={`measurements[${index}].manuelDefined`}
+                                name={`measurements[${index}].manuelDefined`}
                                 className="border border-gray-300 rounded-md p-2 w-6 h-6 cursor-pointer"
                                 checked={measurement.manuelDefined}
                                 readOnly={true}
@@ -288,6 +302,9 @@ import Table from '@/components/table';
                       Gönder
                     </button>
                   </div>
+                </div>
+                )}
+                </FieldArray>
           </Form>
         )}
       </Formik>
@@ -314,4 +331,4 @@ import Table from '@/components/table';
   );
 }
 
-export default MeasurementsFormComponent;
+export default MeasurementsComponent;

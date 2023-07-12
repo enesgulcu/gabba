@@ -95,6 +95,7 @@ const handler = async (req, res) => {
       
       // gelen verinin doğruluğunu kontrol ediyoruz.
       const checkedData = await checkData(data);
+      
 
       if(!checkedData){
         return res.status(500).json({ status: "error", error: "veri yok"});

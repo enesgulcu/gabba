@@ -1,11 +1,11 @@
 import React from 'react'
-import MeasurementsFormComponent from "@/components/test_form"
+import MeasurementsComponent from "@/components/createProduct/MeasurementsComponent"
 import Navbar from "@/components/navbar"
 
 const HomeContainer = () => {
   return (
     <>
-        <MeasurementsFormComponent />
+        <MeasurementsComponent />
     </>
   )
 }
