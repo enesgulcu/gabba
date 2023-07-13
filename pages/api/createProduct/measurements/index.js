@@ -1,9 +1,17 @@
 import { createNewData, getAllData, createNewDataMany } from "@/services/serviceOperations";
 
 // girilen verileri göndermeden önce kontrol ederiz.
-const checkData = async (data) => {
+const checkData = async (measurements) => {
 
-  const newMeasurements = data.filter(item => item.firstValue !== "");
+  // firstValue değeri olmayan değerleri sildik.
+  const newMeasurements = measurements.filter(item => item.firstValue);
+
+  // Number gelen değerleri stringe çeviriyoruz.
+  newMeasurements.forEach((newMeasurement, index, arr) => {
+    arr[index]['firstValue'] = newMeasurement.firstValue.toString();
+    arr[index]['secondValue'] = newMeasurement.secondValue.toString();
+  });
+
 
   newMeasurements.forEach((measurement, index) => {
     if(newMeasurements[index]){
@@ -88,14 +96,14 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       
-      const data = req.body;
-      if(!data){
+      const {measurements} = req.body;
+      console.log(measurements)
+      if(!measurements){
         throw "Veri alınamadı";
       } 
       
       // gelen verinin doğruluğunu kontrol ediyoruz.
-      const checkedData = await checkData(data);
-      
+      const checkedData = await checkData(measurements);
 
       if(!checkedData){
         return res.status(500).json({ status: "error", error: "veri yok"});
@@ -106,15 +114,15 @@ const handler = async (req, res) => {
         throw createdNewData;
       }
 
-      return res.status(200).json({ status: "success", data:data, message: "Veri iletildi!" });
+      return res.status(200).json({ status: "success", data:measurements, message: "Veri iletildi!" });
     }
 
     if(req.method === "GET"){
-      const data = await getAllData("measurements");
-      if (!data || data.error) {
-        throw data;
+      const measurements = await getAllData("measurements");
+      if (!measurements || measurements.error) {
+        throw measurements;
       }
-      return res.status(200).json({ status: "success", data: data });
+      return res.status(200).json({ status: "success", data: measurements });
     }
 
   } catch (error) {
