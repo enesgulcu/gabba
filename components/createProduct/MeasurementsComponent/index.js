@@ -2,6 +2,7 @@
 import React from 'react'
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
+import LoadingScreen from '@/components/other/loading';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import Table from '@/components/table';
@@ -46,20 +47,28 @@ import MeasurementsValidationSchema from './formikData';
     ],
   };
 
+  const [isloading, setIsloading] = useState(false);
 
+  
   return (
-    <div className='w-full'>
+    <>
+      { isloading && (<LoadingScreen isloading={isloading}/>) }
+      <div className='w-full'>
       <Formik
         initialValues={initialValues}
 
         validationSchema={MeasurementsValidationSchema}
 
         onSubmit={async (value) => {
+          setIsloading(true);
             const responseData = await postAPI("/createProduct/measurements", value);
             if (responseData.status !== "success" || responseData.status == "error") {
+              setIsloading(false);
               console.log(responseData.error);
             } else {
+              setIsloading(false);
               console.log("işlem başarılı!");
+              
             }
         }}
       >
@@ -335,7 +344,8 @@ import MeasurementsValidationSchema from './formikData';
 
 
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
