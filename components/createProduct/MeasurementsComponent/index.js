@@ -3,6 +3,8 @@ import React from 'react'
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import LoadingScreen from '@/components/other/loading';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import Table from '@/components/table';
@@ -54,6 +56,18 @@ import MeasurementsValidationSchema from './formikData';
     <>
       { isloading && (<LoadingScreen isloading={isloading}/>) }
       <div className='w-full'>
+      <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          />
       <Formik
         initialValues={initialValues}
 
@@ -65,9 +79,11 @@ import MeasurementsValidationSchema from './formikData';
             if (responseData.status !== "success" || responseData.status == "error") {
               setIsloading(false);
               console.log(responseData.error);
+              toast.success(responseData.error + " Bir Hata Oluştu!");
             } else {
               setIsloading(false);
-              console.log("işlem başarılı!");
+              toast.success(" işlem başarılı!" + responseData.message && responseData.message);
+
               
             }
         }}
