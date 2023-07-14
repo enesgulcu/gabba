@@ -97,36 +97,34 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
       
       const {measurements} = req.body;
-      console.log(measurements)
       if(!measurements){
-        throw "Veri alınamadı";
+        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU1";
       } 
       
       // gelen verinin doğruluğunu kontrol ediyoruz.
       const checkedData = await checkData(measurements);
 
       if(!checkedData){
-        return res.status(500).json({ status: "error", error: "veri yok"});
+        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
       }
       const createdNewData = await createNewDataMany("measurements", checkedData);
-
       if(!createdNewData || createdNewData.error){
-        throw createdNewData;
+        throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
       }
-
-      return res.status(200).json({ status: "success", data:measurements, message: "Veri iletildi!" });
+      console.log("işlem başarılı");
+      return res.status(200).json({ status: "success", data:measurements, message: measurements.message });
     }
 
     if(req.method === "GET"){
       const measurements = await getAllData("measurements");
       if (!measurements || measurements.error) {
-        throw measurements;
+        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU4";
       }
-      return res.status(200).json({ status: "success", data: measurements });
+      return res.status(200).json({ status: "success", data: measurements, message: measurements.message });
     }
 
   } catch (error) {
-    return res.status(500).json({ status: "error", error });
+    return res.status(500).json({ status: "error", error, message: error.message  });
   }
 };
 

@@ -26,6 +26,7 @@ model Measurements {
   oneRangeEnabled Boolean
   twoRangeEnabled Boolean
   manuelDefined   Boolean
+  translateEnabled Boolean?
 
   turkish         String?
   ukrainian       String?
