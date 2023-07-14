@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 
 // Tablo Başlıkları Array olarak alınacak -> ["ID", "Name", "Title", "Status", "Role", "Date", "Actions"] gibi...
@@ -16,7 +17,8 @@ import React from "react";
 }
 */
 
-const Table = () => {
+const Table = ({measurementsData}) => {
+    console.log(measurementsData);
     return (
         <div className="flex flex-col mx-4">
             <div className="overflow-x-auto">

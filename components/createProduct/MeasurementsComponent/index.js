@@ -1,9 +1,8 @@
 "use client"
 import React from 'react'
-import {postAPI, getAPI} from '@/services/fetchAPI';
+import {postAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
-
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,29 +12,7 @@ import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import Table from '@/components/table';
 import MeasurementsValidationSchema from './formikData';
 
- const MeasurementsComponent = () => {
-
-  // veri tabanından çekilen verilerin tutulacağı state.
-  const [listData, setListData] = useState();  
-  
-  // veri tabanından verileri çekme işlemini yapan fonksiyon.
-  const fetchData = async () => {
-    const responseData = await getAPI("/createProduct/measurements");
-    if (!responseData || responseData.status !== "success" || responseData.status == "error") {
-      return "VERİ YOK!";
-    } else {
-      setListData(responseData.data);
-    }
-  }
-
-  useEffect(() => {
-
-    // didMount anında -> veri tabanından verileri çekme işlemini başlat.
-    fetchData();
-
-  }, [])
-    
-
+ const MeasurementsComponent = ({measurementsData}) => {
   const initialValues = {
     measurements: [
       {
@@ -133,7 +110,6 @@ import MeasurementsValidationSchema from './formikData';
                               onClick={() => {
                                 if (props.values.measurements.length > 1) {
                                   // burada ölçü birimini sileceğiz.
-                                  console.log(index)
                                   const newPropsValues = props.values.measurements.filter(
                                     (item, i) => i !== index
                                   );
@@ -581,7 +557,7 @@ import MeasurementsValidationSchema from './formikData';
             <h4>Ölçü Listesi</h4>
           </div>
 
-          <Table />
+          <Table measurementsData={measurementsData}/>
           {/* <div>
         {
           listData && listData.map((item, index) => (
