@@ -9,8 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
-import Table from '@/components/table';
+import Table from '@/components/createProduct/MeasurementsComponent/table';
 import MeasurementsValidationSchema from './formikData';
+import { useRouter } from "next/navigation";
 
  const MeasurementsComponent = ({measurementsData}) => {
   const initialValues = {
@@ -553,21 +554,11 @@ import MeasurementsValidationSchema from './formikData';
           )}
         </Formik>
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
-          <div className="w-full flex justify-center items-center p-2 bg-black text-white text-xl">
+          {/* <div className="w-full flex justify-center items-center p-2 bg-black text-white text-xl">
             <h4>Ölçü Listesi</h4>
-          </div>
+          </div> */}
 
           <Table measurementsData={measurementsData}/>
-          {/* <div>
-        {
-          listData && listData.map((item, index) => (
-            <div key={index} className={`p-4 ${index % 2 ? "bg-white" : "bg-gray-100"}`}>
-              {index+1} - <span className='ml-4 bg-blue-100 p-2 rounded-lg'>{item.firstValue}  {item.secondValue && " - " + item.secondValue} {item.unit}</span>
-            </div>
-          
-          ))
-        }
-        </div> */}
         </div>
       </div>
     </>
