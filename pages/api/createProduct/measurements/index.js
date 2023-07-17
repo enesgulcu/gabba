@@ -1,4 +1,4 @@
-import { createNewData, getAllData, createNewDataMany } from "@/services/serviceOperations";
+import { createNewData, getAllData, createNewDataMany, deleteDataByAny } from "@/services/serviceOperations";
 
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (measurements) => {
@@ -96,24 +96,47 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       
-      const {measurements} = req.body;
-      if(!measurements){
-        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU1";
-      } 
-      
-      // gelen verinin doğruluğunu kontrol ediyoruz.
-      const checkedData = await checkData(measurements);
+      const {measurements, data, processType} = req.body;
 
-      if(!checkedData){
-        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+      //silme işlemi için gelen veriyi sileriz.
+      if(!measurements && processType == "delete"){
+        const deleteData = await deleteDataByAny("measurements", {id: data.id});
+        if(!deleteData || deleteData.error){
+          throw deleteData;
+        }
+        return res.status(200).json({ status: "success", data:deleteData, message: deleteData.message });
       }
-      const createdNewData = await createNewDataMany("measurements", checkedData);
-      if(!createdNewData || createdNewData.error){
-        throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
-      }
-      console.log("işlem başarılı");
-      return res.status(200).json({ status: "success", data:measurements, message: measurements.message });
+
+      else{
+        if(!measurements){
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU1";
+        } 
+        
+        // gelen verinin doğruluğunu kontrol ediyoruz.
+        const checkedData = await checkData(measurements);
+  
+        if(!checkedData){
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+        }
+        const createdNewData = await createNewDataMany("measurements", checkedData);
+        if(!createdNewData || createdNewData.error){
+          throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
+        }
+        return res.status(200).json({ status: "success", data:measurements, message: measurements.message });
+      }      
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     if(req.method === "GET"){
       const measurements = await getAllData("measurements");

@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import {postAPI} from '@/services/fetchAPI';
+import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
 import LoadingScreen from '@/components/other/loading';
@@ -9,11 +9,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
-import Table from '@/components/createProduct/MeasurementsComponent/table';
+import Table from '@/components/createProduct/listComponent/table';
 import MeasurementsValidationSchema from './formikData';
 import { useRouter } from "next/navigation";
+ const MeasurementsComponent = () => {
 
- const MeasurementsComponent = ({measurementsData}) => {
+  const router = useRouter();
+
   const initialValues = {
     measurements: [
       {
@@ -29,10 +31,32 @@ import { useRouter } from "next/navigation";
       },
     ],
   };
+  
 
   const [isloading, setIsloading] = useState(false);
+  const [NewData , setNewData] = useState("");
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setIsloading(true);
+        const response = await getAPI('/createProduct/measurements');
+        setIsloading(false);
+        if(response.status !== "success"){
+          throw new Error("Veri çekilemedi");
+        }
+        setNewData(response.data);
+      } catch (error) {
+        setIsloading(false);
+        toast.error(error.message);
+        console.log(error);
+      }
+    }
+    getData();
+  }, [])
   
+
+
   return (
     <>
       {isloading && <LoadingScreen isloading={isloading} />}
@@ -52,20 +76,22 @@ import { useRouter } from "next/navigation";
         <Formik
           initialValues={initialValues}
           validationSchema={MeasurementsValidationSchema}
+
           onSubmit={async (value) => {
+
             setIsloading(true);
             const responseData = await postAPI("/createProduct/measurements",value);
-
+            
             if (responseData.status !== "success" ||responseData.status == "error") {
-              
+
               setIsloading(false);
-              console.log(responseData.error);
               toast.error(responseData.error);
             } else {
-
+              const getData = await getAPI("/createProduct/measurements");
+              setNewData(getData.data);
               setIsloading(false);
               toast.success("Tüm Veriler Başarıyla Eklendi!");
-
+              router.push('/');
               // form verilerini sıfırla.
               value.measurements = [
                 {
@@ -85,7 +111,6 @@ import { useRouter } from "next/navigation";
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
               document.getElementById(`measurements[${0}].firstValue`).value = "";
               document.getElementById(`measurements[${0}].secondValue`).value = "";
-
 
 
             }
@@ -554,11 +579,14 @@ import { useRouter } from "next/navigation";
           )}
         </Formik>
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
-          {/* <div className="w-full flex justify-center items-center p-2 bg-black text-white text-xl">
-            <h4>Ölçü Listesi</h4>
-          </div> */}
 
-          <Table measurementsData={measurementsData}/>
+
+
+          {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
+          <div className='w-full border-t-4 border-gray-700'>
+            <Table NewData={NewData}/>
+          </div>
+
         </div>
       </div>
     </>
