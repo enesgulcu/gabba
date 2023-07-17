@@ -9,10 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
-import Table from '@/components/createProduct/measurementsComponent/listComponent';
-import MeasurementsValidationSchema from './formikData';
+import EditComponentValidationSchema from './formikData';
 
- const MeasurementsComponent = () => {
+ const EditComponent = () => {
 
   const initialValues = {
     measurements: [
@@ -53,7 +52,7 @@ import MeasurementsValidationSchema from './formikData';
     getData();
   }, [])
   
-
+  const index = 0;
 
   return (
     <>
@@ -73,8 +72,7 @@ import MeasurementsValidationSchema from './formikData';
         />
         <Formik
           initialValues={initialValues}
-          validationSchema={MeasurementsValidationSchema}
-
+          validationSchema={EditComponentValidationSchema}
           onSubmit={async (value) => {
 
             setIsloading(true);
@@ -115,14 +113,13 @@ import MeasurementsValidationSchema from './formikData';
           }}
         >
           {(props) => (
+            
             <Form onSubmit={props.handleSubmit}>
               <FieldArray name="measurements">
                 {({ insert, push, remove }) => (
                   <div>
                     <div>
-                      {props.values.measurements.map((measurement, index) => (
                         <div
-                          key={index}
                           className={` lg:px-10 px-2 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
                             index % 2 ? "bg-white" : "bg-gray-100"
                           }`}
@@ -493,35 +490,16 @@ import MeasurementsValidationSchema from './formikData';
                             </div>
                           </div>
                         </div>
-                      ))}
+                      
                     </div>
 
                     <div className="w-full flex justify-center items-center gap-6 my-6 ">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          push({
-                            firstValue: "",
-                            secondValue: "",
-                            unit: "cm",
-                            oneRangeEnabled: false,
-                            twoRangeEnabled: true,
-                            manuelDefined: false,
-                            turkish: "",
-                            ukrainian: "",
-                            english: "",
-                          })
-                        }
-                        className="px-3 py-2 rounded-md bg-blue-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
-                      >
-                        Yeni Ölçü Ekle
-                      </button>
 
                       <button
                         type="submit"
-                        className="px-4 py-2 rounded-md bg-green-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
+                        className="px-4 py-2 rounded-md bg-purple-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
                       >
-                        Gönder
+                        Güncelle
                       </button>
                     </div>
                   </div>
@@ -530,16 +508,9 @@ import MeasurementsValidationSchema from './formikData';
             </Form>
           )}
         </Formik>
-        <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
-          {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
-          <div className='w-full border-t-4 border-gray-700'>
-            <Table NewData={NewData}/>
-          </div>
-
-        </div>
       </div>
     </>
   );
 }
 
-export default MeasurementsComponent;
+export default EditComponent;

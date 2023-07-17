@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
-
+import EditComponent from '@/components/createProduct/measurementsComponent/editComponent';
 
 /*  veri yapısındaki key değerleri
 [
@@ -23,10 +23,11 @@ import { ToastContainer, toast } from "react-toastify";
 ]
 */
 
-const DataTable = ({NewData}) => {
+const DataTable = ({NewData , setIsEdittable, isEdittable}) => {
 
     const [isloading, setIsloading] = useState(false);
     
+    // tablo verisi bu state üzerinde tutulmaktadır.
     const [measurements, setMeasurements] = useState([]);
 
     useEffect(() => {
@@ -35,7 +36,6 @@ const DataTable = ({NewData}) => {
     
     }, [NewData])
     
-
     // tablodan veri silme fonksiyonu
     const dataDeleteFunction = async (data) => {
         try {
@@ -70,13 +70,14 @@ const DataTable = ({NewData}) => {
         }
     }
     
+    // tablo başlıklarını oluşturma fonksiyonu (thead)
     const renderHead = () => {
 
         const tableHeaders = ["Sıra","Ölçüler","Türkçe","Ukraynaca","İngilizce","İşlemler"]
         return (
             <tr className=''>
                 {tableHeaders.map((header, index) => (
-                    <th key={index} scope="col" className=" text-center py-4 border-l border-white last:bg-gray-700">
+                    <th key={index} scope="col" className=" text-center py-4 border-l border-white last:bg-gray-700 p-2">
                         {header}
                     </th>
                 ))}
@@ -84,6 +85,7 @@ const DataTable = ({NewData}) => {
         );
     };
 
+    // tablo içeriklerini oluşturma fonksiyonu (tbody)
     const renderData = () => {
         
         return measurements ? 
@@ -93,11 +95,15 @@ const DataTable = ({NewData}) => {
                     <div className='bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center'>{index + 1}</div>
                 </td>
                 <td className='text-center py-2 border-r'>
-                    {   measurement.oneRangeEnabled ?
+                    {/* ölçü giriş tipine göre gösterim belirlendiği yer */}
+                    {   measurement.oneRangeEnabled ? // sadece tek değer girilebiliyorsa
                         <div>{measurement.firstValue + " " + measurement.unit}</div>
-                        : measurement.twoRangeEnabled ?
+
+                        : measurement.twoRangeEnabled ? // iki değer girilebiliyorsa
                         <div>{measurement.firstValue + " - " + measurement.secondValue + " " + measurement.unit}</div>
-                        : measurement.manuelDefined &&
+                        
+
+                        : measurement.manuelDefined && // manuel olarak string girilebiliyorsa
                         <div>{measurement.firstValue}</div>
                     } 
                 </td> 
@@ -110,6 +116,8 @@ const DataTable = ({NewData}) => {
                 <td className='text-center py-2 border-r'>
                     <div>{measurement.english}</div>
                 </td>
+
+                {/* Tablonun Düzenle - sil aksiyon işlemlerinin yapıldığı kısım */}
                 <td className='text-center py-2 border-r'>
                     <div className='flex center justify-center items-center gap-4'>
                         <button className='shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]'>
@@ -117,18 +125,15 @@ const DataTable = ({NewData}) => {
                         </button>
                         <button 
                         onClick={async () => {
-                            setIsloading(true);
-                            await dataDeleteFunction(measurement);
-                            await getData();
-                            
+                            setIsloading(true); // yükleniyor etkinleştirildi
+                            await dataDeleteFunction(measurement); // veri silme fonksiyonu çağırıldı
+                            await getData(); // güncel verileri çekme fonksiyonu çağırıldı
                         }}
                         className='shadow-md bg-red-500 hover:bg-red-700 text-white font-bold p-2  rounded-md min-w-[50px]'>
                             Sil
                         </button>
                     </div>
                 </td>
-                 
-   
             </tr>
         )) :
         <tr>
@@ -139,6 +144,7 @@ const DataTable = ({NewData}) => {
     return (
       <>
         {isloading && <LoadingScreen isloading={isloading} />}
+        
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -151,7 +157,13 @@ const DataTable = ({NewData}) => {
           pauseOnHover
           theme="dark"
         />
-        <div className="relative overflow-x-auto w-full">
+        <div className={`
+        w-full relative overflow-x-auto
+        ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}
+        `}>
+            <div>
+                <EditComponent/>
+            </div>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
               {renderHead()}{" "}
