@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
-import EditComponent from '@/components/createProduct/measurementsComponent/editComponent';
 
 /*  veri yapısındaki key değerleri
 [
@@ -23,7 +22,7 @@ import EditComponent from '@/components/createProduct/measurementsComponent/edit
 ]
 */
 
-const DataTable = ({NewData , setIsEdittable, isEdittable}) => {
+const DataTable = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
 
     const [isloading, setIsloading] = useState(false);
     
@@ -120,7 +119,12 @@ const DataTable = ({NewData , setIsEdittable, isEdittable}) => {
                 {/* Tablonun Düzenle - sil aksiyon işlemlerinin yapıldığı kısım */}
                 <td className='text-center py-2 border-r'>
                     <div className='flex center justify-center items-center gap-4'>
-                        <button className='shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]'>
+                        <button 
+                        onClick={() => {
+                            // veri güncellemesi için ilk adım.
+                            setUpdateData(measurement);
+                        }}
+                        className='shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]'>
                             Düzenle
                         </button>
                         <button 
@@ -161,9 +165,7 @@ const DataTable = ({NewData , setIsEdittable, isEdittable}) => {
         w-full relative overflow-x-auto
         ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}
         `}>
-            <div>
-                <EditComponent/>
-            </div>
+
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
               {renderHead()}{" "}

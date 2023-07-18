@@ -11,6 +11,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import Table from '@/components/createProduct/measurementsComponent/listComponent';
 import MeasurementsValidationSchema from './formikData';
+import EditComponent from '@/components/createProduct/measurementsComponent/editComponent';
 
  const MeasurementsComponent = () => {
 
@@ -48,17 +49,129 @@ import MeasurementsValidationSchema from './formikData';
   
   const [isloading, setIsloading] = useState(false);
   const [NewData , setNewData] = useState("");
+  const [isUpdateActive, setIsUpdateActive] = useState(false);
+  const [updateData , setUpdateData] = useState("");
+
 
   useEffect(() => {
     getData();
   }, [])
   
 
+  useEffect(() => {
+    // "updateData" state'i değiştiğinde çalışır.
+    if(updateData){
+      setIsUpdateActive(true);
+    }
+    else{
+      setIsUpdateActive(false);
+    }
+    console.log(updateData);
+  }, [updateData])
+
+
+  const keyMappings = {
+    //id: "ID",
+    firstValue: "İlk Ölçü",
+    secondValue: "İkinci Ölçü",
+    unit: "Birim",
+    oneRangeEnabled: "Tek Ölçü",
+    twoRangeEnabled: "Ölçü Aralığı",
+    manuelDefined: "Özel ölçü",
+    //translateEnabled: "Çeviri Aktif",
+    turkish: "Türkçe",
+    ukrainian: "Ukraynaca",
+    english: "İngilizce",
+    //createdAt: "Oluşturulma Tarihi",
+    //updatedAt: "Güncelleme Tarihi"
+  };
+  
+
+  const filteredData = Object.keys(updateData).reduce((acc, key) => {
+    if (
+      updateData[key] !== "" &&
+      updateData[key] !== null &&
+      updateData[key] !== false &&
+      keyMappings[key]
+    ) {
+      acc[key] = updateData[key];
+    }
+    return acc;
+  }, {});
 
   return (
     <>
+
       {isloading && <LoadingScreen isloading={isloading} />}
-      <div className={`w-full ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}`}>
+    
+
+      {/* // UPDATE EKRANI Aşağıdadır */}
+      {isUpdateActive && updateData && (
+        <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen">
+          <div className="flex-col w-full h-full flex justify-center items-center">
+            <div className='w-auto p-2 flex justify-center items-center flex-col font-bold'>
+              
+              
+                
+
+
+
+              <div className="container mx-auto px-4 py-2 sm:px-6 md:px-8">
+                <div className="bg-white overflow-hidden shadow-md rounded-lg">
+                
+                  <div className="px-4 py-5 sm:p-6">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900 text-center">
+                      Eski Veri
+                    </h3>
+                    <div className="mt-5 flex flex-row flex-wrap justify-center items-center gap-4">
+                      {Object.keys(filteredData).map((key) => (
+                        <div
+                          key={key}
+                          className={`bg-gray-100 px-4 py-2 rounded-lg ${
+                            filteredData[key] === true ? "seçili" : ""
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-gray-500">
+                            {keyMappings[key]}
+                          </p>
+                          <p className="mt-1 text-sm text-gray-900">{
+                          filteredData[key].toString() === "true" ? "Aktif" : filteredData[key].toString() === "false" ? "Pasif" : filteredData[key]
+                          }</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+
+
+
+  
+            </div>
+            <div className='bg-red-600 m-2 p-2 rounded-full cursor-pointer hover:scale-105 transition hover:rotate-6 hover:border-2 hover:border-white '
+            onClick={()=>{setUpdateData("");}}
+            >
+            <IoClose color="white" size={40} />
+            </div>
+
+            <EditComponent/>
+
+          </div>
+        </div>
+      )}
+      {/* // UPDATE EKRANI Yukarıdadır */}
+
+
+      <div
+        className={`w-full ${
+          isloading ? " blur max-h-screen overflow-hidden" : " blur-none"
+        } ${isUpdateActive && "blur-sm max-h-screen overflow-hidden"}`}
+      >
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -74,14 +187,17 @@ import MeasurementsValidationSchema from './formikData';
         <Formik
           initialValues={initialValues}
           validationSchema={MeasurementsValidationSchema}
-
           onSubmit={async (value) => {
-
             setIsloading(true);
-            const responseData = await postAPI("/createProduct/measurements",value);
-            
-            if (responseData.status !== "success" ||responseData.status == "error") {
+            const responseData = await postAPI(
+              "/createProduct/measurements",
+              value
+            );
 
+            if (
+              responseData.status !== "success" ||
+              responseData.status == "error"
+            ) {
               setIsloading(false);
               toast.error(responseData.error);
             } else {
@@ -107,10 +223,10 @@ import MeasurementsValidationSchema from './formikData';
               ];
 
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
-              document.getElementById(`measurements[${0}].firstValue`).value = "";
-              document.getElementById(`measurements[${0}].secondValue`).value = "";
-
-
+              document.getElementById(`measurements[${0}].firstValue`).value =
+                "";
+              document.getElementById(`measurements[${0}].secondValue`).value =
+                "";
             }
           }}
         >
@@ -128,18 +244,22 @@ import MeasurementsValidationSchema from './formikData';
                           }`}
                         >
                           {/* Ölçü kaldırma butonu aşağıdadır. */}
-                          <div className='flex justify-center items-center gap-4'>
-                          <button
-                              className='hover:scale-110 hover:rotate-6 transition-all'
+                          <div className="flex justify-center items-center gap-4">
+                            <button
+                              className="hover:scale-110 hover:rotate-6 transition-all"
                               type="button"
                               onClick={() => {
                                 if (props.values.measurements.length > 1) {
                                   // burada ölçü birimini sileceğiz.
-                                  const newPropsValues = props.values.measurements.filter(
-                                    // tıklanan değeri sil diğerlerini listelemeye deva met demektir...
-                                    (item, i) => i !== index
+                                  const newPropsValues =
+                                    props.values.measurements.filter(
+                                      // tıklanan değeri sil diğerlerini listelemeye deva met demektir...
+                                      (item, i) => i !== index
+                                    );
+                                  props.setFieldValue(
+                                    "measurements",
+                                    newPropsValues
                                   );
-                                  props.setFieldValue("measurements",newPropsValues);
                                 }
                               }}
                             >
@@ -173,45 +293,49 @@ import MeasurementsValidationSchema from './formikData';
                               ) : (
                                 <div className="flex justify-start items-center flex-row gap-2">
                                   <span className="flex justify-center items-center w-[25px] h-[25px] rounded-full bg-black text-white">
-                                    {`${index + 1}`}</span>{" "}
+                                    {`${index + 1}`}
+                                  </span>{" "}
                                   - Özel Ölçü Ekle
                                 </div>
                               )}
                             </label>
-
-                            
                           </div>
-                          {/* Ölçü kaldırma butonu yukarıdadır. */}     
-
+                          {/* Ölçü kaldırma butonu yukarıdadır. */}
 
                           {/* firstValue - secondValue inputları aşağıdadır. */}
                           <div className=" flex flex-row flex-wrap lg:flex-nowrap gap-4 justify-center items-start">
-                            
                             {/* firstValue input aşağıdadır. */}
                             <div className="flex flex-col justify-center items-center ">
                               <Field
-                              
                                 onChange={props.handleChange}
                                 id={`measurements[${index}].firstValue`}
                                 name={`measurements[${index}].firstValue`}
-                                value={props.values.measurements[index].firstValue}
-                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 ${props.values.measurements[index].manuelDefined? "w-[250px]": "w-[170px]"}`}
-                                type={`${props.values.measurements[index].manuelDefined? "text": "number"}`}
+                                value={
+                                  props.values.measurements[index].firstValue
+                                }
+                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 ${
+                                  props.values.measurements[index].manuelDefined
+                                    ? "w-[250px]"
+                                    : "w-[170px]"
+                                }`}
+                                type={`${
+                                  props.values.measurements[index].manuelDefined
+                                    ? "text"
+                                    : "number"
+                                }`}
                                 placeholder={`${
                                   props.values.measurements[index].manuelDefined
                                     ? "örnek: Soldan Kapak Çıkar"
                                     : "örnek: 124"
                                 } `}
                               />
-                              
-                                <ErrorMessage
-                                  name={`measurements[${index}].firstValue`}
-                                  component="div"
-                                  className="field-error text-red-600 m-1"
-                                />
+
+                              <ErrorMessage
+                                name={`measurements[${index}].firstValue`}
+                                component="div"
+                                className="field-error text-red-600 m-1"
+                              />
                             </div>
-
-
 
                             {/* secondValue input aşağıdadır. */}
                             <div
@@ -227,146 +351,213 @@ import MeasurementsValidationSchema from './formikData';
                                 onChange={props.handleChange}
                                 id={`measurements[${index}].secondValue`}
                                 name={`measurements[${index}].secondValue`}
-                                value={props.values.measurements[index].secondValue}
+                                value={
+                                  props.values.measurements[index].secondValue
+                                }
                                 className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[170px]`}
                               />
                             </div>
-
-
                           </div>
                           {/* firstValue - secondValue inputları yukarıdadır. */}
 
-
-                          
                           <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
                             {/*Alt alan Çeviri bölümüdür ############### */}
-                            {props.values.measurements[index].manuelDefined &&
-                              <div className='flex justify-center items-center gap-2 max-w-[%90]'>
-                                <div className='flex justify-center items-center flex-row gap-2'>
-                                  
-                                {
-                                  
-                                  <div className='flex justify-center items-center flex-row gap-2 rounded-lg'>
+                            {props.values.measurements[index].manuelDefined && (
+                              <div className="flex justify-center items-center gap-2 max-w-[%90]">
+                                <div className="flex justify-center items-center flex-row gap-2">
                                   {
-                                    props.values.measurements[index].turkish != "" &&
-                                    <Image className='cursor-default rounded-full' src="/tr_flag.svg" height={25} width={25} alt='TrFlag'/>
-                                  }
-                                  {
-                                    props.values.measurements[index].ukrainian != "" &&
-                                    <Image className='cursor-default rounded-full' src="/ua_flag.svg" height={25} width={25} alt='TrFlag'/>
-                                  }
-                                  {
-                                    props.values.measurements[index].english != "" &&
-                                    <Image className='cursor-default rounded-full' src="/en_flag.svg" height={25} width={25} alt='TrFlag'/>
-                                  }
-                                  </div>
-                                }
-
-                                <Image 
-                                  onClick={() => {
-                                    props.setFieldValue(`measurements[${index}].translateEnabled`,true);
-                                  }}
-                                  className='hover:scale-105 transition-all cursor-pointer' src="/translate.svg" height={30} width={40} alt='TrFlag'/>
-                                
-                                
-                                </div>
-                                
-                                {props.values.measurements[index].translateEnabled &&
-                                <div className=' cursor-default absolute w-screen h-screen z-10 left-0 top-0 bg-black bg-opacity-90'>
-                                  <div className='relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center'>
-                                    
-                                    <div className='p-4 bg-white rounded-lg relative'>
-                                      {
-                                        props.values.measurements[index].turkish == "" &&
-                                        props.values.measurements[index].ukrainian == "" &&
-                                        props.values.measurements[index].english == "" ?
-                                          
-                                        <div className='w-full flex justify-center items-center relative'>
-                                          <div 
-                                          onClick={() => {
-                                            props.setFieldValue(`measurements[${index}].translateEnabled`,false);
-                                          }}
-                                          className='cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center'>
-                                            <IoClose color="white" size={40}/>
-                                          </div>
-                                        </div>
-                                        :
-                                        <div className='w-full flex justify-center items-center relative'>
-                                        <div 
-                                        onClick={() => {
-                                          props.setFieldValue(`measurements[${index}].translateEnabled`,false);
-                                        }}
-                                        className='cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center'>
-                                          <IoCheckmarkDoneSharp color="white" size={40}/>
-                                        </div>
-                                        </div>
-                                      }
-                                      
-
-                                      <div className='flex flex-col gap-4 justify-center items-center'>
-                                        <h2 className='text-xl font-semibold p-2 bg-blue-600 text-white rounded-lg w-full text-center'>
-                                        {`${index + 1}`} - Özel Ölçü Ekle
-                                        </h2>
-                                        <div className="flex flex-col justify-center items-center ">
-                                        <h2 className=''>Girilen Orjinal Değer</h2>
-                                          { props.values.measurements[index].firstValue &&
-                                          
-                                            <div className='bg-black p-2 w-full rounded-lg text-white mb-2'>
-                                              
-                                            {props.values.measurements[index].firstValue}
-                                          </div>
-                                          }
-                                          <div className='w-full flex justify-center item-center flex-row flex-nowrap gap-4'>
-                                          <Image className='hover:scale-105 transition-all' src="/tr_flag.svg" height={40} width={40} alt='TrFlag'/>
-                                
-                                          <Field
-                                            onChange={props.handleChange}
-                                            id={`measurements[${index}].turkish`}
-                                            name={`measurements[${index}].turkish`}
-                                            value={props.values.measurements[index].turkish}
-                                            className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                            type="text"
-                                            placeholder="Türkçe Dil Çevirisi"
-                                          />
-                                          </div>                                        
-                                        </div>
-                                        <div className="flex flex-col justify-center items-center ">
-                                        <div className='w-full flex justify-center item-center flex-row flex-nowrap gap-4'>
-                                          <Image className='hover:scale-105 transition-all' src="/ua_flag.svg" height={40} width={40} alt='TrFlag'/>
-                                          <Field
-                                            onChange={props.handleChange}
-                                          id={`measurements[${index}].ukrainianv`}
-                                          name={`measurements[${index}].ukrainian`}
-                                          value={props.values.measurements[index].ukrainian}
-                                          className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                          type="text"
-                                          placeholder="Ukraynaca Dil Çevirisi"
-                                          />
-                                        </div>                                      
-                                        </div>  
-                                        <div className="flex flex-col justify-center items-center ">
-                                          <div className='w-full flex justify-center item-center flex-row flex-nowrap gap-4'>
-                                            <Image className='hover:scale-105 transition-all' src="/en_flag.svg" height={40} width={40} alt='TrFlag'/>
-                                            <Field
-                                              onChange={props.handleChange}
-                                              id={`measurements[${index}].english`}
-                                              name={`measurements[${index}].english`}
-                                              value={props.values.measurements[index].english}
-                                              className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                              type="text"
-                                              placeholder="İngilizce Dil Çevirisi"
-                                            />
-                                          </div>                                        
-                                        </div> 
-                                      </div>   
+                                    <div className="flex justify-center items-center flex-row gap-2 rounded-lg">
+                                      {props.values.measurements[index]
+                                        .turkish != "" && (
+                                        <Image
+                                          className="cursor-default rounded-full"
+                                          src="/tr_flag.svg"
+                                          height={25}
+                                          width={25}
+                                          alt="TrFlag"
+                                        />
+                                      )}
+                                      {props.values.measurements[index]
+                                        .ukrainian != "" && (
+                                        <Image
+                                          className="cursor-default rounded-full"
+                                          src="/ua_flag.svg"
+                                          height={25}
+                                          width={25}
+                                          alt="TrFlag"
+                                        />
+                                      )}
+                                      {props.values.measurements[index]
+                                        .english != "" && (
+                                        <Image
+                                          className="cursor-default rounded-full"
+                                          src="/en_flag.svg"
+                                          height={25}
+                                          width={25}
+                                          alt="TrFlag"
+                                        />
+                                      )}
                                     </div>
+                                  }
 
-                                  </div>  
+                                  <Image
+                                    onClick={() => {
+                                      props.setFieldValue(
+                                        `measurements[${index}].translateEnabled`,
+                                        true
+                                      );
+                                    }}
+                                    className="hover:scale-105 transition-all cursor-pointer"
+                                    src="/translate.svg"
+                                    height={30}
+                                    width={40}
+                                    alt="TrFlag"
+                                  />
                                 </div>
-                                }
 
+                                {props.values.measurements[index]
+                                  .translateEnabled && (
+                                  <div className=" cursor-default absolute w-screen h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
+                                    <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
+                                      <div className="p-4 bg-white rounded-lg relative">
+                                        {props.values.measurements[index]
+                                          .turkish == "" &&
+                                        props.values.measurements[index]
+                                          .ukrainian == "" &&
+                                        props.values.measurements[index]
+                                          .english == "" ? (
+                                          <div className="w-full flex justify-center items-center relative">
+                                            <div
+                                              onClick={() => {
+                                                props.setFieldValue(
+                                                  `measurements[${index}].translateEnabled`,
+                                                  false
+                                                );
+                                              }}
+                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
+                                            >
+                                              <IoClose
+                                                color="white"
+                                                size={40}
+                                              />
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div className="w-full flex justify-center items-center relative">
+                                            <div
+                                              onClick={() => {
+                                                props.setFieldValue(
+                                                  `measurements[${index}].translateEnabled`,
+                                                  false
+                                                );
+                                              }}
+                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
+                                            >
+                                              <IoCheckmarkDoneSharp
+                                                color="white"
+                                                size={40}
+                                              />
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        <div className="flex flex-col gap-4 justify-center items-center">
+                                          <h2 className="text-xl font-semibold p-2 bg-blue-600 text-white rounded-lg w-full text-center">
+                                            {`${index + 1}`} - Özel Ölçü Ekle
+                                          </h2>
+                                          <div className="flex flex-col justify-center items-center ">
+                                            <h2 className="">
+                                              Girilen Orjinal Değer
+                                            </h2>
+                                            {props.values.measurements[index]
+                                              .firstValue && (
+                                              <div className="bg-black p-2 w-full rounded-lg text-white mb-2">
+                                                {
+                                                  props.values.measurements[
+                                                    index
+                                                  ].firstValue
+                                                }
+                                              </div>
+                                            )}
+                                            <div className="w-full flex justify-center item-center flex-row flex-nowrap gap-4">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/tr_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
+
+                                              <Field
+                                                onChange={props.handleChange}
+                                                id={`measurements[${index}].turkish`}
+                                                name={`measurements[${index}].turkish`}
+                                                value={
+                                                  props.values.measurements[
+                                                    index
+                                                  ].turkish
+                                                }
+                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                type="text"
+                                                placeholder="Türkçe Dil Çevirisi"
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="flex flex-col justify-center items-center ">
+                                            <div className="w-full flex justify-center item-center flex-row flex-nowrap gap-4">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/ua_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
+                                              <Field
+                                                onChange={props.handleChange}
+                                                id={`measurements[${index}].ukrainianv`}
+                                                name={`measurements[${index}].ukrainian`}
+                                                value={
+                                                  props.values.measurements[
+                                                    index
+                                                  ].ukrainian
+                                                }
+                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                type="text"
+                                                placeholder="Ukraynaca Dil Çevirisi"
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="flex flex-col justify-center items-center ">
+                                            <div className="w-full flex justify-center item-center flex-row flex-nowrap gap-4">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/en_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
+                                              <Field
+                                                onChange={props.handleChange}
+                                                id={`measurements[${index}].english`}
+                                                name={`measurements[${index}].english`}
+                                                value={
+                                                  props.values.measurements[
+                                                    index
+                                                  ].english
+                                                }
+                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                type="text"
+                                                placeholder="İngilizce Dil Çevirisi"
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            }
+                            )}
                             {/*Üst alan Çeviri bölümüdür ############### */}
                             {/* (mm-cm-m) seçme yapısı aşağıadadır. */}
                             <Field
@@ -390,22 +581,42 @@ import MeasurementsValidationSchema from './formikData';
                               <option value="m">m</option>
                             </Field>
 
-
                             <div
                               onClick={() => {
-                                props.setFieldValue(`measurements[${index}].oneRangeEnabled`,true);
-                                props.setFieldValue(`measurements[${index}].manuelDefined`,false);
-                                props.setFieldValue(`measurements[${index}].twoRangeEnabled`,false);
+                                props.setFieldValue(
+                                  `measurements[${index}].oneRangeEnabled`,
+                                  true
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].manuelDefined`,
+                                  false
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].twoRangeEnabled`,
+                                  false
+                                );
 
                                 // initialValues içindeki eşleştiği index değerini sıfırla
-                                props.setFieldValue(`measurements[${index}].secondValue`,"");
-                                props.setFieldValue(`measurements[${index}].unit`,"cm");
+                                props.setFieldValue(
+                                  `measurements[${index}].secondValue`,
+                                  ""
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].unit`,
+                                  "cm"
+                                );
 
                                 // kullanıcı ara yüzündeki değeri sıfırla (input içi dolu duruyor diye )
-                                document.getElementById(`measurements[${index}].secondValue`).value = "";
+                                document.getElementById(
+                                  `measurements[${index}].secondValue`
+                                ).value = "";
                               }}
                               className={`
-                              ${props.values.measurements[index].oneRangeEnabled ? "bg-blue-200 text-black" : "bg-white cursor-pointer"}
+                              ${
+                                props.values.measurements[index].oneRangeEnabled
+                                  ? "bg-blue-200 text-black"
+                                  : "bg-white cursor-pointer"
+                              }
                               hover:scale-105 transition-all cursor-pointer flex justify-center items-center gap-2 border border-gray-300 p-2 rounded-lg`}
                             >
                               <label
@@ -426,18 +637,33 @@ import MeasurementsValidationSchema from './formikData';
                               />
                             </div>
 
-
                             <div
                               onClick={() => {
-                                props.setFieldValue(`measurements[${index}].twoRangeEnabled`,true);
-                                props.setFieldValue(`measurements[${index}].manuelDefined`,false);
-                                props.setFieldValue(`measurements[${index}].oneRangeEnabled`,false);
-                                props.setFieldValue(`measurements[${index}].unit`,"cm");
+                                props.setFieldValue(
+                                  `measurements[${index}].twoRangeEnabled`,
+                                  true
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].manuelDefined`,
+                                  false
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].oneRangeEnabled`,
+                                  false
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].unit`,
+                                  "cm"
+                                );
                               }}
                               className={`
-                                ${props.values.measurements[index].twoRangeEnabled? "bg-blue-200 text-black" : "bg-white cursor-pointer"}
-                                hover:scale-105 transition-all cursor-pointer flex justify-center items-center gap-2 border border-gray-300 p-2 rounded-lg`
-                              }
+                                ${
+                                  props.values.measurements[index]
+                                    .twoRangeEnabled
+                                    ? "bg-blue-200 text-black"
+                                    : "bg-white cursor-pointer"
+                                }
+                                hover:scale-105 transition-all cursor-pointer flex justify-center items-center gap-2 border border-gray-300 p-2 rounded-lg`}
                             >
                               <label
                                 className="inline-block whitespace-nowrap cursor-pointer"
@@ -458,22 +684,40 @@ import MeasurementsValidationSchema from './formikData';
                             </div>
                             <div
                               onClick={() => {
-                                props.setFieldValue(`measurements[${index}].manuelDefined`,true);
-                                props.setFieldValue(`measurements[${index}].twoRangeEnabled`,false);
-                                props.setFieldValue(`measurements[${index}].oneRangeEnabled`,false);
+                                props.setFieldValue(
+                                  `measurements[${index}].manuelDefined`,
+                                  true
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].twoRangeEnabled`,
+                                  false
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].oneRangeEnabled`,
+                                  false
+                                );
 
                                 // initialValues içindeki eşleştiği index değerini sıfırla
-                                props.setFieldValue(`measurements[${index}].secondValue`,"");
-                                props.setFieldValue(`measurements[${index}].unit`,"");
+                                props.setFieldValue(
+                                  `measurements[${index}].secondValue`,
+                                  ""
+                                );
+                                props.setFieldValue(
+                                  `measurements[${index}].unit`,
+                                  ""
+                                );
 
                                 // kullanıcı ara yüzündeki değeri sıfırla (input içi dolu duruyor yoksa)
-                                document.getElementById(`measurements[${index}].secondValue`).value = "";
+                                document.getElementById(
+                                  `measurements[${index}].secondValue`
+                                ).value = "";
                               }}
-
                               className={`${
-                                props.values.measurements[index].manuelDefined? "bg-blue-200 text-black" : "bg-white"}
-                                hover:scale-105 transition-all cursor-pointer flex justify-center items-center gap-2 border border-gray-300 p-2 rounded-lg`
+                                props.values.measurements[index].manuelDefined
+                                  ? "bg-blue-200 text-black"
+                                  : "bg-white"
                               }
+                                hover:scale-105 transition-all cursor-pointer flex justify-center items-center gap-2 border border-gray-300 p-2 rounded-lg`}
                             >
                               <label
                                 className="inline-block whitespace-nowrap cursor-pointer"
@@ -532,12 +776,12 @@ import MeasurementsValidationSchema from './formikData';
         </Formik>
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
-          <div className='w-full border-t-4 border-gray-700'>
-            <Table NewData={NewData}/>
+          <div className="w-full border-t-4 border-gray-700">
+            <Table NewData={NewData} setUpdateData={setUpdateData} />
           </div>
-
         </div>
       </div>
+      
     </>
   );
 }
