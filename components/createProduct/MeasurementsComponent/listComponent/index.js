@@ -76,7 +76,7 @@ const DataTable = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
         return (
             <tr className=''>
                 {tableHeaders.map((header, index) => (
-                    <th key={index} scope="col" className=" text-center py-4 border-l border-white last:bg-gray-700 p-2">
+                    <th key={index} scope="col" className=" text-center py-4 border-l border-white last:bg-gray-700 last:text-white p-2">
                         {header}
                     </th>
                 ))}
