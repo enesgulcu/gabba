@@ -1,4 +1,4 @@
-import { createNewData, getAllData, createNewDataMany, deleteDataByAny } from "@/services/serviceOperations";
+import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (measurements) => {
@@ -105,6 +105,14 @@ const handler = async (req, res) => {
           throw deleteData;
         }
         return res.status(200).json({ status: "success", data:deleteData, message: deleteData.message });
+      }
+
+      else if(!measurements && processType == "update"){
+        const updateData = await updateDataByAny("measurements", {id: data.id}, data);
+        if(!updateData || updateData.error){
+          throw updateData;
+        }
+        return res.status(200).json({ status: "success", data:updateData, message: updateData.message });
       }
 
       else{

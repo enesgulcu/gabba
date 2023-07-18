@@ -9,9 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
-import Table from '@/components/createProduct/MeasurementsComponent/listComponent'
+import ListComponent from '@/components/createProduct/measurementsComponent/listComponent'
 import MeasurementsValidationSchema from './formikData';
-import EditComponent from '@/components/createProduct/MeasurementsComponent/editComponent';
+import EditComponent from '@/components/createProduct/measurementsComponent/editComponent';
 
  const MeasurementsComponent = () => {
 
@@ -101,21 +101,18 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
 
   return (
     <>
-
+  
       {isloading && <LoadingScreen isloading={isloading} />}
     
-
+    
       {/* // UPDATE EKRANI Aşağıdadır */}
       {isUpdateActive && updateData && (
         <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen">
           <div className="flex-col w-full h-full flex justify-center items-center">
             <div className='w-auto p-2 flex justify-center items-center flex-col font-bold'>
               
-              
-                
-
-
-
+            
+            {/* // UPDATE EKRANI VERİ BİLGİSİ Aşağıdadır*/}
               <div className="container mx-auto px-4 py-2 sm:px-6 md:px-8">
                 <div className="bg-white overflow-hidden shadow-md rounded-lg">
                 
@@ -143,13 +140,7 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
                   </div>
                 </div>
               </div>
-
-
-
-
-
-
-
+            {/* // UPDATE EKRANI VERİ BİLGİSİ Yukarıdadır*/}
 
   
             </div>
@@ -777,7 +768,7 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
           <div className="w-full border-t-4 border-gray-700">
-            <Table NewData={NewData} setUpdateData={setUpdateData} />
+            <ListComponent NewData={NewData} setUpdateData={setUpdateData} />
           </div>
         </div>
       </div>

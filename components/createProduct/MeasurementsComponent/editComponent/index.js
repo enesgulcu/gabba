@@ -28,33 +28,9 @@ import EditComponentValidationSchema from './formikData';
     ],
   };
 
-  const getData = async () => {
-    try {
-      setIsloading(true);
-      const response = await getAPI('/createProduct/measurements');
-      setIsloading(false);
-      if(response.status !== "success"){
-        throw new Error("Veri çekilemedi");
-      }
-      setNewData(response.data);
-    } catch (error) {
-      setIsloading(false);
-      toast.error(error.message);
-      console.log(error);
-    }
-  }
-  
+    
   const [isloading, setIsloading] = useState(false);
-  const [NewData , setNewData] = useState("");
-
-  useEffect(() => {
-    getData();
-  }, [])
-  
   const index = 0;
-
-
-
 
 
   return (
@@ -79,17 +55,16 @@ import EditComponentValidationSchema from './formikData';
           onSubmit={async (value) => {
 
             setIsloading(true);
-            const responseData = await postAPI("/createProduct/measurements",value);
-            
-            if (responseData.status !== "success" ||responseData.status == "error") {
+            const responseData = await postAPI("/createProduct/measurements",{data:data, processType:"update"});
 
-              setIsloading(false);
-              toast.error(responseData.error);
-            } else {
+            if(responseData.status !== "success"){
+                throw new Error("Veri güncellenemedi");
+            }
+        
+             else {
               // veriyi çek ve state'e at
-              getData();
               setIsloading(false);
-              toast.success("Tüm Veriler Başarıyla Eklendi!");
+              toast.success("Veri başarıyla güncellendi");
 
               // form verilerini sıfırla.
               value.measurements = [

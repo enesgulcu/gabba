@@ -22,7 +22,7 @@ import { ToastContainer, toast } from "react-toastify";
 ]
 */
 
-const DataTable = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
+const ListComponent = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
 
     const [isloading, setIsloading] = useState(false);
     
@@ -181,4 +181,4 @@ const DataTable = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
     );
 };
 
-export default DataTable;
+export default ListComponent;
