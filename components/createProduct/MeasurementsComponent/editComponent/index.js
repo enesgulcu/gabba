@@ -10,8 +10,14 @@ import { useState , useEffect} from 'react';
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import EditComponentValidationSchema from './formikData';
 
- const EditComponent = () => {
 
+ const EditComponent = ({updateData}) => {
+
+  
+  // veri çekildi bu veriyi inputlara yerleştir.
+  console.log(updateData);
+
+  
   const initialValues = {
     measurements: [
       {
