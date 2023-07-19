@@ -149,6 +149,9 @@ const ListComponent = ({NewData, setUpdateData}) => {
       <>
         {isloading && <LoadingScreen isloading={isloading} />}
         
+        {/* 
+        zaten parent componentinde mevcut olduğu için onu algılıyor ve onun çalışması yeterli oluyr
+        yoksa iki kere bildirim geliyor.
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -160,7 +163,8 @@ const ListComponent = ({NewData, setUpdateData}) => {
           draggable
           pauseOnHover
           theme="dark"
-        />
+        /> */}
+        
         <div className={`
         w-full relative overflow-x-auto
         ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}
