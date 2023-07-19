@@ -22,7 +22,7 @@ import { ToastContainer, toast } from "react-toastify";
 ]
 */
 
-const ListComponent = ({NewData , setIsEdittable, isEdittable, setUpdateData}) => {
+const ListComponent = ({NewData, setUpdateData}) => {
 
     const [isloading, setIsloading] = useState(false);
     
