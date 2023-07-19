@@ -35,8 +35,10 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
     try {
       setIsloading(true);
       const response = await getAPI('/createProduct/measurements');
-      
-      
+
+      if(!response){
+        throw new Error("Veri çekilemedi");
+      }
 
       if(response.status !== "success"){
         throw new Error("Veri çekilemedi");
@@ -46,7 +48,7 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
 
     } catch (error) {
       setIsloading(false);
-      toast.error("test test test");
+      //toast.error("test test test");
       toast.error(error.message);
       console.log(error);
     }
@@ -195,7 +197,6 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
               responseData.status == "error"
             ) {
               setIsloading(false);
-              toast.error("test2 test2 test2");
               toast.error(responseData.error);
             } else {
               // veriyi çek ve state'e at
