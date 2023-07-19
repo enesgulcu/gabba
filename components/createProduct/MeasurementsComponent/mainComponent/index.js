@@ -48,7 +48,6 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
 
     } catch (error) {
       setIsloading(false);
-      //toast.error("test test test");
       toast.error(error.message);
       console.log(error);
     }
