@@ -47,6 +47,7 @@ const ListComponent = ({NewData, setUpdateData}) => {
             toast.success("Veri başarıyla silindi");
 
         } catch (error) {
+            toast.error("test3 test3 test3");
             toast.error(error.message);
             console.log(error);
         }
@@ -64,6 +65,7 @@ const ListComponent = ({NewData, setUpdateData}) => {
             setMeasurements(response.data);
             
         } catch (error) {
+            toast.error("test4 test4 test4");
             toast.error(error.message);
             console.log(error);
         }
