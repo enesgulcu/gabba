@@ -35,11 +35,15 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
     try {
       setIsloading(true);
       const response = await getAPI('/createProduct/measurements');
-      setIsloading(false);
+      
+      
+
       if(response.status !== "success"){
         throw new Error("Veri çekilemedi");
       }
       setNewData(response.data);
+      setIsloading(false);
+
     } catch (error) {
       setIsloading(false);
       toast.error(error.message);
