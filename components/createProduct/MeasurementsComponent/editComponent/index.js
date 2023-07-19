@@ -3,7 +3,6 @@ import React from 'react'
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
-import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
@@ -11,15 +10,12 @@ import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import EditComponentValidationSchema from './formikData';
 
 
- const EditComponent = ({updateData}) => {
-
-  
-  // veri çekildi bu veriyi inputlara yerleştir.
-  console.log(updateData);
+ const EditComponent = ({updateData, setUpdateData}) => {
 
   
   const initialValues = {
     measurements: [
+      updateData ||
       {
         firstValue: "",
         secondValue: "",
@@ -41,7 +37,6 @@ import EditComponentValidationSchema from './formikData';
 
   return (
     <div>
-      {isloading && <LoadingScreen isloading={isloading} />}
       <div className={`w-full ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}`}>
         <ToastContainer
           position="top-right"
@@ -59,9 +54,9 @@ import EditComponentValidationSchema from './formikData';
           initialValues={initialValues}
           validationSchema={EditComponentValidationSchema}
           onSubmit={async (value) => {
-
+            
             setIsloading(true);
-            const responseData = await postAPI("/createProduct/measurements",{data:data, processType:"update"});
+            const responseData = await postAPI("/createProduct/measurements",{data:value, processType:"update"});
 
             if(responseData.status !== "success"){
                 throw new Error("Veri güncellenemedi");
@@ -91,7 +86,7 @@ import EditComponentValidationSchema from './formikData';
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
               document.getElementById(`measurements[${0}].firstValue`).value = "";
               document.getElementById(`measurements[${0}].secondValue`).value = "";
-
+              setUpdateData("");
 
             }
           }}
@@ -237,8 +232,8 @@ import EditComponentValidationSchema from './formikData';
                             {/* (mm-cm-m) seçme yapısı aşağıadadır. */}
                             <Field
                               as="select"
-                              defaultValue="cm"
-                              value={props.values.unit}
+                              
+                              
                               onChange={props.handleChange}
                               id={`measurements[${index}].unit`}
                               name={`measurements[${index}].unit`}

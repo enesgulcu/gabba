@@ -2,7 +2,7 @@ import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDa
 
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (measurements) => {
-
+  
   // firstValue değeri olmayan değerleri sildik.
   const newMeasurements = measurements.filter(item => item.firstValue);
 
@@ -85,6 +85,7 @@ const checkData = async (measurements) => {
   });
   
   if(newMeasurements.length > 0){
+
     return newMeasurements;
   }
   else{
@@ -97,7 +98,7 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
       
       const {measurements, data, processType} = req.body;
-
+      
       //silme işlemi için gelen veriyi sileriz.
       if(!measurements && processType == "delete"){
         const deleteData = await deleteDataByAny("measurements", {id: data.id});
@@ -108,10 +109,28 @@ const handler = async (req, res) => {
       }
 
       else if(!measurements && processType == "update"){
-        const updateData = await updateDataByAny("measurements", {id: data.id}, data);
+
+        // veri doğruluğunu test ediyoruz
+        const checkedData = await checkData(data.measurements);
+
+
+        if(!checkedData && checkedData.error){
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+        }
+        
+        // id değerini silip yeni veriyi oluşturuyoruz.
+        const NewDatawitoutId = checkedData.map(item => {
+          const {id, ...newData} = item;
+          return newData;
+        });
+        
+        // veriyi güncelliyoruz.
+        const updateData = await updateDataByAny("measurements", {id: checkedData[0].id}, NewDatawitoutId[0]);
+
         if(!updateData || updateData.error){
           throw updateData;
         }
+        
         return res.status(200).json({ status: "success", data:updateData, message: updateData.message });
       }
 
@@ -126,6 +145,7 @@ const handler = async (req, res) => {
         if(!checkedData){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
         }
+
         const createdNewData = await createNewDataMany("measurements", checkedData);
         if(!createdNewData || createdNewData.error){
           throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
@@ -133,17 +153,6 @@ const handler = async (req, res) => {
         return res.status(200).json({ status: "success", data:measurements, message: measurements.message });
       }      
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     if(req.method === "GET"){

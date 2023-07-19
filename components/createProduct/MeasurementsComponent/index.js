@@ -66,6 +66,7 @@ import EditComponent from '@/components/createProduct/measurementsComponent/edit
     else{
       setIsUpdateActive(false);
     }
+    getData();
   }, [updateData])
 
 
@@ -149,7 +150,7 @@ import EditComponent from '@/components/createProduct/measurementsComponent/edit
             <IoClose color="white" size={40} />
             </div>
 
-            <EditComponent updateData={updateData}/>
+            <EditComponent updateData={updateData} setUpdateData={setUpdateData}/>
 
           </div>
         </div>
