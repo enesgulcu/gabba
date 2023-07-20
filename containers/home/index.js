@@ -5,11 +5,6 @@ import Navbar from "@/components/navbar"
 
 const HomeContainer = async () => {  
 
-
-  
-
-
-
   return (
     <>
       Anasayfa

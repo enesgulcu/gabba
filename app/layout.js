@@ -13,7 +13,8 @@ export default function RootLayout({ children }) {
 
   const links = [
     { url: '/', text: 'Ana Sayfa' },
-    { url: '/measurements', text: 'Ölçü Ekle' },
+    { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },
+    { url: '/createProduct/fabrics', text: 'Kartela Oluştur' },
     // {
     //   url: '/products',
     //   text: 'Products',
