@@ -35,3 +35,29 @@ model Measurements {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
+
+model Fabrics {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  fabricType      String
+  fabricDescription     String?
+  fabricSwatch            String?
+
+
+  translateEnabled Boolean?
+
+  fabricTypeTurkish         String?
+  fabricTypeUkrainian       String?
+  fabricTypeEnglish         String?
+
+  fabricDescriptionTurkish  String?
+  fabricDescriptionUkrainian  String?
+  fabricDescriptionEnglish  String?
+
+  fabricSwatchTurkish String?
+  fabricSwatchUkrainian String?
+  fabricSwatchEnglish String?
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
