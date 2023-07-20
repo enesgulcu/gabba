@@ -37,11 +37,11 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
       const response = await getAPI('/createProduct/measurements');
 
       if(!response){
-        throw new Error("Veri çekilemedi");
+        throw new Error("Veri çekilemedi 2");
       }
 
       if(response.status !== "success"){
-        throw new Error("Veri çekilemedi");
+        throw new Error("Veri çekilemedi 3");
       }
       setNewData(response.data);
       setIsloading(false);

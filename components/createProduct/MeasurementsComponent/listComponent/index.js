@@ -59,7 +59,7 @@ const ListComponent = ({NewData, setUpdateData}) => {
             setIsloading(false);
             if(response.status !== "success"){
                 
-                throw new Error("Veri çekilemedi");
+                throw new Error("Veri çekilemedi 1");
             }
             setMeasurements(response.data);
             
