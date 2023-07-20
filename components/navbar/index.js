@@ -2,6 +2,7 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { MdOutlineKeyboardArrowDown, MdOutlineMenu, MdOutlineClose} from "react-icons/md";
 
 const Navbar = ({ links }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,47 +41,15 @@ const Navbar = ({ links }) => {
             <div className="md:hidden">
               <button
                 onClick={handleMenuToggle}
-                className="text-white focus:outline-none focus:bg-gray-700 px-3 py-2"
+                className="text-white focus:outline-none px-3 py-2"
               >
-                {isMenuOpen ? (
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16m-7 6h7"
-                    ></path>
-                  </svg>
-                )}
+                {isMenuOpen ? <MdOutlineClose size={30}/> : <MdOutlineMenu size={30}/> }
               </button>
             </div>
           </div>
 
           <div
-            className={`${
-              isMenuOpen ? 'block' : 'hidden md:block'
-            } md:flex md:space-x-4 md:items-center`}
+            className={`${isMenuOpen ? 'block' : 'hidden md:block'} md:flex md:space-x-4 md:items-center`}
           >
             {links.map((link, index) => (
               <div key={index} className="relative">
@@ -92,22 +61,11 @@ const Navbar = ({ links }) => {
                       className="text-white hover:bg-gray-700 px-3 py-2 rounded-md md:inline-block"
                     >
                       {link.text}
-                      <svg
-                        className={`w-5 h-5 inline ml-1 transition-transform ${
+                      
+                      <MdOutlineKeyboardArrowDown className={`w-5 h-5 inline ml-1 transition-transform ${
                           openSubMenuIndex === index ? 'transform rotate-180' : ''
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M19 9l-7 7-7-7"
-                        ></path>
-                      </svg>
+                        }`}/>
+                      
                     </button>
                     {openSubMenuIndex === index && (
                       <div className="absolute bg-gray-800 rounded-md shadow-md mt-2 py-2 w-40 z-40 md:left-0"
