@@ -55,6 +55,7 @@ const Navbar = ({ links }) => {
               <div key={index} className="relative">
                 {link.submenu ?(
                   <>
+                  <Link href={link.url}>
                     <button
                       onMouseEnter={() => handleSubMenuToggle(index)}
                       
@@ -67,6 +68,7 @@ const Navbar = ({ links }) => {
                         }`}/>
                       
                     </button>
+                    </Link>
                     {openSubMenuIndex === index && (
                       <div className="absolute bg-gray-800 rounded-md shadow-md mt-2 py-2 w-40 z-40 md:left-0"
                       onMouseLeave={() => handleSubMenuToggle(index)}
@@ -83,17 +85,24 @@ const Navbar = ({ links }) => {
                     )}
                   </>
                 ) : (
+                  !link.button ? (
                   <Link href={link.url} key={index}>
                     <div className="text-white hover:bg-gray-700 px-3 py-2 rounded-md md:inline-block">
                       {link.text}
                     </div>
                   </Link>
+                  ) : (
+                    <Link href={link.url} key={index}>
+                    <button className="text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md md:inline-block">
+                      {link.text}
+                    </button>
+                  </Link>
+                  )
+
                 )}
               </div>
             ))}
-            <button className="text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md md:inline-block">
-              Button
-            </button>
+            
           </div>
         </div>
       </div>
