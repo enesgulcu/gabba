@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.11.2",
+    "@cloudinary/url-gen": "^1.10.2",
     "@prisma/client": "^5.0.0",
     "autoprefixer": "10.4.14",
     "eslint": "8.44.0",

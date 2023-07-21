@@ -97,8 +97,6 @@ import FabricsValidationSchema from './formikData';
     english: "İngilizce",
   };
 
-  
-
   const filteredData = Object.keys(updateData).reduce((acc, key) => {
     if (
       updateData[key] !== "" &&
@@ -408,7 +406,13 @@ import FabricsValidationSchema from './formikData';
                                   value={props.values.image}
                                   className=" opacity-0 cursor-pointer w-28 h-10"
                                   onChange={(event) => {
-                                    props.setFieldValue(`fabrics[${index}].image`, event.currentTarget.files[0]);
+                                    const file = event.target.files[0];
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                      const base64String = reader.result.split(',')[1];
+                                      props.setFieldValue(`fabrics[${index}].image`, base64String);
+                                    };
+                                    reader.readAsDataURL(file);
                                   }}
                                 />
                                 <label

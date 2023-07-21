@@ -1,10 +1,30 @@
 import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
+
+
+
+const removeImageFromFabricData = (data) => {
+  const newData = { ...data }; // Gelen veriyi kopyalayarak yeni bir nesne oluşturuyoruz
+
+  // Eğer "fabrics" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
+  if (newData.fabrics && newData.fabrics.length > 0) {
+    newData.fabrics.forEach((fabric) => {
+      delete fabric.image; // "image" alanını her bir kumaş öğesinden kaldırıyoruz
+    });
+  }
+
+  return newData; // "image" alanı kaldırılmış yeni veriyi döndürüyoruz
+};
+
+
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (fabrics) => {
+
+  // gelen verilerden içerisindeki image verisini siliyoruz.
+  const imageDeleted = await removeImageFromFabricData(fabrics);
   
   // firstValue değeri olmayan değerleri sildik.
-  const newFabrics = fabrics.filter(item => item.fabricType);
+  const newFabrics = await imageDeleted.filter(item => item.fabricType);
 
   // Number gelen değerleri stringe çeviriyoruz.
   newFabrics.forEach((newMeasurement, index, arr) => {
@@ -25,7 +45,6 @@ const checkData = async (fabrics) => {
 const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
-      
       const {fabrics, data, processType} = req.body;
       
       //silme işlemi için gelen veriyi sileriz.
@@ -41,7 +60,7 @@ const handler = async (req, res) => {
 
         // veri doğruluğunu test ediyoruz
         const checkedData = await checkData(data.fabrics);
-
+        
 
         if(!checkedData && checkedData.error){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
@@ -74,12 +93,13 @@ const handler = async (req, res) => {
         if(!checkedData){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
         }
-
+        
         const createdNewData = await createNewDataMany("fabrics", checkedData);
+
         if(!createdNewData || createdNewData.error){
           throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
         }
-        return res.status(200).json({ status: "success", data:fabrics, message: fabrics.message });
+        return res.status(200).json({ status: "success", data:checkedData, message: fabrics.message });
       }      
     }
 
