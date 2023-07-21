@@ -187,10 +187,7 @@ import EditComponent from '@/components/createProduct/MeasurementsComponent/edit
           validationSchema={MeasurementsValidationSchema}
           onSubmit={async (value) => {
             setIsloading(true);
-            const responseData = await postAPI(
-              "/createProduct/measurements",
-              value
-            );
+            const responseData = await postAPI("/createProduct/measurements",value);
 
             if (
               responseData.status !== "success" ||

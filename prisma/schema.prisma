@@ -45,6 +45,7 @@ model Fabrics {
 
 
   translateEnabled Boolean?
+  addSwatchEnabled Boolean?
 
   fabricTypeTurkish         String?
   fabricTypeUkrainian       String?

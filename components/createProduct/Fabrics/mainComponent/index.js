@@ -42,7 +42,7 @@ import FabricsValidationSchema from './formikData';
 
   const getData = async () => {
     // try {
-    //   setIsloading(true);
+    //   //setIsloading(true);
     //   const response = await getAPI('/createProduct/fabrics');
 
     //   if(!response){
@@ -188,9 +188,8 @@ import FabricsValidationSchema from './formikData';
           initialValues={initialValues}
           validationSchema={FabricsValidationSchema}
           onSubmit={async (value) => {
-            setIsloading(true);
-            const responseData = await postAPI("/createProduct/fabrics",value);
-
+            //setIsloading(true);
+            const responseData = await postAPI("/createProduct/fabrics", value);
             if (
               responseData.status !== "success" ||
               responseData.status == "error"
@@ -244,7 +243,6 @@ import FabricsValidationSchema from './formikData';
           }}
         >
           {(props) => (
-            console.log(props.values.fabrics[0].fabricSwatch),
             <Form onSubmit={props.handleSubmit}>
               <FieldArray name="fabrics">
                 {({ insert, push, remove }) => (
@@ -359,6 +357,7 @@ import FabricsValidationSchema from './formikData';
                             <div className={`flex justify-center items-center gap-2 flex-col lg:flex-row`}>
                               <h3 className='lg:mr-2'>Veya</h3>
                               <button
+                              type='button'
                               onClick={ () => {
                                   props.setFieldValue(`fabrics[${index}].addSwatchEnabled`, !props.values.fabrics[index].addSwatchEnabled)
                               }
@@ -383,7 +382,7 @@ import FabricsValidationSchema from './formikData';
                                     id={`fabrics[${index}].fabricSwatch`}
                                     name={`fabrics[${index}].fabricSwatch`}
                                     value={props.values.fabrics[index].fabricSwatch}
-                                    className={`hover:scale-105 transition-all border border-green-600 rounded-md p-2 w-[250px]`}
+                                    className={`hover:scale-105 transition-all border border-gray-600 rounded-md p-2 w-[250px]`}
                                     type="text"
                                     placeholder="Yeni Kartela Adı Giriniz."
                                 />
