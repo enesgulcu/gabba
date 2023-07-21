@@ -43,26 +43,26 @@ import FabricsValidationSchema from './formikData';
   };
 
   const getData = async () => {
-    try {
-      setIsloading(true);
-      const response = await getAPI('/createProduct/fabrics');
+    // try {
+    //   setIsloading(true);
+    //   const response = await getAPI('/createProduct/fabrics');
 
-      if(!response){
-        throw new Error("Veri çekilemedi 2");
-      }
+    //   if(!response){
+    //     throw new Error("Veri çekilemedi 2");
+    //   }
 
-      if(response.status !== "success"){
-        throw new Error("Veri çekilemedi 3");
-      }
-      setNewData(response.data);
-      setIsloading(false);
+    //   if(response.status !== "success"){
+    //     throw new Error("Veri çekilemedi 3");
+    //   }
+    //   setNewData(response.data);
+    //   setIsloading(false);
 
-    } catch (error) {
-      setIsloading(false);
+    // } catch (error) {
+    //   setIsloading(false);
 
-      toast.error(error.message);
-      console.log(error);
-    }
+    //   toast.error(error.message);
+    //   console.log(error);
+    // }
   }
   
   const [isloading, setIsloading] = useState(false);
@@ -375,35 +375,17 @@ import FabricsValidationSchema from './formikData';
                               >
                                 {
                                   props.values.fabrics[index].addSwatchEnabled ?
-                                  <div className='p-2 bg-red-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                                  <div className='hover:scale-105 transition-all p-2 bg-red-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
                                   <IoCloseOutline size={20}/> <h4 className='whitespace-nowrap'>İptal</h4>
                                   </div>
                                   :
-                                  <div className='p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                                  <div className='hover:scale-105 transition-all p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
                                     <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Kartela Ekle</h4>
                                     </div>
                                 }
                                 
                               </button>
-                              <div className='cursor-pointer'>
-                              <input
-                                className="opacity-0 absolute z-0 w-28 h-10 cursor-pointer"
-                                name="image"
-                                type="file"
-                                accept="image/*"
-                                value={props.values.image}
-                                onChange={(event) => {
-                                  props.setFieldValue(`fabrics[${index}].image`, event.currentTarget.files[0]);
-                                }}
-                              />
-                              <label
-                                className="cursor-pointer inline-block bg-blue-500 text-white py-2 px-4 rounded-md shadow-md"
-                              >
-                                <div className='cursor-pointer'>Resim Seç</div>
-                              </label>
-                            </div>
-
-
+                          
                               <div className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"}`}>
                                 <Field
                                     onChange={props.handleChange}
@@ -416,10 +398,25 @@ import FabricsValidationSchema from './formikData';
                                 />
                               </div>
                             </div>
-                            {/* <p className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"} text-white w-full text-center text-sm p-1 bg-gray-700 rounded-md m-2`}>
-                              Kaydı tamamladıktan sonra kartela bilgisi sisteme kayıt edilecektir.
-                            </p> */}
                             </div>
+                            <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                                <Field
+                                  type="file"
+                                  id="image"
+                                  name="image"
+                                  accept="image/*"
+                                  value={props.values.image}
+                                  className=" opacity-0 cursor-pointer w-28 h-10"
+                                  onChange={(event) => {
+                                    props.setFieldValue(`fabrics[${index}].image`, event.currentTarget.files[0]);
+                                  }}
+                                />
+                                <label
+                                  htmlFor="image"
+                                  className="absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition "
+                                > Resim Seç
+                                </label>     
+                              </div>
                             
                             {/* ÇEVİRİ eklendiği bölüm aşağıdadır */}
                             <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
