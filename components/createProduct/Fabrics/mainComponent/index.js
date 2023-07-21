@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
-import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
+import { IoClose, IoCheckmarkDoneSharp, IoAddOutline } from "react-icons/io5";
 //import ListComponent from '@/components/createProduct/fabricsComponent/listComponent'
 import FabricsValidationSchema from './formikData';
 //import EditComponent from '@/components/createProduct/fabricsComponent/editComponent';
@@ -23,6 +23,7 @@ import FabricsValidationSchema from './formikData';
         fabricSwatch: "yok",
         
         translateEnabled: false,
+        addSwatchEnabled: false,
 
         fabricTypeTurkish: "",
         fabricTypeUkrainian: "",
@@ -40,26 +41,26 @@ import FabricsValidationSchema from './formikData';
   };
 
   const getData = async () => {
-    try {
-      setIsloading(true);
-      const response = await getAPI('/createProduct/fabrics');
+    // try {
+    //   setIsloading(true);
+    //   const response = await getAPI('/createProduct/fabrics');
 
-      if(!response){
-        throw new Error("Veri çekilemedi 2");
-      }
+    //   if(!response){
+    //     throw new Error("Veri çekilemedi 2");
+    //   }
 
-      if(response.status !== "success"){
-        throw new Error("Veri çekilemedi 3");
-      }
-      setNewData(response.data);
-      setIsloading(false);
+    //   if(response.status !== "success"){
+    //     throw new Error("Veri çekilemedi 3");
+    //   }
+    //   setNewData(response.data);
+    //   setIsloading(false);
 
-    } catch (error) {
-      setIsloading(false);
+    // } catch (error) {
+    //   setIsloading(false);
 
-      toast.error(error.message);
-      console.log(error);
-    }
+    //   toast.error(error.message);
+    //   console.log(error);
+    // }
   }
   
   const [isloading, setIsloading] = useState(false);
@@ -249,9 +250,8 @@ import FabricsValidationSchema from './formikData';
                   <div>
                     <div>
                       {props.values.fabrics.map((measurement, index) => (
-                        <div
-                          key={index}
-                          className={` lg:px-10 px-2 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
+                        <div key={index}
+                          className={` lg:px-10 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
                             index % 2 ? "bg-white" : "bg-gray-100"
                           }`}
                         >
@@ -298,7 +298,7 @@ import FabricsValidationSchema from './formikData';
 
 
                           {/* fabricType - fabricDescription inputları aşağıdadır. */}
-                          <div className=" flex flex-row flex-wrap lg:flex-nowrap gap-4 justify-center items-start">
+                          <div className=" flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-4 justify-center item-center lg:items-start">
                             {/* fabricDescription input aşağıdadır.*/}
                             <div className="flex flex-col justify-center items-center ">
                               <Field
@@ -350,6 +350,36 @@ import FabricsValidationSchema from './formikData';
                                 <option value="yok-3">yok-3</option>
                               </Field>
                             </div>
+
+                            <div className='flex flex-col justify-center items-center'>
+                            <div className={`flex justify-center items-center gap-2 flex-col lg:flex-row`}>
+                              <h3 className='lg:mr-2'>Veya</h3>
+                              <button className='p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'
+                              onClick={ () => {
+                                  props.setFieldValue(`fabrics[${index}].addSwatchEnabled`, !props.values.fabrics[index].addSwatchEnabled)
+                                  console.log(props.values.fabrics[index].addSwatchEnabled)
+                              }
+                              }
+                              >
+                                <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Kartela Ekle</h4>
+                              </button>
+
+                              <div className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"}`}>
+                                <Field
+                                    onChange={props.handleChange}
+                                    id={`fabrics[${index}].fabricSwatch`}
+                                    name={`fabrics[${index}].fabricSwatch`}
+                                    value=""
+                                    className={`hover:scale-105 transition-all border border-green-600 rounded-md p-2 w-[250px]`}
+                                    type="text"
+                                    placeholder="Yeni Kartela Adı Giriniz."
+                                />
+                              </div>
+                            </div>
+                            <p className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"} text-white w-full text-center text-sm p-1 bg-gray-700 rounded-md m-2`}>Kaydı tamamladıktan sonra kartela bilgisi sisteme kayıt edilecektir.</p>
+                            </div>
+                            
+
                           </div>
                           {/* fabricDescription - fabric Description inputları yukarıdadır. */}
 
@@ -360,8 +390,7 @@ import FabricsValidationSchema from './formikData';
                                 <div className="flex justify-center items-center flex-row gap-2">
                                   {
                                     <div className="flex justify-center items-center flex-row gap-2 rounded-lg">
-                                      {props.values.fabrics[index]
-                                        .turkish != "" && (
+                                      {props.values.fabrics[index].fabricTypeTurkish != "" && props.values.fabrics[index].fabricTypeTurkish && (
                                         <Image
                                           className="cursor-default rounded-full"
                                           src="/tr_flag.svg"
@@ -370,8 +399,7 @@ import FabricsValidationSchema from './formikData';
                                           alt="TrFlag"
                                         />
                                       )}
-                                      {props.values.fabrics[index]
-                                        .ukrainian != "" && (
+                                      {props.values.fabrics[index].fabricTypeUkrainian != "" && props.values.fabrics[index].fabricTypeUkrainian && (
                                         <Image
                                           className="cursor-default rounded-full"
                                           src="/ua_flag.svg"
@@ -380,8 +408,7 @@ import FabricsValidationSchema from './formikData';
                                           alt="TrFlag"
                                         />
                                       )}
-                                      {props.values.fabrics[index]
-                                        .english != "" && (
+                                      {props.values.fabrics[index].fabricTypeEnglish != "" && props.values.fabrics[index].fabricTypeEnglish && (
                                         <Image
                                           className="cursor-default rounded-full"
                                           src="/en_flag.svg"
@@ -409,13 +436,19 @@ import FabricsValidationSchema from './formikData';
                                 </div>
 
                                 {props.values.fabrics[index].translateEnabled && (
-                                  <div className=" cursor-default absolute w-screen h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
+                                  <div className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
                                     <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
-                                      <div className="p-2 bg-white rounded-lg relative">
+                                      <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
 
-                                        {props.values.fabrics[index].turkish == "" &&
-                                        props.values.fabrics[index].ukrainian == "" &&
-                                        props.values.fabrics[index].english == "" ? (
+                                        {props.values.fabrics[index].fabricTypeTurkish == "" &&
+                                        props.values.fabrics[index].fabricTypeUkrainian == "" &&
+                                        props.values.fabrics[index].fabricTypeEnglish == "" &&
+                                        props.values.fabrics[index].fabricDescriptionTurkish == "" &&
+                                        props.values.fabrics[index].fabricDescriptionUkrainian == "" &&
+                                        props.values.fabrics[index].fabricDescriptionEnglish == "" &&
+                                        props.values.fabrics[index].fabricSwatchTurkish == "" &&
+                                        props.values.fabrics[index].fabricSwatchUkrainian == "" &&
+                                        props.values.fabrics[index].fabricSwatchEnglish == "" ? (
 
                                           <div className="w-full flex justify-center items-center relative">
                                             <div
@@ -425,7 +458,7 @@ import FabricsValidationSchema from './formikData';
                                                   false
                                                 );
                                               }}
-                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
+                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
                                             >
                                               <IoClose
                                                 color="white"
@@ -442,7 +475,7 @@ import FabricsValidationSchema from './formikData';
                                                   false
                                                 );
                                               }}
-                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
+                                              className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
                                             >
                                               <IoCheckmarkDoneSharp
                                                 color="white"
@@ -481,49 +514,68 @@ import FabricsValidationSchema from './formikData';
                                             )}
                                             </div>
                                             {/* Türkçe çeviri alanı */}
-                                            <div className="w-full flex justify-center item-center flex-row flex-nowrap gap-2">
+                                            <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
                                               
-                                              <Image
-                                                className="hover:scale-105 transition-all"
-                                                src="/tr_flag.svg"
-                                                height={40}
-                                                width={40}
-                                                alt="TrFlag"
-                                              />
+                                                <Image
+                                                  className="hover:scale-105 transition-all"
+                                                  src="/tr_flag.svg"
+                                                  height={40}
+                                                  width={40}
+                                                  alt="TrFlag"
+                                                />
 
-                                              <Field
-                                                onChange={props.handleChange}
-                                                id={`fabrics[${index}].fabricTypeTurkish`}
-                                                name={`fabrics[${index}].fabricTypeTurkish`}
-                                                value={ props.values.fabrics[index].fabricTypeTurkish }
-                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                                type="text"
-                                                placeholder="Kumaş Tipi Türkçe"
-                                              />
+                                                <Field
+                                                  onChange={props.handleChange}
+                                                  id={`fabrics[${index}].fabricTypeTurkish`}
+                                                  name={`fabrics[${index}].fabricTypeTurkish`}
+                                                  value={ props.values.fabrics[index].fabricTypeTurkish }
+                                                  className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                  type="text"
+                                                  placeholder="Kumaş Tipi Türkçe"
+                                                />
+                                              </div>
 
-                                              <Field
-                                                onChange={props.handleChange}
-                                                id={`fabrics[${index}].fabricDescriptionTurkish`}
-                                                name={`fabrics[${index}].fabricDescriptionTurkish`}
-                                                value={ props.values.fabrics[index].fabricDescriptionTurkish }
-                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                                type="text"
-                                                placeholder="Açıklama Türkçe"
-                                              />
+                                              <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                                                <Image
+                                                  className="hover:scale-105 transition-all"
+                                                  src="/tr_flag.svg"
+                                                  height={40}
+                                                  width={40}
+                                                  alt="TrFlag"
+                                                />
 
-                                              <Field
-                                                onChange={props.handleChange}
-                                                id={`fabrics[${index}].fabricSwatchTurkish`}
-                                                name={`fabrics[${index}].fabricSwatchTurkish`}
-                                                value={ props.values.fabrics[index].fabricSwatchTurkish }
-                                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
-                                                type="text"
-                                                placeholder="Kartela Adı Türkçe"
-                                              />
+                                                <Field
+                                                  onChange={props.handleChange}
+                                                  id={`fabrics[${index}].fabricDescriptionTurkish`}
+                                                  name={`fabrics[${index}].fabricDescriptionTurkish`}
+                                                  value={ props.values.fabrics[index].fabricDescriptionTurkish }
+                                                  className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                  type="text"
+                                                  placeholder="Açıklama Türkçe"
+                                                />
+                                              </div>
+
+                                              <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                                                <Image
+                                                    className="hover:scale-105 transition-all"
+                                                    src="/tr_flag.svg"
+                                                    height={40}
+                                                    width={40}
+                                                    alt="TrFlag"
+                                                  />
+                                                <Field
+                                                  onChange={props.handleChange}
+                                                  id={`fabrics[${index}].fabricSwatchTurkish`}
+                                                  name={`fabrics[${index}].fabricSwatchTurkish`}
+                                                  value={ props.values.fabrics[index].fabricSwatchTurkish }
+                                                  className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                                                  type="text"
+                                                  placeholder="Kartela Adı Türkçe"
+                                                />
                                             </div>
 
                                             {/* Ukrayna çeviri alanı */}
-                                            <div className="bg-gray-100 w-full flex justify-center item-center flex-row flex-nowrap gap-2">
+                                            <div className="bg-gray-100 pl-1 rounded-t w-full flex justify-center item-center flex-row flex-nowrap gap-2">
                                               <Image
                                                 className="hover:scale-105 transition-all"
                                                 src="/ua_flag.svg"
@@ -541,7 +593,15 @@ import FabricsValidationSchema from './formikData';
                                                 type="text"
                                                 placeholder="Kumaş Tipi Ukraynaca"
                                               />
-
+                                              </div>
+                                              <div className="bg-gray-100 pl-1 w-full flex justify-center item-center flex-row flex-nowrap gap-2">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/ua_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
                                               <Field
                                                 onChange={props.handleChange}
                                                 id={`fabrics[${index}].fabricDescriptionUkrainian`}
@@ -551,7 +611,15 @@ import FabricsValidationSchema from './formikData';
                                                 type="text"
                                                 placeholder="Açıklama Ukraynaca"
                                               />
-
+                                            </div>
+                                            <div className="bg-gray-100 rounded-b pl-1 w-full flex justify-center item-center flex-row flex-nowrap gap-2">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/ua_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
                                               <Field
                                                 onChange={props.handleChange}
                                                 id={`fabrics[${index}].fabricSwatchUkrainian`}
@@ -563,8 +631,10 @@ import FabricsValidationSchema from './formikData';
                                               />
                                             </div>
 
+
+
                                             {/* English çeviri alanı */}
-                                            <div className="w-full flex justify-center item-center flex-row flex-nowrap gap-2">
+                                            <div className="w-full pl-1 flex justify-center item-center flex-row flex-nowrap gap-2">
                                               <Image
                                                 className="hover:scale-105 transition-all"
                                                 src="/en_flag.svg"
@@ -582,7 +652,16 @@ import FabricsValidationSchema from './formikData';
                                                 type="text"
                                                 placeholder="Kumaş Tipi İngilizce"
                                               />
+                                            </div>
 
+                                            <div className="w-full pl-1 flex justify-center item-center flex-row flex-nowrap gap-2">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/en_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
                                               <Field
                                                 onChange={props.handleChange}
                                                 id={`fabrics[${index}].fabricDescriptionEnglish`}
@@ -592,7 +671,16 @@ import FabricsValidationSchema from './formikData';
                                                 type="text"
                                                 placeholder="Açıklama İngilizce"
                                               />
+                                            </div>
 
+                                            <div className="w-full pl-1 flex justify-center item-center flex-row flex-nowrap gap-2">
+                                              <Image
+                                                className="hover:scale-105 transition-all"
+                                                src="/en_flag.svg"
+                                                height={40}
+                                                width={40}
+                                                alt="TrFlag"
+                                              />
                                               <Field
                                                 onChange={props.handleChange}
                                                 id={`fabrics[${index}].fabricSwatchEnglish`}
@@ -602,8 +690,8 @@ import FabricsValidationSchema from './formikData';
                                                 type="text"
                                                 placeholder="Kartela Adı İngilizce"
                                               />
-                                            </div>
-                                          
+                                          </div>
+
                                       </div>
                                     </div>
                                   </div>
