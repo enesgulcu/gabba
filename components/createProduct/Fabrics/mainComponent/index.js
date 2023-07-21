@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useRef } from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
@@ -21,6 +21,8 @@ import FabricsValidationSchema from './formikData';
         fabricType: "",
         fabricDescription: "",
         fabricSwatch: "",
+
+        image: null,
         
         translateEnabled: false,
         addSwatchEnabled: false,
@@ -41,26 +43,26 @@ import FabricsValidationSchema from './formikData';
   };
 
   const getData = async () => {
-    // try {
-    //   //setIsloading(true);
-    //   const response = await getAPI('/createProduct/fabrics');
+    try {
+      setIsloading(true);
+      const response = await getAPI('/createProduct/fabrics');
 
-    //   if(!response){
-    //     throw new Error("Veri çekilemedi 2");
-    //   }
+      if(!response){
+        throw new Error("Veri çekilemedi 2");
+      }
 
-    //   if(response.status !== "success"){
-    //     throw new Error("Veri çekilemedi 3");
-    //   }
-    //   setNewData(response.data);
-    //   setIsloading(false);
+      if(response.status !== "success"){
+        throw new Error("Veri çekilemedi 3");
+      }
+      setNewData(response.data);
+      setIsloading(false);
 
-    // } catch (error) {
-    //   setIsloading(false);
+    } catch (error) {
+      setIsloading(false);
 
-    //   toast.error(error.message);
-    //   console.log(error);
-    // }
+      toast.error(error.message);
+      console.log(error);
+    }
   }
   
   const [isloading, setIsloading] = useState(false);
@@ -94,6 +96,7 @@ import FabricsValidationSchema from './formikData';
     ukrainian: "Ukraynaca",
     english: "İngilizce",
   };
+
   
 
   const filteredData = Object.keys(updateData).reduce((acc, key) => {
@@ -188,7 +191,8 @@ import FabricsValidationSchema from './formikData';
           initialValues={initialValues}
           validationSchema={FabricsValidationSchema}
           onSubmit={async (value) => {
-            //setIsloading(true);
+            console.log(value)
+            setIsloading(true);
             const responseData = await postAPI("/createProduct/fabrics", value);
             if (
               responseData.status !== "success" ||
@@ -208,6 +212,8 @@ import FabricsValidationSchema from './formikData';
                   fabricType: "",
                   fabricDescription: "",
                   fabricSwatch: "",
+
+                  image: null,
                   
                   translateEnabled: false,
 
@@ -229,6 +235,7 @@ import FabricsValidationSchema from './formikData';
               document.getElementById(`fabrics[${0}].fabricType`).value ="";
               document.getElementById(`fabrics[${0}].fabricDescription`).value ="";
               document.getElementById(`fabrics[${0}].fabricSwatch`).value ="";
+              document.getElementById(`fabrics[${0}].image`).value = null;
               document.getElementById(`fabrics[${0}].fabricTypeTurkish`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeUkrainian`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeEnglish`).value ="";
@@ -347,8 +354,11 @@ import FabricsValidationSchema from './formikData';
                                 
                                 className="h-10 hover:scale-105 transition-all cursor-pointer  p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Kartela Seç</option>
-                                <option value="Kartela 1">Kartela 1</option>
-                                <option value="Kartela 2">Kartela 2</option>
+                                {
+                                  NewData && NewData.map((item, index) => (
+                                    <option key={index} value={item.fabricSwatch}>{item.fabricSwatch}</option>
+                                  ))
+                                }
                               </Field>
                             </div>
                             
@@ -375,6 +385,24 @@ import FabricsValidationSchema from './formikData';
                                 }
                                 
                               </button>
+                              <div className='cursor-pointer'>
+                              <input
+                                className="opacity-0 absolute z-0 w-28 h-10 cursor-pointer"
+                                name="image"
+                                type="file"
+                                accept="image/*"
+                                value={props.values.image}
+                                onChange={(event) => {
+                                  props.setFieldValue(`fabrics[${index}].image`, event.currentTarget.files[0]);
+                                }}
+                              />
+                              <label
+                                className="cursor-pointer inline-block bg-blue-500 text-white py-2 px-4 rounded-md shadow-md"
+                              >
+                                <div className='cursor-pointer'>Resim Seç</div>
+                              </label>
+                            </div>
+
 
                               <div className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"}`}>
                                 <Field
@@ -717,14 +745,27 @@ import FabricsValidationSchema from './formikData';
                     <div className="w-full flex justify-center items-center gap-6 my-6 ">
                       <button
                         type="button"
-                        onClick={() =>
-                          push({
-                            fabricType: "",
-                            fabricDescription: "",
-                            fabricSwatch: "",
-                            turkish: "",
-                            ukrainian: "",
-                            english: "",
+                        onClick={() =>push({
+                          fabricType: "",
+                          fabricDescription: "",
+                          fabricSwatch: "",
+                  
+                          image: null,
+                          
+                          translateEnabled: false,
+                          addSwatchEnabled: false,
+                  
+                          fabricTypeTurkish: "",
+                          fabricTypeUkrainian: "",
+                          fabricTypeEnglish: "",
+                  
+                          fabricDescriptionTurkish: "",
+                          fabricDescriptionUkrainian: "",
+                          fabricDescriptionEnglish: "",
+                  
+                          fabricSwatchTurkish:"",
+                          fabricSwatchUkrainian:"",
+                          fabricSwatchEnglish:"",
                           })
                         }
                         className="px-3 py-2 rounded-md bg-blue-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
