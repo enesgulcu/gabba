@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
-import { IoClose, IoCheckmarkDoneSharp, IoAddOutline } from "react-icons/io5";
+import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 //import ListComponent from '@/components/createProduct/fabricsComponent/listComponent'
 import FabricsValidationSchema from './formikData';
 //import EditComponent from '@/components/createProduct/fabricsComponent/editComponent';
@@ -20,7 +20,7 @@ import FabricsValidationSchema from './formikData';
       {
         fabricType: "",
         fabricDescription: "",
-        fabricSwatch: "yok",
+        fabricSwatch: "",
         
         translateEnabled: false,
         addSwatchEnabled: false,
@@ -208,7 +208,7 @@ import FabricsValidationSchema from './formikData';
                 {
                   fabricType: "",
                   fabricDescription: "",
-                  fabricSwatch: "yok",
+                  fabricSwatch: "",
                   
                   translateEnabled: false,
 
@@ -229,7 +229,7 @@ import FabricsValidationSchema from './formikData';
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
               document.getElementById(`fabrics[${0}].fabricType`).value ="";
               document.getElementById(`fabrics[${0}].fabricDescription`).value ="";
-              document.getElementById(`fabrics[${0}].fabricSwatch`).value ="yok";
+              document.getElementById(`fabrics[${0}].fabricSwatch`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeTurkish`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeUkrainian`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeEnglish`).value ="";
@@ -244,6 +244,7 @@ import FabricsValidationSchema from './formikData';
           }}
         >
           {(props) => (
+            console.log(props.values.fabrics[0].fabricSwatch),
             <Form onSubmit={props.handleSubmit}>
               <FieldArray name="fabrics">
                 {({ insert, push, remove }) => (
@@ -334,34 +335,46 @@ import FabricsValidationSchema from './formikData';
                                 className="field-error text-red-600 m-1"
                               />
                             </div>
+                            
                             <div className="flex flex-col justify-center items-center ">
                               {/* (Kartela Seç - yok-2 - yok-3) seçme yapısı aşağıadadır. */}
                               <Field
                                 as="select"
-                                defaultValue="yok"
-                                value={props.values.fabricSwatch}
+                                disabled={props.values.fabrics[index].addSwatchEnabled ? true : false}
+                                defaultValue="Kartela Seç"
+                                value={!props.values.fabrics[index].addSwatchEnabled ? props.values.fabricSwatch : ""}
                                 onChange={props.handleChange}
                                 id={`fabrics[${index}].fabricSwatch`}
                                 name={`fabrics[${index}].fabricSwatch`}
                                 
                                 className="h-10 hover:scale-105 transition-all cursor-pointer  p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                <option value="Kartela Seç-1">Kartela Seç</option>
-                                <option value="yok-2">yok-2</option>
-                                <option value="yok-3">yok-3</option>
+                                <option value="">Kartela Seç</option>
+                                <option value="Kartela 1">Kartela 1</option>
+                                <option value="Kartela 2">Kartela 2</option>
                               </Field>
                             </div>
+                            
 
                             <div className='flex flex-col justify-center items-center'>
                             <div className={`flex justify-center items-center gap-2 flex-col lg:flex-row`}>
                               <h3 className='lg:mr-2'>Veya</h3>
-                              <button className='p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'
+                              <button
                               onClick={ () => {
                                   props.setFieldValue(`fabrics[${index}].addSwatchEnabled`, !props.values.fabrics[index].addSwatchEnabled)
-                                  console.log(props.values.fabrics[index].addSwatchEnabled)
                               }
                               }
                               >
-                                <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Kartela Ekle</h4>
+                                {
+                                  props.values.fabrics[index].addSwatchEnabled ?
+                                  <div className='p-2 bg-red-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                                  <IoCloseOutline size={20}/> <h4 className='whitespace-nowrap'>İptal</h4>
+                                  </div>
+                                  :
+                                  <div className='p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                                    <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Kartela Ekle</h4>
+                                    </div>
+                                }
+                                
                               </button>
 
                               <div className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"}`}>
@@ -369,23 +382,20 @@ import FabricsValidationSchema from './formikData';
                                     onChange={props.handleChange}
                                     id={`fabrics[${index}].fabricSwatch`}
                                     name={`fabrics[${index}].fabricSwatch`}
-                                    value=""
+                                    value={props.values.fabrics[index].fabricSwatch}
                                     className={`hover:scale-105 transition-all border border-green-600 rounded-md p-2 w-[250px]`}
                                     type="text"
                                     placeholder="Yeni Kartela Adı Giriniz."
                                 />
                               </div>
                             </div>
-                            <p className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"} text-white w-full text-center text-sm p-1 bg-gray-700 rounded-md m-2`}>Kaydı tamamladıktan sonra kartela bilgisi sisteme kayıt edilecektir.</p>
+                            {/* <p className={`${props.values.fabrics[index].addSwatchEnabled ? "block" : "hidden"} text-white w-full text-center text-sm p-1 bg-gray-700 rounded-md m-2`}>
+                              Kaydı tamamladıktan sonra kartela bilgisi sisteme kayıt edilecektir.
+                            </p> */}
                             </div>
                             
-
-                          </div>
-                          {/* fabricDescription - fabric Description inputları yukarıdadır. */}
-
-
                             {/* ÇEVİRİ eklendiği bölüm aşağıdadır */}
-                          <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
+                            <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
                           <div className="flex justify-center items-center gap-2 max-w-[%90]">
                                 <div className="flex justify-center items-center flex-row gap-2">
                                   {
@@ -697,9 +707,10 @@ import FabricsValidationSchema from './formikData';
                                   </div>
                                 )}
                               </div>
-                          </div>
+                            </div>
                             {/* ÇEVİRİ eklendiği bölüm yukarıdadır */}
-
+                          </div>
+                          {/* fabricDescription - fabric Description inputları yukarıdadır. */}
                         </div>
                       ))}
                     </div>
@@ -711,7 +722,7 @@ import FabricsValidationSchema from './formikData';
                           push({
                             fabricType: "",
                             fabricDescription: "",
-                            fabricSwatch: "yok",
+                            fabricSwatch: "",
                             turkish: "",
                             ukrainian: "",
                             english: "",
