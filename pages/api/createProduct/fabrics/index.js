@@ -1,30 +1,30 @@
 import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
+// // req-body içerisindeki image verisini silmek için kullanılan fonksiyon.
+// const removeImageFromFabricData = (data) => {
+//   const newData = { ...data }; // Gelen veriyi kopyalayarak yeni bir nesne oluşturuyoruz
 
+//   // Eğer "fabrics" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
+//   if (newData.fabrics && newData.fabrics.length > 0) {
+//     newData.fabrics.forEach((fabric) => {
+//       delete fabric.image; // "image" alanını her bir kumaş öğesinden kaldırıyoruz
+//     });
+//   }
 
-
-const removeImageFromFabricData = (data) => {
-  const newData = { ...data }; // Gelen veriyi kopyalayarak yeni bir nesne oluşturuyoruz
-
-  // Eğer "fabrics" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
-  if (newData.fabrics && newData.fabrics.length > 0) {
-    newData.fabrics.forEach((fabric) => {
-      delete fabric.image; // "image" alanını her bir kumaş öğesinden kaldırıyoruz
-    });
-  }
-
-  return newData; // "image" alanı kaldırılmış yeni veriyi döndürüyoruz
-};
+//   return newData; // "image" alanı kaldırılmış yeni veriyi döndürüyoruz
+// };
 
 
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (fabrics) => {
 
   // gelen verilerden içerisindeki image verisini siliyoruz.
-  const imageDeleted = await removeImageFromFabricData(fabrics);
+  //const imageDeleted = await removeImageFromFabricData(fabrics);
+  // const newFabrics = await imageDeleted.filter(item => item.fabricType);
+
   
   // firstValue değeri olmayan değerleri sildik.
-  const newFabrics = await imageDeleted.filter(item => item.fabricType);
+  const newFabrics = await fabrics.filter(item => item.fabricType);
 
   // Number gelen değerleri stringe çeviriyoruz.
   newFabrics.forEach((newMeasurement, index, arr) => {
@@ -46,7 +46,7 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       const {fabrics, data, processType} = req.body;
-      
+      console.log(fabrics);
       //silme işlemi için gelen veriyi sileriz.
       if(!fabrics && processType == "delete"){
         const deleteData = await deleteDataByAny("fabrics", {id: data.id});

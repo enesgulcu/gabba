@@ -43,7 +43,8 @@ model Fabrics {
   fabricDescription     String?
   fabricSwatch            String?
 
-
+  image String?
+  
   translateEnabled Boolean?
   addSwatchEnabled Boolean?
 

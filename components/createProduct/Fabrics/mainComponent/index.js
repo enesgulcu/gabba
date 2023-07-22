@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import ResizeImage from '@/functions/others/resizeImage';
 //import ListComponent from '@/components/createProduct/fabricsComponent/listComponent'
 import FabricsValidationSchema from './formikData';
 //import EditComponent from '@/components/createProduct/fabricsComponent/editComponent';
@@ -43,26 +44,26 @@ import FabricsValidationSchema from './formikData';
   };
 
   const getData = async () => {
-    // try {
-    //   setIsloading(true);
-    //   const response = await getAPI('/createProduct/fabrics');
+    try {
+      setIsloading(true);
+      const response = await getAPI('/createProduct/fabrics');
 
-    //   if(!response){
-    //     throw new Error("Veri çekilemedi 2");
-    //   }
+      if(!response){
+        throw new Error("Veri çekilemedi 2");
+      }
 
-    //   if(response.status !== "success"){
-    //     throw new Error("Veri çekilemedi 3");
-    //   }
-    //   setNewData(response.data);
-    //   setIsloading(false);
+      if(response.status !== "success"){
+        throw new Error("Veri çekilemedi 3");
+      }
+      setNewData(response.data);
+      setIsloading(false);
 
-    // } catch (error) {
-    //   setIsloading(false);
+    } catch (error) {
+      setIsloading(false);
 
-    //   toast.error(error.message);
-    //   console.log(error);
-    // }
+      toast.error(error.message);
+      console.log(error);
+    }
   }
   
   const [isloading, setIsloading] = useState(false);
@@ -189,7 +190,6 @@ import FabricsValidationSchema from './formikData';
           initialValues={initialValues}
           validationSchema={FabricsValidationSchema}
           onSubmit={async (value) => {
-            console.log(value)
             setIsloading(true);
             const responseData = await postAPI("/createProduct/fabrics", value);
             if (
@@ -405,14 +405,12 @@ import FabricsValidationSchema from './formikData';
                                   accept="image/*"
                                   value={props.values.image}
                                   className=" opacity-0 cursor-pointer w-28 h-10"
-                                  onChange={(event) => {
+                                  onChange={async (event) => {
                                     const file = event.target.files[0];
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => {
-                                      const base64String = reader.result.split(',')[1];
-                                      props.setFieldValue(`fabrics[${index}].image`, base64String);
-                                    };
-                                    reader.readAsDataURL(file);
+                                    const resizedImageBase64 = await ResizeImage(file, 400, 400); // İstediğiniz boyutları (200x200) burada belirleyin
+                                
+                                    // Daha küçük boyutlu Base64 verisini MongoDB'ye kaydedin
+                                    props.setFieldValue(`fabrics[${index}].image`, resizedImageBase64);
                                   }}
                                 />
                                 <label
