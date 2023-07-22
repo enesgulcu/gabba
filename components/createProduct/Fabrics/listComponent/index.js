@@ -98,8 +98,11 @@ const ListComponent = ({NewData, setUpdateData}) => {
         return fields ? 
         fields.map((field, index) => (
             <tr key={index} className='border-b'>
-                <td className='text-center py-2 border-r flex justify-center items-center h-full mt-2'>
-                    <div className='bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center'>{index + 1}</div>
+                <td className='  border-r'>
+                <div className='flex justify-center items-center h-full mt-2 w-full text-center py-2'>
+                <div className='bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center'>{index + 1}</div>
+                </div>
+                    
                 </td>
                 <td className='text-center py-2 border-r'>
                     {/* Kumaş Tipi giriş tipine göre gösterim belirlendiği yer */}
@@ -111,13 +114,13 @@ const ListComponent = ({NewData, setUpdateData}) => {
                 <td className='text-center py-2 border-r'>
                     <div>{field.fabricSwatch}</div>
                 </td>
-                <td className='text-center py-2 border-r hover:bg-gray-100'>
+                <td className='text-center py-2 border-r hover:bg-blue-100'>
                 
                     <div className='w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max '> 
                         {
                             field.image ?
                             <Image 
-                            src={field.image} width={500} height={500} alt="resim" className='hover:border-4 hover:border-blue-500 hover:cursor-pointer hover:w-72 transition-all w-20 rounded object-cover' />
+                            src={field.image} width={2} height={2} alt="resim" className='hover:border-4 hover:border-blue-500 hover:cursor-pointer hover:w-36 transition-all w-20 rounded-full object-cover ease-in-out  ' />
                             :
                             <div className='w-10 h-10 rounded-full bg-gray-300'></div>
                         }
