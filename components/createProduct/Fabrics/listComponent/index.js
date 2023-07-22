@@ -111,13 +111,13 @@ const ListComponent = ({NewData, setUpdateData}) => {
                 <td className='text-center py-2 border-r'>
                     <div>{field.fabricSwatch}</div>
                 </td>
-                <td className='text-center py-2 border-r'>
+                <td className='text-center py-2 border-r hover:bg-gray-100'>
                 
-                    <div className='w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max'> 
+                    <div className='w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max '> 
                         {
                             field.image ?
                             <Image 
-                            src={field.image} width={500} height={500} alt="resim" className='hover:cursor-pointer hover:w-72 transition-all w-20 rounded object-cover' />
+                            src={field.image} width={500} height={500} alt="resim" className='hover:border-4 hover:border-blue-500 hover:cursor-pointer hover:w-72 transition-all w-20 rounded object-cover' />
                             :
                             <div className='w-10 h-10 rounded-full bg-gray-300'></div>
                         }
