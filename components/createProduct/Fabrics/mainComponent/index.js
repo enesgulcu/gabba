@@ -10,7 +10,7 @@ import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import ResizeImage from '@/functions/others/resizeImage';
-//import ListComponent from '@/components/createProduct/fabricsComponent/listComponent'
+import ListComponent from '@/components/createProduct/Fabrics/listComponent';
 import FabricsValidationSchema from './formikData';
 //import EditComponent from '@/components/createProduct/fabricsComponent/editComponent';
 
@@ -354,7 +354,10 @@ import FabricsValidationSchema from './formikData';
                                 <option value="">Kartela Seç</option>
                                 {
                                   NewData && NewData.map((item, index) => (
+                                    // fabricSwatch içi boş olanları eklemiyoruz.
+                                    item.fabricSwatch != "" && item.fabricSwatch &&
                                     <option key={index} value={item.fabricSwatch}>{item.fabricSwatch}</option>
+                                    
                                   ))
                                 }
                               </Field>
@@ -397,7 +400,8 @@ import FabricsValidationSchema from './formikData';
                               </div>
                             </div>
                             </div>
-                            <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                            <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                              <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
                                 <Field
                                   type="file"
                                   id="image"
@@ -407,6 +411,7 @@ import FabricsValidationSchema from './formikData';
                                   className=" opacity-0 cursor-pointer w-28 h-10"
                                   onChange={async (event) => {
                                     const file = event.target.files[0];
+                                    if (!file) return;
                                     const resizedImageBase64 = await ResizeImage(file, 400, 400); // İstediğiniz boyutları (200x200) burada belirleyin
                                 
                                     // Daha küçük boyutlu Base64 verisini MongoDB'ye kaydedin
@@ -415,11 +420,33 @@ import FabricsValidationSchema from './formikData';
                                 />
                                 <label
                                   htmlFor="image"
-                                  className="absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition "
-                                > Resim Seç
-                                </label>     
+                                  className={
+                                    props.values.fabrics[index].image
+                                      ? "absolute inset-0 text-center p-2  bg-purple-600 text-white cursor-pointer transition  whitespace-nowrap"
+                                      : "absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition whitespace-nowrap"
+                                    
+                                  }
+                                > {
+                                  props.values.fabrics[index].image ? "Resim Seçildi" : "Resim Seç"
+                                }
+                                </label> 
+                                   
                               </div>
-                            
+                              {props.values.fabrics[index].image &&
+                                <div className=' hover:scale-125 transition-all hover:rotate-6'>
+                                  <button 
+                                  className=''
+                                  onClick={
+                                    () => {
+                                      props.values.fabrics[index].image &&
+                                      props.setFieldValue(`fabrics[${index}].image`, null);
+                                    }
+                                  }>
+                                    <IoClose/>
+                                  </button>
+                              </div> 
+                              }
+                              </div>
                             {/* ÇEVİRİ eklendiği bölüm aşağıdadır */}
                             <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
                           <div className="flex justify-center items-center gap-2 max-w-[%90]">
@@ -788,7 +815,7 @@ import FabricsValidationSchema from './formikData';
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
           <div className="w-full border-t-4 border-gray-700">
-            {/* <ListComponent NewData={NewData} setUpdateData={setUpdateData} /> */}
+            <ListComponent NewData={NewData} setUpdateData={setUpdateData} />
           </div>
         </div>
       </div>

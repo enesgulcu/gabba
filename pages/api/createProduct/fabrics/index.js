@@ -32,6 +32,13 @@ const checkData = async (fabrics) => {
     arr[index]['fabricDescription'] = newMeasurement.fabricDescription.toString();
     arr[index]['fabricSwatch'] = newMeasurement.fabricSwatch.toString();
   });
+
+  // fabricSwatch içi boş olan değerleri siliyoruz.
+  newFabrics.forEach((newMeasurement, index, arr) => {
+    if(newMeasurement.fabricSwatch == ""){
+      delete arr[index]['fabricSwatch'];
+    }
+  });
   
   if(newFabrics.length > 0){
 
@@ -46,7 +53,6 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       const {fabrics, data, processType} = req.body;
-      console.log(fabrics);
       //silme işlemi için gelen veriyi sileriz.
       if(!fabrics && processType == "delete"){
         const deleteData = await deleteDataByAny("fabrics", {id: data.id});
