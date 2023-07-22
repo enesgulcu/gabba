@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
+import ResizeImage from '@/functions/others/resizeImage';
+import Image from 'next/image';
 
 /*  veri yapısındaki key değerleri
 [
@@ -110,7 +112,16 @@ const ListComponent = ({NewData, setUpdateData}) => {
                     <div>{field.fabricSwatch}</div>
                 </td>
                 <td className='text-center py-2 border-r'>
-                    <div> resim gelecek field.image </div>
+                
+                    <div className='w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max'> 
+                        {
+                            field.image ?
+                            <Image 
+                            src={field.image} width={500} height={500} alt="resim" className='hover:cursor-pointer hover:w-72 transition-all w-20 rounded object-cover' />
+                            :
+                            <div className='w-10 h-10 rounded-full bg-gray-300'></div>
+                        }
+                     </div>
                 </td>
                 <td className='text-center py-2 border-r'>
                     <div>Dil çevirme iconu</div>

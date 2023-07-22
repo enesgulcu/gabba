@@ -16,7 +16,7 @@ const ResizeImage = (file, maxWidth, maxHeight, toBase64 = true) => {
         },
         'base64', // Sonuç olarak base64 formatında veri almak istediğimiz için 'base64' olarak belirliyoruz
         500, // Yeniden boyutlandırma işlemi sırasında önbelleğe alınan en büyük resim boyutu (piksel cinsinden)
-        250 // Önbellekte tutulacak maksimum süre (ms cinsinden)
+        500 // Önbellekte tutulacak maksimum süre (ms cinsinden)
       );
     } else {
       Resizer.imageFileResizer(
@@ -35,7 +35,7 @@ const ResizeImage = (file, maxWidth, maxHeight, toBase64 = true) => {
         },
         'blob', // Sonuç olarak blob formatında veri almak istediğimiz için 'blob' olarak belirliyoruz
         500, // Yeniden boyutlandırma işlemi sırasında önbelleğe alınan en büyük resim boyutu (piksel cinsinden)
-        250 // Önbellekte tutulacak maksimum süre (ms cinsinden)
+        500 // Önbellekte tutulacak maksimum süre (ms cinsinden)
       );
     }
   });
