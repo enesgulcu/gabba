@@ -9,9 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
-import ListComponent from '@/components/createProduct/MeasurementsComponent/listComponent '
+import ListComponent from '@/components/createProduct/MeasurementsComponent/listComponent'
 import MeasurementsValidationSchema from './formikData';
-import EditComponent from '@/components/createProduct/MeasurementsComponent/editComponent ';
+import EditComponent from '@/components/createProduct/MeasurementsComponent/editComponent';
 
  const MeasurementsComponent = () => {
 

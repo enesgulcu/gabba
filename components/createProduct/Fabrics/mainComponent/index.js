@@ -119,16 +119,16 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
     
       {/* // UPDATE EKRANI Aşağıdadır */}
       {isUpdateActive && updateData && (
-        <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen">
+        <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen max-w-full">
           <div className="flex-col w-full h-full flex justify-center items-center">
-            <div className='w-auto p-2 flex justify-center items-center flex-col font-bold'>
+            <div className='w-auto flex justify-center items-center flex-col font-bold'>
               
             
             {/* // UPDATE EKRANI VERİ BİLGİSİ Aşağıdadır*/}
-              <div className="container mx-auto px-4 py-2 sm:px-6 md:px-8">
+              <div className="w-full">
                 <div className="bg-white overflow-hidden shadow-md rounded-lg">
                 
-                  <div className="px-4 py-5 sm:p-6">
+                  <div className="p-2">
                     <h3 className="text-lg leading-6 font-medium text-gray-900 text-center">
                       Eski Veri
                     </h3>
@@ -137,12 +137,50 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
                         keyMappings[key] -> obje başlıklarını listeler
                         filteredData[key] -> obje içindeki değerleri listeler 
                     */}
-                    <div className="mt-5 flex flex-row flex-wrap justify-center items-start gap-4">
+                    <div className="mt-2 flex flex-row flex-wrap justify-center items-start gap-2">
                       {Object.keys(filteredData).map((key) => (
 
-                        <div key={key}>
+                        <div key={key} className={`p-2 rounded
+                        ${key === "image" && " order-first w-full"}
+                        ${key === "fabricType" && " bg-blue-600 w-full"}
+                        ${key === "fabricDescription" && " bg-blue-600 w-full"}
+                        ${key === "fabricSwatch" && " bg-blue-600 w-full"}
+                        ${key === "fabricTypeTurkish" && " bg-orange-600"}
+                        ${key === "fabricTypeUkrainian" && " bg-orange-600"}
+                        ${key === "fabricTypeEnglish" && " bg-orange-600"}
+                        ${key === "fabricDescriptionTurkish" && " bg-orange-600"}
+                        ${key === "fabricDescriptionUkrainian" && " bg-orange-600"}
+                        ${key === "fabricDescriptionEnglish" && " bg-orange-600"}
+                        ${key === "fabricSwatchTurkish" && " bg-orange-600"}
+                        ${key === "fabricSwatchUkrainian" && " bg-orange-600"}
+                        ${key === "fabricSwatchEnglish" && " bg-orange-600"}
 
-                        {/* burada kalındı */}
+                        `}>
+                        {
+                          key === "image" ?
+                          <div className='flex justify-center items-center text-center flex-col'>
+                            <h3 className='text-black'>{keyMappings[key]}</h3>
+                            <div className='flex justify-center items-center order-last'>
+                              <Image
+                                src={filteredData[key]}
+                                height={200}
+                                width={200}
+                                alt="TrFlag"
+                              />
+                            </div>
+                          </div>
+                          : key === "fabricType" || key === "fabricDescription" || key === "fabricSwatch" ?
+                            <div className='flex flex-row flex-nowrap gap-2'>
+                              <h3 className='text-white'>{keyMappings[key]} :</h3>
+                              <h4 className='text-white font-normal'>{filteredData[key]}</h4>
+                            </div>
+                          :
+                          <div className='flex flex-row flex-nowrap gap-2'>
+                            <h3 className='text-white'>{keyMappings[key]} :</h3>
+                            <h4 className='text-white'>{filteredData[key]}</h4>
+                          </div>
+                           
+                        }
                         </div>
 
                       ))}
@@ -254,7 +292,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
                     <div>
                       {props.values.fabrics.map((measurement, index) => (
                         <div key={index}
-                          className={` lg:px-10 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
+                          className={` lg:px-10 hover:bg-yellow-400 p-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
                             index % 2 ? "bg-white" : "bg-gray-100"
                           }`}
                         >
@@ -301,7 +339,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
 
 
                           {/* fabricType - fabricDescription inputları aşağıdadır. */}
-                          <div className=" flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-4 justify-center item-center lg:items-start">
+                          <div className="flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-4 justify-center item-center lg:items-start">
                             {/* fabricDescription input aşağıdadır.*/}
                             <div className="flex flex-col justify-center items-center ">
                               <Field

@@ -136,7 +136,7 @@ import FabricsValidationSchema from './formikData';
                     <div>
                       {props.values.fabrics.map((measurement, index) => (
                         <div key={index}
-                          className={` lg:px-10 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
+                          className={` lg:px-4 hover:bg-yellow-400 py-4 transition-all w-full flex-col xl:flex-row flex flex-wrap xl:justify-between justify-center item-center xl:items-start gap-4 ${
                             index % 2 ? "bg-white" : "bg-gray-100"
                           }`}
                         >
@@ -150,7 +150,7 @@ import FabricsValidationSchema from './formikData';
                                 id={`fabrics[${index}].fabricType`}
                                 name={`fabrics[${index}].fabricType`}
                                 value={props.values.fabrics[index].fabricType}
-                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[250px]`}
+                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-full lg:w-[200px]`}
                                 type="text"
                                 placeholder="Kumaş tipini giriniz."
                               />
@@ -167,7 +167,7 @@ import FabricsValidationSchema from './formikData';
                                 id={`fabrics[${index}].fabricDescription`}
                                 name={`fabrics[${index}].fabricDescription`}
                                 value={props.values.fabrics[index].fabricDescription}
-                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[250px]`}
+                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-full lg:w-[200px]`}
                                 type="text"
                                 placeholder="Kumaş açıklamasını giriniz."
                               />
@@ -237,7 +237,7 @@ import FabricsValidationSchema from './formikData';
                                     id={`fabrics[${index}].fabricSwatch`}
                                     name={`fabrics[${index}].fabricSwatch`}
                                     value={props.values.fabrics[index].fabricSwatch}
-                                    className={`hover:scale-105 transition-all border border-gray-600 rounded-md p-2 w-[250px]`}
+                                    className={`hover:scale-105 transition-all border border-gray-600 rounded-md p-2 w-full lg:w-[200px]`}
                                     type="text"
                                     placeholder="Yeni Kartela Adı Giriniz."
                                 />
