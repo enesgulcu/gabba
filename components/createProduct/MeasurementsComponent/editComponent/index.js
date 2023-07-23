@@ -10,7 +10,7 @@ import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import EditComponentValidationSchema from './formikData';
 
 
- const EditComponent = ({updateData, setUpdateData}) => {
+ const EditComponent = ({updateData, setUpdateData, isloading, setIsloading}) => {
 
   
   const initialValues = {
@@ -30,8 +30,7 @@ import EditComponentValidationSchema from './formikData';
     ],
   };
 
-    
-  const [isloading, setIsloading] = useState(false);
+
   const index = 0;
 
 
@@ -54,7 +53,6 @@ import EditComponentValidationSchema from './formikData';
           initialValues={initialValues}
           validationSchema={EditComponentValidationSchema}
           onSubmit={async (value) => {
-            
             setIsloading(true);
             const responseData = await postAPI("/createProduct/measurements",{data:value, processType:"update"});
 

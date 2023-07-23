@@ -30,9 +30,8 @@ import Image from 'next/image';
 ]
 */
 
-const ListComponent = ({NewData, setUpdateData, setNewData}) => {
+const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsloading}) => {
 
-    const [isloading, setIsloading] = useState(false);
     
     // tablo verisi bu state üzerinde tutulmaktadır.
     const [fabrics, setFabrics] = useState([]);
@@ -179,8 +178,6 @@ const ListComponent = ({NewData, setUpdateData, setNewData}) => {
 
     return (
       <>
-        {isloading && <LoadingScreen isloading={isloading} />}
-        
         {/* 
         zaten parent componentinde mevcut olduğu için onu algılıyor ve onun çalışması yeterli oluyr
         yoksa iki kere bildirim geliyor.

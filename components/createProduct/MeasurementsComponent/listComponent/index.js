@@ -22,9 +22,9 @@ import { ToastContainer, toast } from "react-toastify";
 ]
 */
 
-const ListComponent = ({NewData, setUpdateData}) => {
+const ListComponent = ({NewData, setUpdateData, isloading, setIsloading }) => {
 
-    const [isloading, setIsloading] = useState(false);
+
     
     // tablo verisi bu state üzerinde tutulmaktadır.
     const [measurements, setMeasurements] = useState([]);
@@ -146,24 +146,7 @@ const ListComponent = ({NewData, setUpdateData}) => {
     }
 
     return (
-      <>
-        {isloading && <LoadingScreen isloading={isloading} />}
-        
-        {/* 
-        zaten parent componentinde mevcut olduğu için onu algılıyor ve onun çalışması yeterli oluyr
-        yoksa iki kere bildirim geliyor.
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        /> */}
+      <>       
         
         <div className={`
         w-full relative overflow-x-auto

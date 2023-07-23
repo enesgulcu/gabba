@@ -13,9 +13,8 @@ import ResizeImage from '@/functions/others/resizeImage';
 import FabricsValidationSchema from './formikData';
 
 
- const EditComponent = ({updateData, setUpdateData}) => {
+ const EditComponent = ({updateData, setUpdateData, NewData, isloading, setIsloading}) => {
 
-  const [NewData , setNewData] = useState("");
 
 
   
@@ -48,7 +47,7 @@ import FabricsValidationSchema from './formikData';
   };
 
     
-  const [isloading, setIsloading] = useState(false);
+
   const index = 0;
 
 
@@ -72,7 +71,7 @@ import FabricsValidationSchema from './formikData';
           validationSchema={FabricsValidationSchema}
           onSubmit={async (value) => {
             setIsloading(true);
-            const responseData = await postAPI("/createProduct/fabrics", value);
+            const responseData = await postAPI("/createProduct/fabrics",{data:value, processType:"update"});
             if (
               responseData.status !== "success" ||
               responseData.status == "error"
@@ -80,10 +79,9 @@ import FabricsValidationSchema from './formikData';
               setIsloading(false);
               toast.error(responseData.error);
             } else {
-              // veriyi çek ve state'e at
-              getData();
               setIsloading(false);
-              toast.success("Tüm Veriler Başarıyla Eklendi!");
+              toast.success("Tüm Veriler Başarıyla Güncellendi!");
+              setUpdateData("");
 
               // form verilerini sıfırla.
               value.fabrics = [
@@ -108,7 +106,9 @@ import FabricsValidationSchema from './formikData';
                   fabricSwatchUkrainian:"",
                   fabricSwatchEnglish:"",
                 },
+                
               ];
+              
 
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
               document.getElementById(`fabrics[${0}].fabricType`).value ="";

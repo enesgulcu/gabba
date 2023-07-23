@@ -119,7 +119,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
     
       {/* // UPDATE EKRANI Aşağıdadır */}
       {isUpdateActive && updateData && (
-        <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen max-w-full">
+        <div className={`${isloading && "blur"} cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen max-w-full`}>
           <div className="flex-col w-full h-full flex justify-center items-center">
             <div className='w-auto flex justify-center items-center flex-col font-bold'>
               
@@ -158,7 +158,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
                         `}>
                         {
                           key === "image" ?
-                          <div className='flex justify-center items-center text-center flex-col'>
+                          <div className={`flex justify-center items-center text-center flex-col`}>
                             <h3 className='text-black'>{keyMappings[key]}</h3>
                             <div className='flex justify-center items-center order-last'>
                               <Image
@@ -198,7 +198,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
             <IoClose color="white" size={40} />
             </div>
 
-            <EditComponent updateData={updateData} setUpdateData={setUpdateData}/>
+            <EditComponent updateData={updateData} setUpdateData={setUpdateData} NewData={NewData} setIsloading={setIsloading} isloading={isloading} />
 
           </div>
         </div>
@@ -855,7 +855,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
           <div className="w-full border-t-4 border-gray-700">
-            <ListComponent NewData={NewData} setUpdateData={setUpdateData} setNewData={setNewData} />
+            <ListComponent NewData={NewData} setUpdateData={setUpdateData} setNewData={setNewData} setIsloading={setIsloading} isloading={isloading}/>
           </div>
         </div>
       </div>
