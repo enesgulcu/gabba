@@ -50,11 +50,14 @@ const checkData = async (fabrics) => {
 };
 
 const handler = async (req, res) => {
+  
   try {
     if (req.method === "POST") {
       const {fabrics, data, processType} = req.body;
+      
       //silme işlemi için gelen veriyi sileriz.
       if(!fabrics && processType == "delete"){
+         
         const deleteData = await deleteDataByAny("fabrics", {id: data.id});
         if(!deleteData || deleteData.error){
           throw deleteData;

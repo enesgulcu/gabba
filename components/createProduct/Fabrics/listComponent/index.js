@@ -30,24 +30,25 @@ import Image from 'next/image';
 ]
 */
 
-const ListComponent = ({NewData, setUpdateData}) => {
+const ListComponent = ({NewData, setUpdateData, setNewData}) => {
 
     const [isloading, setIsloading] = useState(false);
     
     // tablo verisi bu state üzerinde tutulmaktadır.
-    const [fields, setFields] = useState([]);
+    const [fabrics, setFabrics] = useState([]);
 
     useEffect(() => {
 
-      setFields(NewData);
+      setFabrics(NewData);
     
     }, [NewData])
     
     // tablodan veri silme fonksiyonu
     const dataDeleteFunction = async (data) => {
+        
         try {
-            const responseData = await postAPI("/createProduct/fields",{data:data, processType:"delete"});
-            if(responseData.status !== "success"){
+            const responseData = await postAPI("/createProduct/fabrics",{data:data, processType:"delete"});
+            if(!responseData || responseData.status !== "success"){
                 throw new Error("Veri silinemedi");
             }
             getData();
@@ -63,14 +64,14 @@ const ListComponent = ({NewData, setUpdateData}) => {
     // tabloya veri çekme fonksiyonu
     const getData = async () => {
         try {
-            const response = await getAPI('/createProduct/fields');
+            const response = await getAPI('/createProduct/fabrics');
             setIsloading(false);
             if(response.status !== "success"){
                 
                 throw new Error("Veri çekilemedi 1");
             }
-            setFields(response.data);
             
+            setNewData(response.data);
         } catch (error) {
             toast.error(error.message);
             console.log(error);
@@ -95,68 +96,85 @@ const ListComponent = ({NewData, setUpdateData}) => {
     // tablo içeriklerini oluşturma fonksiyonu (tbody)
     const renderData = () => {
         
-        return fields ? 
-        fields.map((field, index) => (
-            <tr key={index} className='border-b'>
-                <td className='  border-r'>
-                <div className='flex justify-center items-center h-full mt-2 w-full text-center py-2'>
-                <div className='bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center'>{index + 1}</div>
+        return fabrics ? (
+          fabrics.map((fabric, index) => (
+            <tr key={index} className="border-b">
+              <td className="  border-r">
+                <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
+                  <div className="bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center">
+                    {index + 1}
+                  </div>
                 </div>
-                    
-                </td>
-                <td className='text-center py-2 border-r'>
-                    {/* Kumaş Tipi giriş tipine göre gösterim belirlendiği yer */}
-                    <div>{field.fabricType}</div>
-                </td> 
-                <td className='text-center py-2 border-r'>
-                    <div>{field.fabricDescription}</div>
-                </td>
-                <td className='text-center py-2 border-r'>
-                    <div>{field.fabricSwatch}</div>
-                </td>
-                <td className='text-center py-2 border-r hover:bg-blue-100'>
-                
-                    <div className='w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max '> 
-                        {
-                            field.image ?
-                            <Image 
-                            src={field.image} width={2} height={2} alt="resim" className='hover:border-4 hover:border-blue-500 hover:cursor-pointer hover:w-36 transition-all w-20 rounded-full object-cover ease-in-out  ' />
-                            :
-                            <div className='w-10 h-10 rounded-full bg-gray-300'></div>
-                        }
-                     </div>
-                </td>
-                <td className='text-center py-2 border-r'>
-                    <div>Dil çevirme iconu</div>
-                </td>
+              </td>
+              <td className="text-center py-2 border-r">
+                {/* Kumaş Tipi giriş tipine göre gösterim belirlendiği yer */}
+                <div>{fabric.fabricType}</div>
+              </td>
+              <td className="text-center py-2 border-r">
+                <div>{fabric.fabricDescription}</div>
+              </td>
+              <td className="text-center py-2 border-r">
+                <div>{fabric.fabricSwatch}</div>
+              </td>
+              <td className="text-center py-2 border-r hover:bg-blue-100">
+                <div className="w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max ">
+                  {fabric.image ? (
+                    <Image
+                      src={fabric.image}
+                      width={2}
+                      height={2}
+                      alt="resim"
+                      className="hover:border-2 hover:border-gray-500 hover:cursor-pointer hover:w-48 hover:h-48 transition-all w-20 h-20 rounded-lg object-cover ease-in-out  "
+                    />
+                  ) : (
+                    <div className="rounded-full bg-gray-200 p-2">Resim yok</div>
+                  )}
+                </div>
+              </td>
+              <td className="text-center py-2 border-r">
+                <div className='h-20 flex justify-center items-center'>
+                  <Image
+                    className="hover:scale-125 transition-all cursor-pointer"
+                    src="/translate_book.svg"
+                    height={30}
+                    width={40}
+                    alt="TrFlag"
+                  />
+                </div>
+              </td>
 
-                {/* Tablonun Düzenle - sil aksiyon işlemlerinin yapıldığı kısım */}
-                <td className='text-center py-2 border-r'>
-                    <div className='flex center justify-center items-center gap-4'>
-                        <button 
-                        onClick={() => {
-                            // veri güncellemesi için ilk adım.
-                            setUpdateData(field);
-                        }}
-                        className='shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]'>
-                            Düzenle
-                        </button>
-                        <button 
-                        onClick={async () => {
-                            setIsloading(true); // yükleniyor etkinleştirildi
-                            await dataDeleteFunction(field); // veri silme fonksiyonu çağırıldı
-                            await getData(); // güncel verileri çekme fonksiyonu çağırıldı
-                        }}
-                        className='shadow-md bg-red-500 hover:bg-red-700 text-white font-bold p-2  rounded-md min-w-[50px]'>
-                            Sil
-                        </button>
-                    </div>
-                </td>
+              {/* Tablonun Düzenle - sil aksiyon işlemlerinin yapıldığı kısım */}
+              <td className="text-center py-2 border-r">
+                <div className="flex center justify-center items-center gap-4">
+                  <button
+                    onClick={() => {
+                      // veri güncellemesi için ilk adım.
+                      setUpdateData(fabric);
+                    }}
+                    className="shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]"
+                  >
+                    Düzenle
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      setIsloading(true); // yükleniyor etkinleştirildi
+                      await dataDeleteFunction(fabric); // veri silme fonksiyonu çağırıldı
+                      await getData(); // güncel verileri çekme fonksiyonu çağırıldı
+                    }}
+                    className="shadow-md bg-red-500 hover:bg-red-700 text-white font-bold p-2  rounded-md min-w-[50px]"
+                  >
+                    Sil
+                  </button>
+                </div>
+              </td>
             </tr>
-        )) :
-        <tr>
+          ))
+        ) : (
+          <tr>
             <td>Veri yok</td>
-        </tr>
+          </tr>
+        );
     }
 
     return (

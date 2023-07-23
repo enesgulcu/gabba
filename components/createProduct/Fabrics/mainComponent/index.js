@@ -23,7 +23,7 @@ import FabricsValidationSchema from './formikData';
         fabricDescription: "",
         fabricSwatch: "",
 
-        image: null,
+        image: "",
         
         translateEnabled: false,
         addSwatchEnabled: false,
@@ -42,6 +42,11 @@ import FabricsValidationSchema from './formikData';
       },
     ],
   };
+
+  const [isloading, setIsloading] = useState(false);
+  const [NewData , setNewData] = useState("");
+  const [isUpdateActive, setIsUpdateActive] = useState(false);
+  const [updateData , setUpdateData] = useState("");
 
   const getData = async () => {
     try {
@@ -64,18 +69,7 @@ import FabricsValidationSchema from './formikData';
       toast.error(error.message);
       console.log(error);
     }
-  }
-  
-  const [isloading, setIsloading] = useState(false);
-  const [NewData , setNewData] = useState("");
-  const [isUpdateActive, setIsUpdateActive] = useState(false);
-  const [updateData , setUpdateData] = useState("");
-
-
-  useEffect(() => {
-    getData();
-  }, [])
-  
+  }  
 
   useEffect(() => {
     // "updateData" state'i değiştiğinde çalışır.
@@ -211,7 +205,7 @@ import FabricsValidationSchema from './formikData';
                   fabricDescription: "",
                   fabricSwatch: "",
 
-                  image: null,
+                  image: "",
                   
                   translateEnabled: false,
 
@@ -233,7 +227,7 @@ import FabricsValidationSchema from './formikData';
               document.getElementById(`fabrics[${0}].fabricType`).value ="";
               document.getElementById(`fabrics[${0}].fabricDescription`).value ="";
               document.getElementById(`fabrics[${0}].fabricSwatch`).value ="";
-              document.getElementById(`fabrics[${0}].image`).value = null;
+              document.getElementById(`fabrics[${0}].image`).value = "";
               document.getElementById(`fabrics[${0}].fabricTypeTurkish`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeUkrainian`).value ="";
               document.getElementById(`fabrics[${0}].fabricTypeEnglish`).value ="";
@@ -356,6 +350,10 @@ import FabricsValidationSchema from './formikData';
                                   NewData && NewData.map((item, index) => (
                                     // fabricSwatch içi boş olanları eklemiyoruz.
                                     item.fabricSwatch != "" && item.fabricSwatch &&
+
+                                    // aynı değere sahip olanlardan sadece birini ekliyoruz.
+                                    !NewData.slice(0, index).some((item2) => item2.fabricSwatch === item.fabricSwatch) &&
+
                                     <option key={index} value={item.fabricSwatch}>{item.fabricSwatch}</option>
                                     
                                   ))
@@ -402,24 +400,23 @@ import FabricsValidationSchema from './formikData';
                             </div>
                             <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
                               <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
-                                <Field
-                                  type="file"
-                                  id="image"
-                                  name="image"
-                                  accept="image/*"
-                                  value={props.values.image}
-                                  className=" opacity-0 cursor-pointer w-28 h-10"
-                                  onChange={async (event) => {
-                                    const file = event.target.files[0];
-                                    if (!file) return;
-                                    const resizedImageBase64 = await ResizeImage(file, 400, 400); // İstediğiniz boyutları (200x200) burada belirleyin
-                                
-                                    // Daha küçük boyutlu Base64 verisini MongoDB'ye kaydedin
-                                    props.setFieldValue(`fabrics[${index}].image`, resizedImageBase64);
-                                  }}
-                                />
+                              <Field
+                                type="file"
+                                id={`fabrics[${index}].image`}
+                                name={`fabrics[${index}].image`}
+                                accept="image/*"
+                                className="opacity-0 cursor-pointer w-28 h-10"
+                                value={props.values.image}                             
+                                onChange={async (event) => {
+                                  const file = event.target.files[0];
+                                  if (!file) return;
+
+                                  const resizedImageBase64 = await ResizeImage(file, 400, 400);
+                                  props.setFieldValue(`fabrics[${index}].image`, resizedImageBase64);
+                                }}
+                              />
                                 <label
-                                  htmlFor="image"
+                                  htmlFor={`fabrics[${index}].image`}
                                   className={
                                     props.values.fabrics[index].image
                                       ? "absolute inset-0 text-center p-2  bg-purple-600 text-white cursor-pointer transition  whitespace-nowrap"
@@ -439,7 +436,7 @@ import FabricsValidationSchema from './formikData';
                                   onClick={
                                     () => {
                                       props.values.fabrics[index].image &&
-                                      props.setFieldValue(`fabrics[${index}].image`, null);
+                                      props.setFieldValue(`fabrics[${index}].image`, "");
                                     }
                                   }>
                                     <IoClose/>
@@ -776,7 +773,7 @@ import FabricsValidationSchema from './formikData';
                           fabricDescription: "",
                           fabricSwatch: "",
                   
-                          image: null,
+                          image: "",
                           
                           translateEnabled: false,
                           addSwatchEnabled: false,
@@ -815,7 +812,7 @@ import FabricsValidationSchema from './formikData';
         <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
           <div className="w-full border-t-4 border-gray-700">
-            <ListComponent NewData={NewData} setUpdateData={setUpdateData} />
+            <ListComponent NewData={NewData} setUpdateData={setUpdateData} setNewData={setNewData} />
           </div>
         </div>
       </div>
