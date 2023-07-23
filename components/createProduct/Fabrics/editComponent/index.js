@@ -1,23 +1,27 @@
 "use client"
-import React, { useRef } from 'react';
+
+import React from 'react'
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
-import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import ResizeImage from '@/functions/others/resizeImage';
-import ListComponent from '@/components/createProduct/Fabrics/listComponent';
 import FabricsValidationSchema from './formikData';
-import EditComponent from '@/components/createProduct/Fabrics/editComponent';
 
- const FabricsComponent = () => {
 
+ const EditComponent = ({updateData, setUpdateData}) => {
+
+  const [NewData , setNewData] = useState("");
+
+
+  
   const initialValues = {
     fabrics: [
+      updateData ||
       {
         fabricType: "",
         fabricDescription: "",
@@ -43,136 +47,14 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
     ],
   };
 
+    
   const [isloading, setIsloading] = useState(false);
-  const [NewData , setNewData] = useState("");
-  const [isUpdateActive, setIsUpdateActive] = useState(false);
-  const [updateData , setUpdateData] = useState("");
+  const index = 0;
 
-  const getData = async () => {
-    try {
-      setIsloading(true);
-      const response = await getAPI('/createProduct/fabrics');
-
-      if(!response){
-        throw new Error("Veri çekilemedi 2");
-      }
-
-      if(response.status !== "success"){
-        throw new Error("Veri çekilemedi 3");
-      }
-      setNewData(response.data);
-      setIsloading(false);
-
-    } catch (error) {
-      setIsloading(false);
-
-      toast.error(error.message);
-      console.log(error);
-    }
-  }  
-
-  useEffect(() => {
-    // "updateData" state'i değiştiğinde çalışır.
-    if(updateData){
-      setIsUpdateActive(true);
-    }
-    else{
-      setIsUpdateActive(false);
-    }
-    getData();
-  }, [updateData])
-
-
-  const keyMappings = {
-    fabricType: "Kumaş Tipi",
-    fabricDescription: "Ek Açıklama",
-    fabricSwatch: "Kartela",
-    fabricTypeTurkish: "Kumaş Tipi (TR)",
-    fabricTypeUkrainian: "Kumaş Tipi (UA)",
-    fabricTypeEnglish: "Kumaş Tipi (EN)",
-    fabricDescriptionTurkish: "Ek Açıklama (TR)",
-    fabricDescriptionUkrainian: "Ek Açıklama (UA)",
-    fabricDescriptionEnglish: "Ek Açıklama (EN)",
-    fabricSwatchTurkish: "Kartela (TR)",
-    fabricSwatchUkrainian: "Kartela (UA)",
-    fabricSwatchEnglish: "Kartela (EN)",
-    image: "Resim",
-  };
-
-  const filteredData = Object.keys(updateData).reduce((acc, key) => {
-    if (
-      updateData[key] !== "" &&
-      updateData[key] !== null &&
-      updateData[key] !== false &&
-      keyMappings[key]
-    ) {
-      acc[key] = updateData[key];
-    }
-    return acc;
-  }, {});
 
   return (
-    <>
-  
-      {isloading && <LoadingScreen isloading={isloading} />}
-    
-    
-      {/* // UPDATE EKRANI Aşağıdadır */}
-      {isUpdateActive && updateData && (
-        <div className=" cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen">
-          <div className="flex-col w-full h-full flex justify-center items-center">
-            <div className='w-auto p-2 flex justify-center items-center flex-col font-bold'>
-              
-            
-            {/* // UPDATE EKRANI VERİ BİLGİSİ Aşağıdadır*/}
-              <div className="container mx-auto px-4 py-2 sm:px-6 md:px-8">
-                <div className="bg-white overflow-hidden shadow-md rounded-lg">
-                
-                  <div className="px-4 py-5 sm:p-6">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 text-center">
-                      Eski Veri
-                    </h3>
-
-                    {/* 
-                        keyMappings[key] -> obje başlıklarını listeler
-                        filteredData[key] -> obje içindeki değerleri listeler 
-                    */}
-                    <div className="mt-5 flex flex-row flex-wrap justify-center items-start gap-4">
-                      {Object.keys(filteredData).map((key) => (
-
-                        <div key={key}>
-
-                        {/* burada kalındı */}
-                        </div>
-
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {/* // UPDATE EKRANI VERİ BİLGİSİ Yukarıdadır*/}
-
-  
-            </div>
-            <div className='bg-red-600 m-2 p-2 rounded-full cursor-pointer hover:scale-105 transition hover:rotate-6 hover:border-2 hover:border-white '
-            onClick={()=>{setUpdateData("");}}
-            >
-            <IoClose color="white" size={40} />
-            </div>
-
-            <EditComponent updateData={updateData} setUpdateData={setUpdateData}/>
-
-          </div>
-        </div>
-      )}
-      {/* // UPDATE EKRANI Yukarıdadır */}
-
-
-      <div
-        className={`w-full ${
-          isloading ? " blur max-h-screen overflow-hidden" : " blur-none"
-        } ${isUpdateActive && "blur-sm max-h-screen overflow-hidden"}`}
-      >
+    <div>
+      <div className={`w-full ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}`}>
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -258,47 +140,6 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
                             index % 2 ? "bg-white" : "bg-gray-100"
                           }`}
                         >
-                          {/* Kumaş kaldırma butonu aşağıdadır. */}
-                          <div className="flex justify-center items-center gap-4">
-                            <button
-                              className="hover:scale-110 hover:rotate-6 transition-all"
-                              type="button"
-                              onClick={() => {
-                                if (props.values.fabrics.length > 1) {
-                                  // burada Kumaş birimini sileceğiz.
-                                  const newPropsValues =
-                                    props.values.fabrics.filter(
-                                      // tıklanan değeri sil diğerlerini listelemeye deva met demektir...
-                                      (item, i) => i !== index
-                                    );
-                                  props.setFieldValue(
-                                    "fabrics",
-                                    newPropsValues
-                                  );
-                                }
-                              }}
-                            >
-                              <p className="bg-red-600 text-white p-2 rounded-md">
-                                {" "}
-                                <MdOutlineCancel size={25} />{" "}
-                              </p>
-                            </button>
-
-                            <label
-                              htmlFor={`measure-${index}`}
-                              className="whitespace-nowrap font-semibold flex justify-center items-center"
-                            >
-                              <div className="flex justify-start items-center flex-row gap-2">
-                                  <span className="flex justify-center items-center w-[25px] h-[25px] rounded-full bg-black text-white">
-                                    {`${index + 1}`}
-                                  </span>{" "}
-                                  - Kumaş Ekle
-                                </div>
-                            </label>
-                          </div>
-                          {/* Kumaş kaldırma butonu yukarıdadır. */}
-
-
 
                           {/* fabricType - fabricDescription inputları aşağıdadır. */}
                           <div className=" flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-4 justify-center item-center lg:items-start">
@@ -772,40 +613,10 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
 
                     <div className="w-full flex justify-center items-center gap-6 my-6 ">
                       <button
-                        type="button"
-                        onClick={() =>push({
-                          fabricType: "",
-                          fabricDescription: "",
-                          fabricSwatch: "",
-                  
-                          image: "",
-                          
-                          translateEnabled: false,
-                          addSwatchEnabled: false,
-                  
-                          fabricTypeTurkish: "",
-                          fabricTypeUkrainian: "",
-                          fabricTypeEnglish: "",
-                  
-                          fabricDescriptionTurkish: "",
-                          fabricDescriptionUkrainian: "",
-                          fabricDescriptionEnglish: "",
-                  
-                          fabricSwatchTurkish:"",
-                          fabricSwatchUkrainian:"",
-                          fabricSwatchEnglish:"",
-                          })
-                        }
-                        className="px-3 py-2 rounded-md bg-blue-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
-                      >
-                        Yeni Kumaş Ekle
-                      </button>
-
-                      <button
                         type="submit"
-                        className="px-4 py-2 rounded-md bg-green-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
+                        className="px-4 py-2 rounded-md bg-purple-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
                       >
-                        Gönder
+                        Güncelle
                       </button>
                     </div>
                   </div>
@@ -814,16 +625,9 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
             </Form>
           )}
         </Formik>
-        <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
-          {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
-          <div className="w-full border-t-4 border-gray-700">
-            <ListComponent NewData={NewData} setUpdateData={setUpdateData} setNewData={setNewData} />
-          </div>
-        </div>
       </div>
-      
-    </>
+    </div>
   );
 }
 
-export default FabricsComponent;
+export default EditComponent;
