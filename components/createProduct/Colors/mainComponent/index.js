@@ -12,6 +12,7 @@ import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "rea
 import ListComponent from '@/components/createProduct/Colors/listComponent';
 import ColorsValidationSchema from './formikData';
 import EditComponent from '@/components/createProduct/Colors/editComponent';
+import HandleColorPick from '@/functions/others/HandleColorPick';
 
  const ColorsComponent = () => {
 
@@ -339,7 +340,7 @@ import EditComponent from '@/components/createProduct/Colors/editComponent';
                                 component="div"
                                 className="field-error text-red-600 m-1"
                               />
-                            </div>                                        
+                            </div>                                         
 
                             {/* ÇEVİRİ eklendiği bölüm aşağıdadır */}
                             <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
