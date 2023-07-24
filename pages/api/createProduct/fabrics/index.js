@@ -72,7 +72,7 @@ const handler = async (req, res) => {
         
 
         if(!checkedData && checkedData.error){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KR2";
         }
         
         // id değerini silip yeni veriyi oluşturuyoruz.
@@ -93,14 +93,14 @@ const handler = async (req, res) => {
 
       else{
         if(!fabrics){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU1";
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KR1";
         } 
         
         // gelen verinin doğruluğunu kontrol ediyoruz.
         const checkedData = await checkData(fabrics);
         
         if(!checkedData){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KR2";
         }
         
         const createdNewData = await createNewDataMany("fabrics", checkedData);

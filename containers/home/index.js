@@ -1,6 +1,6 @@
 
 import React from 'react'
-import MeasurementsComponent from "../../components/createProduct/MeasurementsComponent/mainComponent"
+import Measurements from "../../components/createProduct/Measurements/mainComponent"
 import Navbar from "@/components/navbar"
 
 const HomeContainer = async () => {  

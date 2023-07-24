@@ -1,5 +1,5 @@
 import React from 'react'
-import MeasurementsComponent from "@/components/createProduct/MeasurementsComponent/mainComponent"
+import MeasurementsComponent from "@/components/createProduct/Measurements/mainComponent"
 
 const Measurements = () => {
   return (

@@ -1,6 +1,6 @@
 
 import React from 'react'
-import MeasurementsComponent from "@/components/createProduct/MeasurementsComponent/mainComponent"
+import Measurements from "@/components/createProduct/Measurements/mainComponent"
 
 const MeasurementsContainer = async () => {  
 
@@ -8,7 +8,7 @@ const MeasurementsContainer = async () => {
 
   return (
     <>
-      <MeasurementsComponent/>
+      <Measurements/>
     </>
   )
 }

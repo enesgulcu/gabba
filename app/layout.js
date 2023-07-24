@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
     { url: '/', text: 'Ana Sayfa' },
     { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },
     { url: '/createProduct/fabrics', text: 'Kartela Oluştur' },
+    { url: '/createProduct/metals', text: 'Metal Oluştur' },
     // {
     //   url: '/products',
     //   text: 'Products',
