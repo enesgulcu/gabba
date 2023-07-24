@@ -13,6 +13,7 @@ import ResizeImage from '@/functions/others/resizeImage';
 import ListComponent from '@/components/createProduct/Fabrics/listComponent';
 import FabricsValidationSchema from './formikData';
 import EditComponent from '@/components/createProduct/Fabrics/editComponent';
+import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
 
  const FabricsComponent = () => {
 
@@ -47,6 +48,10 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
   const [NewData , setNewData] = useState("");
   const [isUpdateActive, setIsUpdateActive] = useState(false);
   const [updateData , setUpdateData] = useState("");
+  const [selectedLanguageData , setSelectedLanguageData] = useState("");
+
+
+  
 
   const getData = async () => {
     try {
@@ -119,7 +124,8 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
     
       {/* // UPDATE EKRANI Aşağıdadır */}
       {isUpdateActive && updateData && (
-        <div className={`${isloading && "blur"} cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen max-w-full`}>
+        <div className={`        
+        ${isloading || selectedLanguageData && "blur"} cursor-default w-screen absolute bg-black bg-opacity-90 z-50 py-4 min-h-screen max-w-full`}>
           <div className="flex-col w-full h-full flex justify-center items-center">
             <div className='w-auto flex justify-center items-center flex-col font-bold'>
               
@@ -142,18 +148,18 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
 
                         <div key={key} className={`p-2 rounded
                         ${key === "image" && " order-first w-full"}
-                        ${key === "fabricType" && " bg-blue-600 w-full"}
-                        ${key === "fabricDescription" && " bg-blue-600 w-full"}
-                        ${key === "fabricSwatch" && " bg-blue-600 w-full"}
-                        ${key === "fabricTypeTurkish" && " bg-orange-600"}
-                        ${key === "fabricTypeUkrainian" && " bg-orange-600"}
-                        ${key === "fabricTypeEnglish" && " bg-orange-600"}
-                        ${key === "fabricDescriptionTurkish" && " bg-orange-600"}
-                        ${key === "fabricDescriptionUkrainian" && " bg-orange-600"}
-                        ${key === "fabricDescriptionEnglish" && " bg-orange-600"}
-                        ${key === "fabricSwatchTurkish" && " bg-orange-600"}
-                        ${key === "fabricSwatchUkrainian" && " bg-orange-600"}
-                        ${key === "fabricSwatchEnglish" && " bg-orange-600"}
+                        ${key === "fabricType" && " bg-blue-500 w-full"}
+                        ${key === "fabricDescription" && " bg-blue-500 w-full"}
+                        ${key === "fabricSwatch" && " bg-blue-500 w-full"}
+                        ${key === "fabricTypeTurkish" && " bg-orange-400"}
+                        ${key === "fabricTypeUkrainian" && " bg-orange-400"}
+                        ${key === "fabricTypeEnglish" && " bg-orange-400"}
+                        ${key === "fabricDescriptionTurkish" && "bg-orange-400 "}
+                        ${key === "fabricDescriptionUkrainian" && " bg-orange-400"}
+                        ${key === "fabricDescriptionEnglish" && " bg-orange-400"}
+                        ${key === "fabricSwatchTurkish" && " bg-orange-400"}
+                        ${key === "fabricSwatchUkrainian" && " bg-orange-400"}
+                        ${key === "fabricSwatchEnglish" && " bg-orange-400"}
 
                         `}>
                         {
@@ -162,6 +168,7 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
                             <h3 className='text-black'>{keyMappings[key]}</h3>
                             <div className='flex justify-center items-center order-last'>
                               <Image
+                              className='rounded-lg shadow-lg'
                                 src={filteredData[key]}
                                 height={200}
                                 width={200}
@@ -208,8 +215,9 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
 
       <div
         className={`w-full ${
-          isloading ? " blur max-h-screen overflow-hidden" : " blur-none"
-        } ${isUpdateActive && "blur-sm max-h-screen overflow-hidden"}`}
+          isloading || selectedLanguageData ? " blur max-h-screen overflow-hidden" : " blur-none"
+        } ${isUpdateActive && "blur-sm max-h-screen overflow-hidden"}
+        `}
       >
         <ToastContainer
           position="top-right"
@@ -228,59 +236,69 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
           validationSchema={FabricsValidationSchema}
           onSubmit={async (value) => {
             setIsloading(true);
-            const responseData = await postAPI("/createProduct/fabrics", value);
-            if (
-              responseData.status !== "success" ||
-              responseData.status == "error"
-            ) {
+
+            // base64 boyutunu hesapla
+            const base64Size = await ProcessBase64Array(value.fabrics.map((item) => item.image));
+            if(base64Size.status !== "success"){
+              toast.error(base64Size.error);
               setIsloading(false);
-              toast.error(responseData.error);
-            } else {
-              // veriyi çek ve state'e at
-              getData();
-              setIsloading(false);
-              toast.success("Tüm Veriler Başarıyla Eklendi!");
+            }
+            else{
+              const responseData = await postAPI("/createProduct/fabrics", value);
 
-              // form verilerini sıfırla.
-              value.fabrics = [
-                {
-                  fabricType: "",
-                  fabricDescription: "",
-                  fabricSwatch: "",
+              if (
+                responseData.status !== "success" ||
+                responseData.status == "error"
+              ) {
+                setIsloading(false);
+                toast.error(responseData.error);
+              } else {
+                // veriyi çek ve state'e at
+                getData();
+                setIsloading(false);
+                toast.success("Tüm Veriler Başarıyla Eklendi!");
 
-                  image: "",
-                  
-                  translateEnabled: false,
+                // form verilerini sıfırla.
+                value.fabrics = [
+                  {
+                    fabricType: "",
+                    fabricDescription: "",
+                    fabricSwatch: "",
 
-                  fabricTypeTurkish: "",
-                  fabricTypeUkrainian: "",
-                  fabricTypeEnglish: "",
+                    image: "",
+                    
+                    translateEnabled: false,
 
-                  fabricDescriptionTurkish: "",
-                  fabricDescriptionUkrainian: "",
-                  fabricDescriptionEnglish: "",
+                    fabricTypeTurkish: "",
+                    fabricTypeUkrainian: "",
+                    fabricTypeEnglish: "",
 
-                  fabricSwatchTurkish:"",
-                  fabricSwatchUkrainian:"",
-                  fabricSwatchEnglish:"",
-                },
-              ];
+                    fabricDescriptionTurkish: "",
+                    fabricDescriptionUkrainian: "",
+                    fabricDescriptionEnglish: "",
 
-              // arayüzdeki input içindeki değerleri sil ve sıfırla.
-              document.getElementById(`fabrics[${0}].fabricType`).value ="";
-              document.getElementById(`fabrics[${0}].fabricDescription`).value ="";
-              document.getElementById(`fabrics[${0}].fabricSwatch`).value ="";
-              document.getElementById(`fabrics[${0}].image`).value = "";
-              document.getElementById(`fabrics[${0}].fabricTypeTurkish`).value ="";
-              document.getElementById(`fabrics[${0}].fabricTypeUkrainian`).value ="";
-              document.getElementById(`fabrics[${0}].fabricTypeEnglish`).value ="";
-              document.getElementById(`fabrics[${0}].fabricDescriptionTurkish`).value ="";
-              document.getElementById(`fabrics[${0}].fabricDescriptionUkrainian`).value ="";
-              document.getElementById(`fabrics[${0}].fabricDescriptionEnglish`).value ="";
-              document.getElementById(`fabrics[${0}].fabricSwatchTurkish`).value ="";
-              document.getElementById(`fabrics[${0}].fabricSwatchUkrainian`).value ="";
-              document.getElementById(`fabrics[${0}].fabricSwatchEnglish`).value ="";
-              
+                    fabricSwatchTurkish:"",
+                    fabricSwatchUkrainian:"",
+                    fabricSwatchEnglish:"",
+                  },
+                ];
+
+                // arayüzdeki input içindeki değerleri sil ve sıfırla.
+                document.getElementById(`fabrics[${0}].fabricType`).value ="";
+                document.getElementById(`fabrics[${0}].fabricDescription`).value ="";
+                document.getElementById(`fabrics[${0}].fabricSwatch`).value ="";
+                document.getElementById(`fabrics[${0}].image`).value = "";
+                document.getElementById(`fabrics[${0}].fabricTypeTurkish`).value ="";
+                document.getElementById(`fabrics[${0}].fabricTypeUkrainian`).value ="";
+                document.getElementById(`fabrics[${0}].fabricTypeEnglish`).value ="";
+                document.getElementById(`fabrics[${0}].fabricDescriptionTurkish`).value ="";
+                document.getElementById(`fabrics[${0}].fabricDescriptionUkrainian`).value ="";
+                document.getElementById(`fabrics[${0}].fabricDescriptionEnglish`).value ="";
+                document.getElementById(`fabrics[${0}].fabricSwatchTurkish`).value ="";
+                document.getElementById(`fabrics[${0}].fabricSwatchUkrainian`).value ="";
+                document.getElementById(`fabrics[${0}].fabricSwatchEnglish`).value ="";
+                
+              }
             }
           }}
         >
@@ -852,14 +870,105 @@ import EditComponent from '@/components/createProduct/Fabrics/editComponent';
             </Form>
           )}
         </Formik>
-        <div className="w-full mt-6 flex-row flex-wrap justify-center items-center">
+        <div>
+        
+        </div>
+        
+        <div className={`
+        ${selectedLanguageData && "hidden blur opacity-0"}
+        w-full mt-6 flex-row flex-wrap justify-center items-center
+        `}>
           {/* verileri aşağıdakicomponent içerisinde listeleriz. */}
           <div className="w-full border-t-4 border-gray-700">
-            <ListComponent NewData={NewData} setUpdateData={setUpdateData} setNewData={setNewData} setIsloading={setIsloading} isloading={isloading}/>
+            <ListComponent
+            NewData={NewData}
+            setUpdateData={setUpdateData}
+            setNewData={setNewData}
+            setIsloading={setIsloading}
+            isloading={isloading}
+            selectedLanguageData={selectedLanguageData}
+            setSelectedLanguageData={setSelectedLanguageData}
+            />
           </div>
         </div>
       </div>
-      
+
+
+      { //  listedeki dil iconuna basınca dilleri göstermek için açılan ekran aşağıdadır.
+        selectedLanguageData && selectedLanguageData !== "" &&
+          <div className='absolute top-0 left-0 w-full z-40 bg-black bg-opacity-90 h-screen flex justify-center items-center'>
+            <div className='relative top-0 left-0 w-full flex justify-center item-center'>
+              <div className=' bg-white rounded-lg min-h-screen lg:min-h-min'>
+                <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                  <div className='flex flex-col justify-center items-center gap-2 p-2'>
+
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-black lg:bg-opacity-0 p-2 rounded'>
+                      <div className=' rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className=' p-2 w-full bg-black rounded-lg text-white text-center text-xl'>
+                          Dil Çevrisi - Kumaş Bilgileri
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-blue-200 lg:bg-opacity-0 p-2 rounded'>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kumaş Tipi Türkçe :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricTypeTurkish}</h4>
+                      </div>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Açıklama Türkçe :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricDescriptionTurkish}</h4>
+                      </div>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kartela Adı Türkçe :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricSwatchTurkish}</h4>
+                      </div>
+                    </div>
+
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-orange-200 lg:bg-opacity-0 p-2 rounded'>
+                      <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kumaş Tipi İngilizce :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricTypeEnglish}</h4>
+                      </div>
+                      <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Açıklama İngilizce :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricDescriptionEnglish}</h4>
+                      </div>
+                      <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kartela Adı İngilizce :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricSwatchEnglish}</h4>
+                      </div>
+                    </div>
+
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-green-200 lg:bg-opacity-0 p-2 rounded'>
+                      <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kumaş Tipi Ukraynaca :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricTypeUkrainian}</h4>
+                      </div>
+                      <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Açıklama Ukraynaca :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricDescriptionUkrainian}</h4>
+                      </div>
+                      <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold'>Kartela Adı Ukraynaca :</h3>
+                        <h4 className='text-center'>{selectedLanguageData.fabricSwatchUkrainian}</h4>
+                      </div>
+                    </div>
+
+                    <div>
+                    <div className='bg-red-600 m-2 p-2 rounded-full cursor-pointer hover:scale-105 transition hover:rotate-6 hover:border-2 hover:border-white '
+                      onClick={()=>{setSelectedLanguageData("")}}
+                      >
+                      <IoClose color="white" size={40} />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      }
     </>
   );
 }

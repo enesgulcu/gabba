@@ -30,11 +30,12 @@ import Image from 'next/image';
 ]
 */
 
-const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsloading}) => {
+const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsloading, setSelectedLanguageData, selectedLanguageData}) => {
 
     
     // tablo verisi bu state üzerinde tutulmaktadır.
     const [fabrics, setFabrics] = useState([]);
+
 
     useEffect(() => {
 
@@ -50,8 +51,8 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
             if(!responseData || responseData.status !== "success"){
                 throw new Error("Veri silinemedi");
             }
-            getData();
-            setIsloading(false);
+            await getData();
+            await setIsloading(false);
             toast.success("Veri başarıyla silindi");
 
         } catch (error) {
@@ -133,6 +134,11 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
               <td className="text-center py-2 border-r">
                 <div className='h-20 flex justify-center items-center'>
                   <Image
+                  onClick={
+                    () => {
+                      setSelectedLanguageData(fabric);
+                    }
+                  }
                     className="hover:scale-125 transition-all cursor-pointer"
                     src="/translate_book.svg"
                     height={30}
@@ -159,7 +165,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
                     onClick={async () => {
                       setIsloading(true); // yükleniyor etkinleştirildi
                       await dataDeleteFunction(fabric); // veri silme fonksiyonu çağırıldı
-                      await getData(); // güncel verileri çekme fonksiyonu çağırıldı
+                      //await getData(); // güncel verileri çekme fonksiyonu çağırıldı
                     }}
                     className="shadow-md bg-red-500 hover:bg-red-700 text-white font-bold p-2  rounded-md min-w-[50px]"
                   >
@@ -198,7 +204,6 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
         w-full relative overflow-x-auto
         ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}
         `}>
-
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
               {renderHead()}{" "}
