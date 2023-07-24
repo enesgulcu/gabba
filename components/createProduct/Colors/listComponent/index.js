@@ -2,23 +2,22 @@
 import React, { useState, useEffect } from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { toast } from "react-toastify";
-import ResizeImage from '@/functions/others/resizeImage';
 import Image from 'next/image';
 
 /*  veri yapısındaki key değerleri
 [
-    metalType: "",
-    metalDescription: "",
+    colourType: "",
+    colourDescription: "",
         
     translateEnabled: false,
 
-    metalTypeTurkish: "",
-    metalTypeUkrainian: "",
-    metalTypeEnglish: "",
+    colourTypeTurkish: "",
+    colourTypeUkrainian: "",
+    colourTypeEnglish: "",
 
-    metalDescriptionTurkish: "",
-    metalDescriptionUkrainian: "",
-    metalDescriptionEnglish: "",
+    colourDescriptionTurkish: "",
+    colourDescriptionUkrainian: "",
+    colourDescriptionEnglish: "",
 ]
 */
 
@@ -26,12 +25,12 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
 
     
     // tablo verisi bu state üzerinde tutulmaktadır.
-    const [metals, setMetals] = useState([]);
+    const [colors, setColors] = useState([]);
 
 
     useEffect(() => {
 
-      setMetals(NewData);
+      setColors(NewData);
     
     }, [NewData])
     
@@ -39,7 +38,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     const dataDeleteFunction = async (data) => {
         
         try {
-            const responseData = await postAPI("/createProduct/metals",{data:data, processType:"delete"});
+            const responseData = await postAPI("/createProduct/colors",{data:data, processType:"delete"});
             if(!responseData || responseData.status !== "success"){
                 throw new Error("Veri silinemedi");
             }
@@ -56,7 +55,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tabloya veri çekme fonksiyonu
     const getData = async () => {
         try {
-            const response = await getAPI('/createProduct/metals');
+            const response = await getAPI('/createProduct/colors');
             setIsloading(false);
             if(response.status !== "success"){
                 
@@ -73,7 +72,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tablo başlıklarını oluşturma fonksiyonu (thead)
     const renderHead = () => {
 
-        const tableHeaders = ["Sıra","Metal Tipi","Açıklama","Dil Çevirisi","İşlemler"]
+        const tableHeaders = ["Sıra","Renk Tipi","Açıklama","Dil Çevirisi","İşlemler"]
         return (
             <tr className=''>
                 {tableHeaders.map((header, index) => (
@@ -88,8 +87,8 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tablo içeriklerini oluşturma fonksiyonu (tbody)
     const renderData = () => {
         
-        return metals ? (
-          metals.map((metal, index) => (
+        return colors ? (
+          colors.map((colour, index) => (
             <tr key={index} className="border-b">
               <td className="  border-r">
                 <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
@@ -99,18 +98,18 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
                 </div>
               </td>
               <td className="text-center py-2 border-r">
-                {/* Metal Tipi giriş tipine göre gösterim belirlendiği yer */}
-                <div>{metal.metalType}</div>
+                {/* Colour Tipi giriş tipine göre gösterim belirlendiği yer */}
+                <div>{colour.colourType}</div>
               </td>
               <td className="text-center py-2 border-r">
-                <div>{metal.metalDescription}</div>
+                <div>{colour.colourDescription}</div>
               </td>
               <td className="text-center py-2 border-r">
                 <div className='h-20 flex justify-center items-center'>
                   <Image
                   onClick={
                     () => {
-                      setSelectedLanguageData(metal);
+                      setSelectedLanguageData(colour);
                     }
                   }
                     className="hover:scale-125 transition-all cursor-pointer"
@@ -128,7 +127,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
                   <button
                     onClick={() => {
                       // veri güncellemesi için ilk adım.
-                      setUpdateData(metal);
+                      setUpdateData(colour);
                     }}
                     className="shadow-md bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded-md min-w-[50px]"
                   >
@@ -138,7 +137,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
                   <button
                     onClick={async () => {
                       setIsloading(true); // yükleniyor etkinleştirildi
-                      await dataDeleteFunction(metal); // veri silme fonksiyonu çağırıldı
+                      await dataDeleteFunction(colour); // veri silme fonksiyonu çağırıldı
                       //await getData(); // güncel verileri çekme fonksiyonu çağırıldı
                     }}
                     className="shadow-md bg-red-500 hover:bg-red-700 text-white font-bold p-2  rounded-md min-w-[50px]"

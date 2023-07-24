@@ -1,13 +1,11 @@
 "use client"
 
 import React from 'react'
-import {postAPI, getAPI} from '@/services/fetchAPI';
+import {postAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { useState , useEffect} from 'react';
-import { MdOutlineCancel } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import ResizeImage from '@/functions/others/resizeImage';
 import FabricsValidationSchema from './formikData';

@@ -83,3 +83,23 @@ model Metals {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
+
+model Colors {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  colourType                   String
+  colourDescription            String?
+  
+  translateEnabled            Boolean?
+
+  colourTypeTurkish           String?
+  colourTypeUkrainian         String?
+  colourTypeEnglish           String?
+
+  colourDescriptionTurkish    String?
+  colourDescriptionUkrainian  String?
+  colourDescriptionEnglish    String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}

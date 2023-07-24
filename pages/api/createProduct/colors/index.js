@@ -1,12 +1,12 @@
 import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
-// const removeImageFromMetalData = (data) => {
+// const removeImageFromColourData = (data) => {
 //   const newData = { ...data }; // Gelen veriyi kopyalayarak yeni bir nesne oluşturuyoruz
 
-//   // Eğer "metals" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
-//   if (newData.metals && newData.metals.length > 0) {
-//     newData.metals.forEach((metal) => {
-//       delete metal.image; // "image" alanını her bir Metal öğesinden kaldırıyoruz
+//   // Eğer "colors" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
+//   if (newData.colors && newData.colors.length > 0) {
+//     newData.colors.forEach((colour) => {
+//       delete colour.image; // "image" alanını her bir Colour öğesinden kaldırıyoruz
 //     });
 //   }
 
@@ -15,20 +15,20 @@ import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDa
 
 
 // girilen verileri göndermeden önce kontrol ederiz.
-const checkData = async (metals) => {
+const checkData = async (colors) => {
   
   // firstValue değeri olmayan değerleri sildik.
-  const newMetals = await metals.filter(item => item.metalType);
+  const newColors = await colors.filter(item => item.colourType);
 
   // Number gelen değerleri stringe çeviriyoruz.
-  newMetals.forEach((newMetal, index, arr) => {
-    arr[index]['metalType'] = newMetal.metalType.toString();
-    arr[index]['metalDescription'] = newMetal.metalDescription.toString();
+  newColors.forEach((newColour, index, arr) => {
+    arr[index]['colourType'] = newColour.colourType.toString();
+    arr[index]['colourDescription'] = newColour.colourDescription.toString();
   });
   
-  if(newMetals.length > 0){
+  if(newColors.length > 0){
 
-    return newMetals;
+    return newColors;
   }
   else{
     return false;
@@ -39,22 +39,22 @@ const handler = async (req, res) => {
   
   try {
     if (req.method === "POST") {
-      const {metals, data, processType} = req.body;
+      const {colors, data, processType} = req.body;
 
       //silme işlemi için gelen veriyi sileriz.
-      if(!metals && processType == "delete"){
+      if(!colors && processType == "delete"){
          
-        const deleteData = await deleteDataByAny("metals", {id: data.id});
+        const deleteData = await deleteDataByAny("colors", {id: data.id});
         if(!deleteData || deleteData.error){
           throw deleteData;
         }
         return res.status(200).json({ status: "success", data:deleteData, message: deleteData.message });
       }
 
-      else if(!metals && processType == "update"){
+      else if(!colors && processType == "update"){
 
         // veri doğruluğunu test ediyoruz
-        const checkedData = await checkData(data.metals);
+        const checkedData = await checkData(data.colors);
         
 
         if(!checkedData && checkedData.error){
@@ -68,7 +68,7 @@ const handler = async (req, res) => {
         });
         
         // veriyi güncelliyoruz.
-        const updateData = await updateDataByAny("metals", {id: checkedData[0].id}, NewDatawitoutId[0]);
+        const updateData = await updateDataByAny("colors", {id: checkedData[0].id}, NewDatawitoutId[0]);
 
         if(!updateData || updateData.error){
           throw updateData;
@@ -78,34 +78,34 @@ const handler = async (req, res) => {
       }
 
       else{
-        if(!metals){
+        if(!colors){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1";
         } 
         
         // gelen verinin doğruluğunu kontrol ediyoruz.
-        const checkedData = await checkData(metals);
+        const checkedData = await checkData(colors);
         
         
         if(!checkedData){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";
         }
         
-        const createdNewData = await createNewDataMany("metals", checkedData);
+        const createdNewData = await createNewDataMany("colors", checkedData);
 
         if(!createdNewData || createdNewData.error){
           throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
         }
-        return res.status(200).json({ status: "success", data:checkedData, message: metals.message });
+        return res.status(200).json({ status: "success", data:checkedData, message: colors.message });
       }      
     }
 
 
     if(req.method === "GET"){
-      const metals = await getAllData("metals");
-      if (!metals || metals.error) {
+      const colors = await getAllData("colors");
+      if (!colors || colors.error) {
         throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY4";
       }
-      return res.status(200).json({ status: "success", data: metals, message: metals.message });
+      return res.status(200).json({ status: "success", data: colors, message: colors.message });
     }
 
   } catch (error) {
