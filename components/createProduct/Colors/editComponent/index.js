@@ -131,8 +131,8 @@ import HandleImageClick from '@/functions/others/HandleImageClick';
                           <div className=" flex flex-col gap-4 justify-center item-center">
                             <div className='flex flex-col lg:flex-row flex-wrap gap-4 justify-center item-center '>
                               {/* colourDescription input aşağıdadır.*/}
-                              <div className="flex flex-col justify-center items-center ">
-                                <h3>Renk tipini giriniz.</h3>
+                              <div className="flex flex-col justify-center items-center gap-2">
+                                <h3 className=' rounded  text-black w-full text-center'>Renk tipini giriniz.</h3>
                                 <Field
                                   onChange={props.handleChange}
                                   id={`colors[${index}].colourType`}
@@ -149,8 +149,8 @@ import HandleImageClick from '@/functions/others/HandleImageClick';
                                   className="field-error text-red-600 m-1"
                                 />
                               </div>
-                              <div className="flex flex-col justify-center items-center ">
-                                <h3>Renk açıklamasını giriniz.</h3>
+                              <div className="flex flex-col justify-center items-center gap-2">
+                                <h3 className='rounded  text-black w-full text-center'>Renk açıklamasını giriniz.</h3>
                                 <Field
                                   onChange={props.handleChange}
                                   id={`colors[${index}].colourDescription`}
@@ -168,58 +168,62 @@ import HandleImageClick from '@/functions/others/HandleImageClick';
                                 />
                               </div>
 
-                              <div className="flex flex-row justify-center items-end gap-2 flex-wrap ">
-                              <div
-                                style={{
-                                  backgroundColor: props.values.colors[index].colourHex.toString(),
-                                }}
-                                className="p-[20px] rounded border border-gray-200 bg-white"
-                              ></div>
-                              <Field
-                                onChange={props.handleChange}
-                                id={`colors[${index}].colourHex`}
-                                name={`colors[${index}].colourHex`}
-                                value={props.values.colors[index].colourHex}
-                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[150px]`}
-                                type="text"
-                                placeholder="Hex Kodu"
-                              />
+                              <div className="flex flex-col justify-center items-center gap-2 flex-wrap ">
+                              <h3 className='rounded  text-black w-full text-center'>Renginizin Hex Değerini giriniz veya resimden seçiniz.</h3>
+                              <div className="flex flex-row justify-center items-center gap-2 flex-wrap ">
+                                <div
+                                  style={{
+                                    backgroundColor: props.values.colors[index].colourHex.toString(),
+                                  }}
+                                  className="p-[20px] rounded border border-gray-200 bg-white"
+                                ></div>
+                                
+                                <Field
+                                  onChange={props.handleChange}
+                                  id={`colors[${index}].colourHex`}
+                                  name={`colors[${index}].colourHex`}
+                                  value={props.values.colors[index].colourHex}
+                                  className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[150px]`}
+                                  type="text"
+                                  placeholder="Hex Kodu"
+                                />
 
-                              <ErrorMessage
-                                name={`colors[${index}].colourHex`}
-                                component="div"
-                                className="field-error text-red-600 m-1"
-                              />
-                              <h3>Veya</h3>
-                              <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
-                              <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
-                              <Field
-                                type="file"
-                                id={`colors[${index}].image`}
-                                name={`colors[${index}].image`}
-                                accept="image/*"
-                                className="opacity-0 cursor-pointer w-44 h-10"
-                                value={props.values.image}                             
-                                onChange={async (event) => {
-                                  const file = event.target.files[0];
-                                  if (!file) return;
+                                <ErrorMessage
+                                  name={`colors[${index}].colourHex`}
+                                  component="div"
+                                  className="field-error text-red-600 m-1"
+                                />
+                                <h3>Veya</h3>
+                                <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                                <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                                <Field
+                                  type="file"
+                                  id={`colors[${index}].image`}
+                                  name={`colors[${index}].image`}
+                                  accept="image/*"
+                                  className="opacity-0 cursor-pointer w-44 h-10"
+                                  value={props.values.image}                             
+                                  onChange={async (event) => {
+                                    const file = event.target.files[0];
+                                    if (!file) return;
 
-                                  const resizedImageBase64 = await ResizeImage(file, 800, 800);
-                                  await props.setFieldValue(`colors[${index}].image`, resizedImageBase64);
-                                  await props.setFieldValue(`colors[${index}].colourPickerEnabled`, true);
-                                }}
-                              />
-                                <label
-                                onClick={
-                                  async () => {
-                                    await props.setFieldValue(`colors[${index}].image`, "");
+                                    const resizedImageBase64 = await ResizeImage(file, 800, 800);
+                                    await props.setFieldValue(`colors[${index}].image`, resizedImageBase64);
+                                    await props.setFieldValue(`colors[${index}].colourPickerEnabled`, true);
+                                  }}
+                                />
+                                  <label
+                                  onClick={
+                                    async () => {
+                                      await props.setFieldValue(`colors[${index}].image`, "");
+                                    }
                                   }
-                                }
-                                  htmlFor={`colors[${index}].image`}
-                                  className="absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition " 
-                                >Resimden Renk Seç
-                                </label> 
-                              </div>
+                                    htmlFor={`colors[${index}].image`}
+                                    className="absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition " 
+                                  >Resimden Renk Seç
+                                  </label> 
+                                </div>
+                                </div>
                               </div>
                             </div>
 
@@ -270,6 +274,7 @@ import HandleImageClick from '@/functions/others/HandleImageClick';
                                       alt="TrFlag"
                                     />
                               </div>
+                              
                               {props.values.colors[index].colourPickerEnabled && (
                                   <div 
                                   className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-50 left-0 top-0 bg-black bg-opacity-90">
@@ -520,7 +525,8 @@ import HandleImageClick from '@/functions/others/HandleImageClick';
                       ))}
                     </div>
 
-                    <div className="w-full flex justify-center items-center gap-6 my-6 ">
+                    <div className="w-full flex flex-col justify-center items-center gap-6 my-6 ">
+                      <h3 className='text-center text-white'>Günncelle butouna basılana kadar hiçbir veri güncellenemez.</h3>
                       <button
                         type="submit"
                         className="px-4 py-2 rounded-md bg-purple-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"

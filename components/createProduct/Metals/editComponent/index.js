@@ -411,7 +411,8 @@ import MetalsValidationSchema from './formikData';
                       ))}
                     </div>
 
-                    <div className="w-full flex justify-center items-center gap-6 my-6 ">
+                    <div className="w-full flex flex-col justify-center items-center gap-6 my-6 ">
+                    <h3 className='text-center text-white'>Günncelle butouna basılana kadar hiçbir veri güncellenemez.</h3>
                       <button
                         type="submit"
                         className="px-4 py-2 rounded-md bg-purple-500 text-white hover:rotate-2 hover:scale-105 transition-all shadow-lg"
