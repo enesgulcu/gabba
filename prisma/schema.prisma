@@ -69,6 +69,7 @@ model Metals {
 
   metalType                   String
   metalDescription            String?
+  image                       String?
   
   translateEnabled            Boolean?
 

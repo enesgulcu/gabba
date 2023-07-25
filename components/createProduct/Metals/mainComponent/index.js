@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef } from 'react';
+import React from 'react';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
@@ -8,12 +8,11 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect} from 'react';
 import { MdOutlineCancel } from "react-icons/md";
-import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import ResizeImage from '@/functions/others/resizeImage';
 import ListComponent from '@/components/createProduct/Metals/listComponent';
 import MetalsValidationSchema from './formikData';
 import EditComponent from '@/components/createProduct/Metals/editComponent';
-import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
 
  const MetalsComponent = () => {
 
@@ -22,6 +21,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
       {
         metalType: "",
         metalDescription: "",
+        image: "",
         
         translateEnabled: false,
 
@@ -83,6 +83,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
   const keyMappings = {
     metalType: "Metal Tipi",
     metalDescription: "Ek Açıklama",
+    image: "Resim",
     metalTypeTurkish: "Metal Tipi (TR)",
     metalTypeUkrainian: "Metal Tipi (UA)",
     metalTypeEnglish: "Metal Tipi (EN)",
@@ -136,7 +137,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                         <div key={key} className={`p-2 rounded
                         ${key === "metalType" && " bg-blue-500 w-full"}
                         ${key === "metalDescription" && " bg-blue-500 w-full"}
-
+                        ${key === "image" && " order-first bg-gray-100 w-full"}
                         ${key === "metalTypeTurkish" && " bg-orange-400"}
                         ${key === "metalTypeUkrainian" && " bg-orange-400"}
                         ${key === "metalTypeEnglish" && " bg-orange-400"}
@@ -146,6 +147,20 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
 
                         `}>
                         {
+                          key === "image" ?
+                          <div className={`flex justify-center items-center text-center flex-col`}>
+                            <h3 className='text-black'>{keyMappings[key]}</h3>
+                            <div className='flex justify-center items-center order-last'>
+                              <Image
+                              className='rounded-lg shadow-lg'
+                                src={filteredData[key]}
+                                height={200}
+                                width={200}
+                                alt="Metal Resmi"
+                              />
+                            </div>
+                          </div>
+                          :
                           key === "metalType" || key === "metalDescription" ?
                             <div className='flex flex-row flex-nowrap gap-2'>
                               <h3 className='text-white'>{keyMappings[key]} :</h3>
@@ -224,7 +239,8 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                     {
                     metalType: "",
                     metalDescription: "",
-                        
+                    image: "",
+
                     translateEnabled: false,
                 
                     metalTypeTurkish: "",
@@ -240,6 +256,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                 // arayüzdeki input içindeki değerleri sil ve sıfırla.
                 document.getElementById(`metals[${0}].metalType`).value ="";
                 document.getElementById(`metals[${0}].metalDescription`).value ="";
+                document.getElementById(`metals[${0}].image`).value ="";
                 document.getElementById(`metals[${0}].metalTypeTurkish`).value ="";
                 document.getElementById(`metals[${0}].metalTypeUkrainian`).value ="";
                 document.getElementById(`metals[${0}].metalTypeEnglish`).value ="";
@@ -341,7 +358,53 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                                 component="div"
                                 className="field-error text-red-600 m-1"
                               />
-                            </div>                                        
+                            </div>  
+                            <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                              <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                              <Field
+                                type="file"
+                                id={`metals[${index}].image`}
+                                name={`metals[${index}].image`}
+                                accept="image/*"
+                                className="opacity-0 cursor-pointer w-28 h-10"
+                                value={props.values.image}                             
+                                onChange={async (event) => {
+                                  const file = event.target.files[0];
+                                  if (!file) return;
+
+                                  const resizedImageBase64 = await ResizeImage(file, 400, 400);
+                                  props.setFieldValue(`metals[${index}].image`, resizedImageBase64);
+                                }}
+                              />
+                                <label
+                                  htmlFor={`metals[${index}].image`}
+                                  className={
+                                    props.values.metals[index].image
+                                      ? "absolute inset-0 text-center p-2  bg-purple-600 text-white cursor-pointer transition  whitespace-nowrap"
+                                      : "absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition whitespace-nowrap"
+                                    
+                                  }
+                                > {
+                                  props.values.metals[index].image ? "Resim Seçildi" : "Resim Seç"
+                                }
+                                </label> 
+                                   
+                              </div>
+                              {props.values.metals[index].image &&
+                                <div className=' hover:scale-125 transition-all hover:rotate-6'>
+                                  <button 
+                                  className=''
+                                  onClick={
+                                    () => {
+                                      props.values.metals[index].image &&
+                                      props.setFieldValue(`metals[${index}].image`, "");
+                                    }
+                                  }>
+                                    <IoClose/>
+                                  </button>
+                              </div> 
+                              }
+                              </div>                                      
 
                             {/* ÇEVİRİ eklendiği bölüm aşağıdadır */}
                             <div className="flex flex-row flex-wrap justify-center xl:justify-around gap-2 items-center cursor-pointer">
@@ -604,6 +667,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                             
                             metalType: "",
                             metalDescription: "",
+                            image: "",
                                 
                             translateEnabled: false,
                         

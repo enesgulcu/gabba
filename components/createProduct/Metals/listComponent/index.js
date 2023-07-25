@@ -9,6 +9,7 @@ import Image from 'next/image';
 [
     metalType: "",
     metalDescription: "",
+    image: "",
         
     translateEnabled: false,
 
@@ -73,7 +74,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tablo başlıklarını oluşturma fonksiyonu (thead)
     const renderHead = () => {
 
-        const tableHeaders = ["Sıra","Metal Tipi","Açıklama","Dil Çevirisi","İşlemler"]
+        const tableHeaders = ["Sıra","Metal Tipi", "Açıklama", "Resim", "Dil Çevirisi", "İşlemler"]
         return (
             <tr className=''>
                 {tableHeaders.map((header, index) => (
@@ -104,6 +105,21 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
               </td>
               <td className="text-center py-2 border-r">
                 <div>{metal.metalDescription}</div>
+              </td>
+              <td className="text-center py-2 border-r hover:bg-blue-100">
+                <div className="w-full flex justify-center items-center max-h-40 overflow-hidden hover:overflow-visible hover:max-h-max ">
+                  {metal.image ? (
+                    <Image
+                      src={metal.image}
+                      width={2}
+                      height={2}
+                      alt="resim"
+                      className="hover:border-2 hover:border-gray-500 hover:cursor-pointer hover:w-48 hover:h-48 transition-all w-20 h-20 rounded-lg object-cover ease-in-out  "
+                    />
+                  ) : (
+                    <div className="rounded-full bg-gray-200 p-2">Resim yok</div>
+                  )}
+                </div>
               </td>
               <td className="text-center py-2 border-r">
                 <div className='h-20 flex justify-center items-center'>

@@ -1,15 +1,14 @@
 "use client"
 
 import React from 'react'
-import {postAPI, getAPI} from '@/services/fetchAPI';
+import {postAPI} from '@/services/fetchAPI';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import Image from 'next/image';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { useState , useEffect} from 'react';
-import { MdOutlineCancel } from "react-icons/md";
-import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import ResizeImage from '@/functions/others/resizeImage';
+
 import MetalsValidationSchema from './formikData';
 
 
@@ -24,6 +23,7 @@ import MetalsValidationSchema from './formikData';
       {
         metalType: "",
         metalDescription: "",
+        image: "",
         
         translateEnabled: false,
 
@@ -98,6 +98,7 @@ import MetalsValidationSchema from './formikData';
               // arayüzdeki input içindeki değerleri sil ve sıfırla.
               document.getElementById(`metals[${0}].metalType`).value ="";
               document.getElementById(`metals[${0}].metalDescription`).value ="";
+              document.getElementById(`metals[${0}].image`).value ="";
               document.getElementById(`metals[${0}].metalTypeTurkish`).value ="";
               document.getElementById(`metals[${0}].metalTypeUkrainian`).value ="";
               document.getElementById(`metals[${0}].metalTypeEnglish`).value ="";
@@ -161,6 +162,51 @@ import MetalsValidationSchema from './formikData';
                                   className="field-error text-red-600 m-1"
                                 />
                               </div>
+                              <div className='flex flex-row flex-nowrap justify-center items-end gap-2'>
+                                <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                                <Field
+                                  type="file"
+                                  id={`metals[${index}].image`}
+                                  name={`metals[${index}].image`}
+                                  accept="image/*"
+                                  className="opacity-0 cursor-pointer w-28 h-10"
+                                  value={props.values.image}                             
+                                  onChange={async (event) => {
+                                    const file = event.target.files[0];
+                                    if (!file) return;
+                                    const resizedImageBase64 = await ResizeImage(file, 400, 400);
+                                    props.setFieldValue(`metals[${index}].image`, resizedImageBase64);
+                                  }}
+                                />
+                                  <label
+                                    htmlFor={`metals[${index}].image`}
+                                    className={
+                                      props.values.metals[index].image
+                                        ? "absolute inset-0 text-center p-2  bg-purple-600 text-white cursor-pointer transition  whitespace-nowrap"
+                                        : "absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition whitespace-nowrap"
+                                      
+                                    }
+                                  > {
+                                    props.values.metals[index].image ? "Resim Seçildi" : "Resim Seç"
+                                  }
+                                  </label> 
+                                    
+                                </div>
+                                {props.values.metals[index].image &&
+                                  <div className=' hover:scale-125 transition-all hover:rotate-6 mb-2'>
+                                    <button 
+                                    className=''
+                                    onClick={
+                                      () => {
+                                        props.values.metals[index].image &&
+                                        props.setFieldValue(`metals[${index}].image`, "");
+                                      }
+                                    }>
+                                      <IoClose/>
+                                    </button>
+                                </div> 
+                                }
+                                </div>
 
                               <div className="flex justify-center items-center flex-row gap-2">
                                     {
@@ -202,7 +248,7 @@ import MetalsValidationSchema from './formikData';
                                           true
                                         );
                                       }}
-                                      className="hover:scale-105 transition-all cursor-pointer"
+                                      className="hover:scale-105 transition-all cursor-pointer flex self-end"
                                       src="/translate.svg"
                                       height={30}
                                       width={40}

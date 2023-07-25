@@ -172,7 +172,7 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                                 src={filteredData[key]}
                                 height={200}
                                 width={200}
-                                alt="TrFlag"
+                                alt="Kumaş Resmi"
                               />
                             </div>
                           </div>
