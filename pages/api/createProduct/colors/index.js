@@ -19,6 +19,13 @@ const checkData = async (colors) => {
   
   // firstValue değeri olmayan değerleri sildik.
   const newColors = await colors.filter(item => item.colourType);
+  
+  //newColors içinden image ve ColourPickerEnabled key value değerlerini siliyoruz.
+  newColors.forEach((newColour, index, arr) => {
+    delete arr[index]['image'];
+    //delete arr[index]['ColourPickerEnabled'];
+  });
+
 
   // Number gelen değerleri stringe çeviriyoruz.
   newColors.forEach((newColour, index, arr) => {
@@ -55,7 +62,7 @@ const handler = async (req, res) => {
 
         // veri doğruluğunu test ediyoruz
         const checkedData = await checkData(data.colors);
-        
+       
 
         if(!checkedData && checkedData.error){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
@@ -84,7 +91,7 @@ const handler = async (req, res) => {
         
         // gelen verinin doğruluğunu kontrol ediyoruz.
         const checkedData = await checkData(colors);
-        
+
         
         if(!checkedData){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";

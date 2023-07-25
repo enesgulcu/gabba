@@ -8,7 +8,7 @@ const ResizeImage = (file, maxWidth, maxHeight) => {
       maxWidth,
       maxHeight,
       'JPEG', // Formatı belirleyebilirsiniz (JPEG, PNG, GIF, vb.)
-      100, // Kalite (0-100 arasında)
+      70, // Kalite (0-100 arasında)
       0, // Yeniden boyutlandırmadan önce döndürme açısı (0 = döndürme yok)
       (resizedImage) => {
         resolve(resizedImage);

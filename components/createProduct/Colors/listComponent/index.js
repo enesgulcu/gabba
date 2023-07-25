@@ -10,6 +10,8 @@ import Image from 'next/image';
     colourDescription: "",
         
     translateEnabled: false,
+    colourPickerEnabled: false,
+    colourHex: "",
 
     colourTypeTurkish: "",
     colourTypeUkrainian: "",
@@ -72,7 +74,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tablo başlıklarını oluşturma fonksiyonu (thead)
     const renderHead = () => {
 
-        const tableHeaders = ["Sıra","Renk Tipi","Açıklama","Dil Çevirisi","İşlemler"]
+        const tableHeaders = ["Sıra","Renk Tipi","Renk Kodu","Açıklama","Dil Çevirisi","İşlemler"]
         return (
             <tr className=''>
                 {tableHeaders.map((header, index) => (
@@ -100,6 +102,17 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
               <td className="text-center py-2 border-r">
                 {/* Colour Tipi giriş tipine göre gösterim belirlendiği yer */}
                 <div>{colour.colourType}</div>
+              </td>
+              <td className="text-center py-2 border-r">
+                {/* Colour Tipi giriş tipine göre gösterim belirlendiği yer */}
+                <div className='flex flex-row flex-wrap justify-center items-center gap-2'>
+                  <div className=''>
+                  {colour.colourHex}
+                  </div>
+                  <div style={{backgroundColor: colour.colourHex,}}
+                  className='p-4 rounded text-black inline-block'
+                  ></div>
+                </div>
               </td>
               <td className="text-center py-2 border-r">
                 <div>{colour.colourDescription}</div>

@@ -8,6 +8,8 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { IoClose, IoCheckmarkDoneSharp } from "react-icons/io5";
 import ColorsValidationSchema from './formikData';
+import ResizeImage from '@/functions/others/resizeImage';
+import HandleImageClick from '@/functions/others/HandleImageClick';
 
 
  const EditComponent = ({updateData, setUpdateData, isloading, setIsloading}) => {
@@ -23,10 +25,14 @@ import ColorsValidationSchema from './formikData';
         colourDescription: "",
         
         translateEnabled: false,
+        colourPickerEnabled: false,
+        colourHex: "",
+        image: "",
 
         colourTypeTurkish: "",
         colourTypeUkrainian: "",
         colourTypeEnglish: "",
+        
 
         colourDescriptionTurkish: "",
         colourDescriptionUkrainian: "",
@@ -79,6 +85,9 @@ import ColorsValidationSchema from './formikData';
                   colourDescription: "",
                   
                   translateEnabled: false,
+                  colourPickerEnabled: false,
+                  colourHex: "",
+                  image: "",
           
                   colourTypeTurkish: "",
                   colourTypeUkrainian: "",
@@ -159,6 +168,61 @@ import ColorsValidationSchema from './formikData';
                                 />
                               </div>
 
+                              <div className="flex flex-row justify-center items-end gap-2 flex-wrap ">
+                              <div
+                                style={{
+                                  backgroundColor: props.values.colors[index].colourHex.toString(),
+                                }}
+                                className="p-[20px] rounded border border-gray-200 bg-white"
+                              ></div>
+                              <Field
+                                onChange={props.handleChange}
+                                id={`colors[${index}].colourHex`}
+                                name={`colors[${index}].colourHex`}
+                                value={props.values.colors[index].colourHex}
+                                className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[150px]`}
+                                type="text"
+                                placeholder="Hex Kodu"
+                              />
+
+                              <ErrorMessage
+                                name={`colors[${index}].colourHex`}
+                                component="div"
+                                className="field-error text-red-600 m-1"
+                              />
+                              <h3>Veya</h3>
+                              <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                              <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+                              <Field
+                                type="file"
+                                id={`colors[${index}].image`}
+                                name={`colors[${index}].image`}
+                                accept="image/*"
+                                className="opacity-0 cursor-pointer w-44 h-10"
+                                value={props.values.image}                             
+                                onChange={async (event) => {
+                                  const file = event.target.files[0];
+                                  if (!file) return;
+
+                                  const resizedImageBase64 = await ResizeImage(file, 800, 800);
+                                  await props.setFieldValue(`colors[${index}].image`, resizedImageBase64);
+                                  await props.setFieldValue(`colors[${index}].colourPickerEnabled`, true);
+                                }}
+                              />
+                                <label
+                                onClick={
+                                  async () => {
+                                    await props.setFieldValue(`colors[${index}].image`, "");
+                                  }
+                                }
+                                  htmlFor={`colors[${index}].image`}
+                                  className="absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition " 
+                                >Resimden Renk Seç
+                                </label> 
+                              </div>
+                              </div>
+                            </div>
+
                               <div className="flex justify-center items-center flex-row gap-2">
                                     {
                                       <div className="flex justify-center items-center flex-row gap-2 rounded-lg">
@@ -206,6 +270,53 @@ import ColorsValidationSchema from './formikData';
                                       alt="TrFlag"
                                     />
                               </div>
+                              {props.values.colors[index].colourPickerEnabled && (
+                                  <div 
+                                  className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-50 left-0 top-0 bg-black bg-opacity-90">
+                                    <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
+                                      <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2 flex justify-center items-center flex-col">
+                                        <div
+                                          onClick={async () => {
+                                            await props.setFieldValue(`colors[${index}].colourPickerEnabled`,false);
+                                            await props.setFieldValue(`colors[${index}].image`,"");
+                                          }}
+                                          className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center"
+                                        >
+                                          <IoClose color="white" size={40} />
+                                        </div>
+
+                                        {/* // resmi ekranda göstereceğiz */}
+                                        <div className='flex justify-center items-center flex-col'>
+                                          <div className='flex flex-row justify-center items-center gap-2 m-2'>
+                                            <div className='rounded inline-block'>Seçilen Renk:</div>
+                                            <div style={{backgroundColor: `${props.values.colors[index].colourHex}`}}
+                                            className={`
+                                              ${props.values.colors[index].colourHex ? "p-4": "p-2"}
+                                               border-2 border-gray-200 rounded-lg`
+                                            }
+                                            >
+                                              {
+                                                props.values.colors[index].colourHex ? props.values.colors[index].colourHex : "Renk Seçilmedi"
+                                              }
+                                            </div>
+                                          </div>
+                                          <div className='p-2 bg-gray-100 rounded m-2'>Lütfen resim üzerinde istediğiniz yere tıklayarak renginizi seçiniz.</div>
+                                          <Image 
+                                          className='hover:cursor-pointer'
+                                            onClick={ async (event) => {
+                                              await props.setFieldValue(`colors[${index}].colourHex`, HandleImageClick(event));
+                                              }
+                                            }                                         
+                                            src={props.values.colors[index].image}
+                                            height={600}
+                                            width={600}
+                                            alt="colorPickerImage"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                             </div>
 
                             {/* translateEnabled true ise çeviri alanı açılır. */}
@@ -216,6 +327,7 @@ import ColorsValidationSchema from './formikData';
                               {props.values.colors[index].colourTypeTurkish == "" &&
                               props.values.colors[index].colourTypeUkrainian == "" &&
                               props.values.colors[index].colourTypeEnglish == "" &&
+
                               props.values.colors[index].colourDescriptionTurkish == "" &&
                               props.values.colors[index].colourDescriptionUkrainian == "" &&
                               props.values.colors[index].colourDescriptionEnglish == "" ? (

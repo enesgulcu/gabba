@@ -218,11 +218,11 @@ import FabricsValidationSchema from './formikData';
                                   {
                                     props.values.fabrics[index].addSwatchEnabled ?
                                     <div className='hover:scale-105 transition-all p-2 bg-red-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
-                                    <IoCloseOutline size={20}/> <h4 className='whitespace-nowrap'>İptal</h4>
+                                    <IoCloseOutline size={20}/> <h4>İptal</h4>
                                     </div>
                                     :
                                     <div className='hover:scale-105 transition-all p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
-                                      <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Kartela Ekle</h4>
+                                      <IoAddOutline size={20}/> <h4>Kartela Ekle</h4>
                                       </div>
                                   }
                                   

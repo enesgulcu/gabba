@@ -87,10 +87,12 @@ model Metals {
 model Colors {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
 
-  colourType                   String
-  colourDescription            String?
+  colourType                  String
+  colourDescription           String?
   
   translateEnabled            Boolean?
+  colourPickerEnabled         Boolean?
+  colourHex                   String?
 
   colourTypeTurkish           String?
   colourTypeUkrainian         String?
