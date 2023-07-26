@@ -106,3 +106,81 @@ model Colors {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
+
+// Ürün ekleme
+model Product {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  productType        String
+  productName        String
+  productDescription String
+  productPrice       String
+  productImage       String
+
+  productFeature     ProductFeature?
+}
+
+model ProductFeature {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  product            Product          @relation(fields: [productId], references: [id])
+  productId          String           @map("productId") @db.ObjectId @unique
+
+  measurementFeature MeasurementFeature[]
+  fabricFeature      FabricFeature[]
+  metalFeature       MetalFeature[]
+  colourFeature      ColourFeature[]
+}
+
+model MeasurementFeature {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  measurementID      String
+  measurement        String
+  isStandart         Boolean
+  isExtraCharge      Boolean
+  extraChargePrice   String
+  
+  productFeature     ProductFeature   @relation(fields: [productFeatureId], references: [id])
+  productFeatureId   String           @map("productFeatureId") @db.ObjectId
+}
+
+model FabricFeature {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  fabricID           String
+  fabricDescription  String
+  fabricType         String
+  fabricKartela      String
+  image              String
+  isStandart         Boolean
+  isExtraCharge      Boolean
+  extraChargePrice   String
+  
+  productFeature     ProductFeature   @relation(fields: [productFeatureId], references: [id])
+  productFeatureId   String           @map("productFeatureId") @db.ObjectId
+}
+
+model MetalFeature {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  metalID            String
+  metalType          String
+  metalDescription   String
+  image              String
+  isStandart         Boolean
+  isExtraCharge      Boolean
+  extraChargePrice   String
+  
+  productFeature     ProductFeature   @relation(fields: [productFeatureId], references: [id])
+  productFeatureId   String           @map("productFeatureId") @db.ObjectId
+}
+
+model ColourFeature {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  colourID           String
+  colourType         String
+  colourDescription  String
+  colourHex          String
+  isStandart         Boolean
+  isExtraCharge      Boolean
+  extraChargePrice   String
+  
+  productFeature     ProductFeature   @relation(fields: [productFeatureId], references: [id])
+  productFeatureId   String           @map("productFeatureId") @db.ObjectId
+}
