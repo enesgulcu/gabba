@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
   const links = [
     { url: '/', text: 'Ana Sayfa' },
     {
-        url: '/createProduct',
+        url: '/createProduct/createProduct',
         text: 'Ürün Oluştur',
         submenu: [
           { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },

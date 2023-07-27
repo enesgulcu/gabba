@@ -1,6 +1,6 @@
 
 import React from 'react'
-import CreateProductComponent from "@/components/createProduct"
+import CreateProductComponent from "@/components/createProduct/createProduct"
 
 const CreateProductContainer = async () => {  
 
