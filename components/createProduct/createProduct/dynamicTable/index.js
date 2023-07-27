@@ -26,6 +26,38 @@ const DynamicTable = ({ data }) => {
         'addSwatchEnabled',
         'oneRangeEnabled',
         'twoRangeEnabled',
+        'manuelDefined',
+
+        'metalTypeTurkish',
+        'metalTypeUkrainian',
+        'metalTypeEnglish',
+        'metalDescriptionTurkish',
+        'metalDescriptionUkrainian',
+        'metalDescriptionEnglish',
+        
+
+        'turkish',
+        'ukrainian',
+        'english',
+
+
+        'fabricTypeTurkish',
+        'fabricTypeUkrainian',
+        'fabricTypeEnglish',
+        'fabricDescriptionTurkish',
+        'fabricDescriptionUkrainian',
+        'fabricDescriptionEnglish',
+        'fabricSwatchTurkish',
+        'fabricSwatchUkrainian',
+        'fabricSwatchEnglish',
+
+        'colourTypeTurkish',
+        'colourTypeUkrainian',
+        'colourTypeEnglish',
+        'colourDescriptionTurkish',
+        'colourDescriptionUkrainian',
+        'colourDescriptionEnglish',
+
     ];
 }
 
@@ -35,7 +67,9 @@ const DynamicTable = ({ data }) => {
 
   const renderCell = (key, value) => {
     if (key === 'image' && value && value.length > 0) {
-      return <Image width={100} height={100} src={value} alt="Image" className="h-30 w-30 object-cover" />;
+        return <div className='flex justify-center item-center'>
+        <Image width={100} height={100} src={value} alt="Image" className="h-30 w-30 object-cover" />
+      </div>
     }
 
     return value;
@@ -62,8 +96,9 @@ const DynamicTable = ({ data }) => {
         <table className="table w-full border-collapse border border-gray-300">
           <thead>
             <tr>
+                <th className="p-3 text-white bg-blue-600 font-bold">Sıra</th>
               {Object.keys(filteredData[0]).map((header) => (
-                <th key={header} className="p-3 font-medium text-white bg-blue-600">
+                <th key={header} className="p-3 text-white bg-blue-600 border-l border-white font-bold">
                   {header}
                 </th>
               ))}
@@ -71,9 +106,12 @@ const DynamicTable = ({ data }) => {
           </thead>
           <tbody>
             {filteredData.map((item, index) => (
-              <tr key={index}>
+              <tr key={index}> 
+              <td className="p-3 border-t border-gray-300 border-l border-r text-center">
+              {index +1}
+              </td>
                 {Object.entries(item).map(([key, value]) => (
-                  <td key={key} className="p-3 border-t border-gray-300 border-l border-r">
+                  <td key={key} className="p-3 border-t border-gray-300 border-l border-r text-center">
                     {renderCell(key, value)}
                   </td>
                 ))}
@@ -87,7 +125,7 @@ const DynamicTable = ({ data }) => {
 
   return (
     <div>
-      <ul className="flex space-x-2">
+      <ul className="flex space-x-2 w-full p-4 justify-center item-center">
         {getMenuItems().map((menuItem) => (
           <li
             key={menuItem}
