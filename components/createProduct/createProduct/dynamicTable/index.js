@@ -7,7 +7,7 @@ const DynamicTable = ({ data }) => {
   const objectKey = Object.keys(data)[0];
   const responseData = data[objectKey];
 
-  const [selectedMenu, setSelectedMenu] = useState("Renkler");
+  const [selectedMenu, setSelectedMenu] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
 
   useEffect(() => {
@@ -157,10 +157,12 @@ const DynamicTable = ({ data }) => {
                     <input type="number"
                     defaultValue={0}
                     placeholder='322'
-                    min={0}
+                    min={1}
                     className="w-20 h-10 border border-gray-300 rounded-md ml-4 text-center"
                     onChange={(e) => {
+                      e.target.value > 0 &&
                       handleCheckboxChange(index, selectedMenu, item.id, "plus",true, e.target.value)
+
                     }}
                   />
                   : null
@@ -187,10 +189,11 @@ const DynamicTable = ({ data }) => {
                     ) ?
                     <input type="number"
                     defaultValue={0}
-                    min={0}
+                    min={1}
                     placeholder='145'
                     className="w-20 h-10 border border-gray-300 rounded-md ml-4 text-center"
                     onChange={(e) => {
+                      e.target.value > 0 &&
                       handleCheckboxChange(index, selectedMenu, item.id, "minus",true, (-1 * e.target.value))
                     }}
                   />
