@@ -7,6 +7,14 @@ const DynamicTable = ({ data }) => {
   const objectKey = Object.keys(data)[0];
   const responseData = data[objectKey];
 
+  //responseData içerisine yeni bir başlık ekle
+  responseData["Ekstra"] = [
+    {
+      id: 1,
+      Value: "test",
+    }
+  ];
+
   const [selectedMenu, setSelectedMenu] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
 
@@ -229,6 +237,7 @@ const DynamicTable = ({ data }) => {
             {menuItem}
           </li>
         ))}
+        
       </ul>
       {renderTable()}
       <div className='w-full flex justify-end items-center p-4'>
