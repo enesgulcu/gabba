@@ -11,7 +11,8 @@ const DynamicTable = ({ data }) => {
   responseData["Ekstra"] = [
     {
       id: 1,
-      Value: "test",
+      Value1: "değer",
+      Value2: "açıklama",
     }
   ];
 
@@ -69,7 +70,7 @@ const DynamicTable = ({ data }) => {
   const renderCell = (key, value) => (
     key === 'image' && value && value.length > 0 ?
       <div className='flex justify-center item-center'>
-        <Image width={100} height={100} src={value} alt="Image" className="h-30 w-30 object-cover" />
+        <Image width={150} height={150} src={value} alt="Image" className="h-35 w-35 object-cover hover:scale-150 transition-all hover:border-2 border-gray-600 hover:rounded" />
       </div>
       : value
   );
@@ -86,6 +87,34 @@ const DynamicTable = ({ data }) => {
       return filteredItem;
     });
 
+    const headerMappings = {
+      // Ölçü
+      firstValue: "1. Ölçü",
+      secondValue: "2. Ölçü",
+      unit: "Birim",
+
+      // Renkler
+      colourType: "Renk Tipi",
+      colourDescription: "Renk Açıklaması",
+      colourHex: "Renk Kodu",
+
+      // Kumaş
+      fabricType: "Kumaş Tipi",
+      fabricDescription: "Kumaş Açıklaması",
+      fabricSwatch: "Kartela",
+      image: "Resim",
+
+      // Metal
+      metalType: "Metal Tipi",
+      metalDescription: "Metal Açıklaması",
+      image: "Resim",
+
+      // Ekstra
+      Value1: "Ekstra",
+      Value2: "Açıklama",
+
+    };
+
     return (
       <div className="overflow-x-auto">
         <table className="table w-full border-collapse border border-gray-300">
@@ -96,15 +125,17 @@ const DynamicTable = ({ data }) => {
               <th className="p-3 text-white bg-red-600 font-bold border-l border-white">+ ücret</th>
               <th className="p-3 text-white bg-red-600 font-bold border-l border-white">- ücret</th>
               {Object.keys(filteredData[0]).map(header => (
+                // tablo başlıklarının listelendiği bölüm
                 header != "id" &&
                 <th key={header} className="p-3 text-white bg-blue-600 border-l border-white font-bold">
-                  {header}
+                  {headerMappings[header] || header}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {filteredData.map((item, index) => (
+              // tablo satırlarının listelendiği bölüm
               <tr key={index} 
               // eğer checkboxlardan herhangi biri seçilmişs ise bu satırı bg-green-200 yap.
               className={checkboxValues && checkboxValues.some(
@@ -225,7 +256,7 @@ const DynamicTable = ({ data }) => {
 
   return (
     <div>
-      <ul className="flex space-x-2 w-full p-4 justify-center item-center">
+      <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full">
         {getMenuItems().map(menuItem => (
           <li
             key={menuItem}
