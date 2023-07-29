@@ -8,11 +8,46 @@ const DynamicTable = ({ data }) => {
   const responseData = data[objectKey];
 
   //responseData içerisine yeni bir başlık ekle
-  responseData["Ekstra"] = [
+  responseData["Extra"] = [
     {
-      id: 1,
-      Value1: "değer",
-      Value2: "açıklama",
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
+    },
+    {
+      id: "ekstra",
+      extraValue1: "",
     }
   ];
 
@@ -55,8 +90,7 @@ const DynamicTable = ({ data }) => {
     'addSwatchEnabled', 'oneRangeEnabled', 'twoRangeEnabled', 'manuelDefined',
     'metalTypeTurkish', 'metalTypeUkrainian', 'metalTypeEnglish',
     'metalDescriptionTurkish', 'metalDescriptionUkrainian', 'metalDescriptionEnglish',
-    'turkish', 'ukrainian', 'english',
-    'fabricTypeTurkish', 'fabricTypeUkrainian', 'fabricTypeEnglish',
+    'turkish', 'ukrainian', 'english', 'fabricTypeTurkish', 'fabricTypeUkrainian', 'fabricTypeEnglish',
     'fabricDescriptionTurkish', 'fabricDescriptionUkrainian', 'fabricDescriptionEnglish',
     'fabricSwatchTurkish', 'fabricSwatchUkrainian', 'fabricSwatchEnglish',
     'colourTypeTurkish', 'colourTypeUkrainian', 'colourTypeEnglish',
@@ -109,9 +143,9 @@ const DynamicTable = ({ data }) => {
       metalDescription: "Metal Açıklaması",
       image: "Resim",
 
-      // Ekstra
-      Value1: "Ekstra",
-      Value2: "Açıklama",
+      // Extra
+      extraValue1: "Ekstra",
+      extraValue2: "Açıklama",
 
     };
 
@@ -143,18 +177,21 @@ const DynamicTable = ({ data }) => {
                   value.index === index &&
                   value.menu === selectedMenu &&
                   value.checked === true
-              ) ? "bg-blue-50" : ""}
+              ) ? "bg-blue-50 " : ""}
 
               >
-                <td className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100 flex flex-row flex-nowrap gap-2 justify-center items-center">
+                <td className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100 ">
                 {/* eğer checkboxlardan herhangi biri seçilmiş ise bu veriyi tik şareti yap. */}
-                  {checkboxValues && checkboxValues.some((value) =>
-                      value.index === index &&
-                      value.menu === selectedMenu &&
-                      value.checked === true) && <MdDone size={25} color='green' className="" />
-                  }
+                  <div className='h-full flex  justify-center items-center gap-2'>
+                    {checkboxValues && checkboxValues.some((value) =>
+                        value.index === index &&
+                        value.menu === selectedMenu &&
+                        value.checked === true) && 
+                        <MdDone size={25} color='green' className="" />
+                    }
 
-                  {index + 1}
+                    {index + 1}
+                  </div>
                 </td>
 
                 <td className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
@@ -197,7 +234,7 @@ const DynamicTable = ({ data }) => {
                     defaultValue={0}
                     placeholder='322'
                     min={1}
-                    className="w-20 h-10 border border-gray-300 rounded-md ml-4 text-center"
+                    className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
                       handleCheckboxChange(index, selectedMenu, item.id, "plus",true, e.target.value)
@@ -207,7 +244,7 @@ const DynamicTable = ({ data }) => {
                   : null
                   }
                 </td>
-                <td className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
+                <td className="p-2 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
                   <input type="checkbox" name="minus" value="minus" className='scale-150 cursor-pointer'
                   checked={checkboxValues && checkboxValues.some(
                     (value) =>
@@ -230,7 +267,7 @@ const DynamicTable = ({ data }) => {
                     defaultValue={0}
                     min={1}
                     placeholder='145'
-                    className="w-20 h-10 border border-gray-300 rounded-md ml-4 text-center"
+                    className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
                       handleCheckboxChange(index, selectedMenu, item.id, "minus",true, (-1 * e.target.value))
@@ -241,9 +278,28 @@ const DynamicTable = ({ data }) => {
                 </td>
 
                 {Object.entries(item).map(([key, value]) => (
+                  key != "id" && key === "extraValue1" ? 
+                  
+                  <td key={key}  className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
+                    <input type="text"
+                    placeholder='Ekstra değer'
+                    className="p-2 border border-gray-300 rounded-md ml-4 text-center"
+                    onChange={(e) => {
+                      e.target.value.length > 0 &&
+                      handleCheckboxChange(index, selectedMenu, item.id, "minus",true, e.target.value)
+                    }}
+                  />
+                  </td> :                   
                   key != "id" &&
                   <td key={key} className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
-                    {renderCell(key, value)}
+                    {key === "colourHex" ? (
+                      <div style={{backgroundColor: value}}
+                      className='p-4 rounded flex justify-center items-center text-white'
+                      >{renderCell(key, value)}</div>
+                      )
+
+                      : renderCell(key, value)
+                    }
                   </td>
                 ))}
               </tr>
@@ -256,7 +312,7 @@ const DynamicTable = ({ data }) => {
 
   return (
     <div>
-      <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full">
+      <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full flex-wrap gap-2">
         {getMenuItems().map(menuItem => (
           <li
             key={menuItem}
