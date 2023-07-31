@@ -35,8 +35,6 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
       const {data, processType} = req.body;
 
-      console.log(data)
-
       //silme işlemi için gelen veriyi sileriz.
       if(!createProducts && processType == "delete"){
          
