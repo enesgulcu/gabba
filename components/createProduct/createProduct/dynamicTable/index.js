@@ -2,6 +2,22 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
 import Image from 'next/image';
+import {postAPI} from '@/services/fetchAPI';
+
+const sendData = async (data) =>{
+  try {
+    const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
+    if(!responseData || responseData.status !== "success"){
+        throw new Error("Veri eklenemedi");
+    }
+    // await setIsloading(false);
+    // toast.success("Veri başarıyla silindi");
+
+  } catch (error) {
+      // toast.error(error.message);
+      console.log(error);
+  }
+}
 
 const DynamicTable = ({ data }) => {
   const objectKey = Object.keys(data)[0];
@@ -51,7 +67,7 @@ const DynamicTable = ({ data }) => {
     }
   ];
 
-  const [selectedMenu, setSelectedMenu] = useState("Ölçüler");
+  const [selectedFeature, setSelectedFeature] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
 
   useEffect(() => {
@@ -59,11 +75,11 @@ const DynamicTable = ({ data }) => {
   }, [checkboxValues])
   
 
-  const handleCheckboxChange = (index, menu, id, targetValue, checked, value) => {
+  const handleCheckboxChange = (index, feature, id, targetValue, checked, value) => {
     // Değişen checkbox değerini yeni bir nesne olarak hazırla
     const newValue = {
       index,
-      menu,
+      feature,
       id,
       targetValue,
       checked,
@@ -72,9 +88,9 @@ const DynamicTable = ({ data }) => {
 
     // Eski arrayi yeni değerle birleştir ve state'i güncelle
     setCheckboxValues((prevValues) => {
-      // Eğer önceki değer zaten varsa ve menu değeri aynı ise, onu sil ve yeni değeri ekle
+      // Eğer önceki değer zaten varsa ve feature değeri aynı ise, onu sil ve yeni değeri ekle
       const filteredValues = prevValues.filter(
-        (value) => !(value.index === index && value.menu === menu)
+        (value) => !(value.index === index && value.feature === feature)
       );
 
       // checked değeri false ise onu sil
@@ -97,9 +113,9 @@ const DynamicTable = ({ data }) => {
     'colourDescriptionTurkish', 'colourDescriptionUkrainian', 'colourDescriptionEnglish'
   ] : [];
 
-  const handleMenuSelect = (menu) => setSelectedMenu(menu);
+  const handleFeatureSelect = (feature) => setSelectedFeature(feature);
 
-  const getMenuItems = () => Object.keys(responseData);
+  const getFeatureItems = () => Object.keys(responseData);
 
   const renderCell = (key, value) => (
     key === 'image' && value && value.length > 0 ?
@@ -110,8 +126,8 @@ const DynamicTable = ({ data }) => {
   );
 
   const renderTable = () => {
-    if (selectedMenu === null) return null;
-    const selectedResponseData = responseData[selectedMenu];
+    if (selectedFeature === null) return null;
+    const selectedResponseData = responseData[selectedFeature];
 
     const filteredData = selectedResponseData.map(item => {
       const filteredItem = {};
@@ -175,7 +191,7 @@ const DynamicTable = ({ data }) => {
               className={checkboxValues && checkboxValues.some(
                 (value) =>
                   value.index === index &&
-                  value.menu === selectedMenu &&
+                  value.feature === selectedFeature &&
                   value.checked === true
               ) ? "bg-blue-50 " : ""}
 
@@ -185,7 +201,7 @@ const DynamicTable = ({ data }) => {
                   <div className='h-full flex  justify-center items-center gap-2'>
                     {checkboxValues && checkboxValues.some((value) =>
                         value.index === index &&
-                        value.menu === selectedMenu &&
+                        value.feature === selectedFeature &&
                         value.checked === true) && 
                         <MdDone size={25} color='green' className="" />
                     }
@@ -200,13 +216,13 @@ const DynamicTable = ({ data }) => {
                     checked={checkboxValues && checkboxValues.some(
                       (value) =>
                         value.index === index &&
-                        value.menu === selectedMenu &&
+                        value.feature === selectedFeature &&
                         value.targetValue === "standard"
                     )}
 
 
                     onChange={(e) => {
-                      handleCheckboxChange(index, selectedMenu, item.id, "standard", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "standard", e.target.checked)
                     }}
                   />
                   
@@ -216,18 +232,18 @@ const DynamicTable = ({ data }) => {
                   checked={checkboxValues && checkboxValues.some(
                       (value) =>
                         value.index === index &&
-                        value.menu === selectedMenu &&
+                        value.feature === selectedFeature &&
                         value.targetValue === "plus"
                     )}
                   onChange={(e) => {
-                      handleCheckboxChange(index, selectedMenu, item.id, "plus", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "plus", e.target.checked)
                     }}
                   />
 
                   { checkboxValues && checkboxValues.some(
                       (value) =>
                         value.index === index &&
-                        value.menu === selectedMenu &&
+                        value.feature === selectedFeature &&
                         value.targetValue === "plus"
                     ) ?
                     <input type="number"
@@ -237,7 +253,7 @@ const DynamicTable = ({ data }) => {
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
-                      handleCheckboxChange(index, selectedMenu, item.id, "plus",true, e.target.value)
+                      handleCheckboxChange(index, selectedFeature, item.id, "plus",true, e.target.value)
 
                     }}
                   />
@@ -249,18 +265,18 @@ const DynamicTable = ({ data }) => {
                   checked={checkboxValues && checkboxValues.some(
                     (value) =>
                       value.index === index &&
-                      value.menu === selectedMenu &&
+                      value.feature === selectedFeature &&
                       value.targetValue === "minus"
                   )}
                   onChange={(e) => {
-                      handleCheckboxChange(index, selectedMenu, item.id, "minus", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "minus", e.target.checked)
                     }}
                   />
 
                     { checkboxValues && checkboxValues.some(
                       (value) =>
                         value.index === index &&
-                        value.menu === selectedMenu &&
+                        value.feature === selectedFeature &&
                         value.targetValue === "minus"
                     ) ?
                     <input type="number"
@@ -270,7 +286,7 @@ const DynamicTable = ({ data }) => {
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
-                      handleCheckboxChange(index, selectedMenu, item.id, "minus",true, (-1 * e.target.value))
+                      handleCheckboxChange(index, selectedFeature, item.id, "minus",true, (-1 * e.target.value))
                     }}
                   />
                   : null
@@ -283,10 +299,10 @@ const DynamicTable = ({ data }) => {
                   <td key={key}  className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
                     <input type="text"
                     placeholder='Ekstra değer'
-                    className="p-2 border border-gray-300 rounded-md ml-4 text-center"
+                    className="p-2 border border-gray-300 rounded-md ml-4 text-center w-full lg:w-2/3 "
                     onChange={(e) => {
                       e.target.value.length > 0 &&
-                      handleCheckboxChange(index, selectedMenu, item.id, "minus",true, e.target.value)
+                      handleCheckboxChange(index, selectedFeature, item.id, "minus",true, e.target.value)
                     }}
                   />
                   </td> :                   
@@ -313,25 +329,29 @@ const DynamicTable = ({ data }) => {
   return (
     <div>
       <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full flex-wrap gap-2">
-        {getMenuItems().map(menuItem => (
+        {getFeatureItems().map(featureItem => (
           <li
-            key={menuItem}
-            onClick={() => handleMenuSelect(menuItem)}
+            key={featureItem}
+            onClick={() => handleFeatureSelect(featureItem)}
             className={`cursor-pointer py-2 px-4 ml-2 rounded-md flex flex-row flex-nowrap gap-2 justify-center items-center
-            ${selectedMenu === menuItem ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}
-            ${ menuItem == "Ölçüler" && "order-first ml-0"}`}
+            ${selectedFeature === featureItem ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}
+            ${ featureItem == "Ölçüler" && "order-first ml-0"}`}
           >
-            {menuItem}
+            {featureItem}
           </li>
         ))}
-        
+        {/* sendData */}
       </ul>
       {renderTable()}
-      <div className='w-full flex justify-end items-center p-4'>
+      <div className='w-full flex justify-around items-center p-4'>
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setCheckboxValues([])}>
           Tümünü Temizle
         </button>
+        <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(checkboxValues)}>
+          Ürünü Kaydet
+        </button>
       </div>
+      
     </div>
   );
 };
