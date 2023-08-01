@@ -4,6 +4,7 @@ import { getAPI } from '@/services/fetchAPI';
 import DropDownCatagories from "@/components/createProduct/createProduct/dropDownCatagories"
 import DynamicTable from "@/components/createProduct/createProduct/dynamicTable"
 
+// özellikler ve alt özelliklerin verilerini çekmek için kullanılır
 const catagoriesData = {
   furniture: {
     label: "Mobilya",
@@ -43,10 +44,6 @@ const CreateProductComponent = () => {
       throw error;
     }
   };
-
-
-
-
 
   useEffect(() => {
     setSelectedSubCategory("");

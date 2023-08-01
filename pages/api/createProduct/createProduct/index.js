@@ -80,7 +80,7 @@ const handler = async (req, res) => {
         const checkedData = await checkData(createProducts);
 
         
-        if(!checkedData){
+        if(!checkedData || checkedData.error){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";
         }
         

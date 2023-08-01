@@ -1,23 +1,12 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
+import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import LoadingScreen from '@/components/other/loading';
+import { ToastContainer, toast } from "react-toastify";
+
 import Image from 'next/image';
-import {postAPI} from '@/services/fetchAPI';
-
-const sendData = async (data) =>{
-  try {
-    const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
-    if(!responseData || responseData.status !== "success"){
-        throw new Error("Veri eklenemedi");
-    }
-    // await setIsloading(false);
-    // toast.success("Veri başarıyla silindi");
-
-  } catch (error) {
-      // toast.error(error.message);
-      console.log(error);
-  }
-}
+import {postAPI, getAPI} from '@/services/fetchAPI';
 
 const DynamicTable = ({ data }) => {
   const objectKey = Object.keys(data)[0];
@@ -67,14 +56,78 @@ const DynamicTable = ({ data }) => {
     }
   ];
 
+  const [isloading, setIsloading] = useState(false);
+
+  const [createProduct, setCreateProduct] = useState("");
+  
   const [selectedFeature, setSelectedFeature] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
+  
+  const [addTypeEnabled, setAddTypeEnabled] = useState(false);
+  const [productTypes, setProductTypes] = useState("");
+  const [productType, setProductType] = useState("");
+
+  const [productName , setProductName] = useState("");
+
+
+  const sendData = async (productName, productType, checkboxValues) =>{
+    
+    setIsloading(true);
+    const data = {
+      productName: productName,
+      productType: productType,
+      productFeatures: checkboxValues
+    }
+
+    try {
+      const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
+      if(!responseData || responseData.status !== "success"){
+          throw new Error("Veri eklenemedi");
+      }
+       await setIsloading(false);
+       toast.success("Veri başarıyla Eklendi");
+  
+    } catch (error) {
+         toast.error(error.message);
+        console.log(error);
+    }
+  }
+  
+  const getData = async () => {
+    try {
+      setIsloading(true);
+      const response = await getAPI('/createProduct/fabrics');
+  
+      if(!response){
+        throw new Error("Veri çekilemedi 2");
+      }
+  
+      if(response.status !== "success"){
+        throw new Error("Veri çekilemedi 3");
+      }
+      setProductTypes(response.data);
+      setIsloading(false);
+  
+    } catch (error) {
+      setIsloading(false);
+  
+      toast.error(error.message);
+      console.log(error);
+    }
+  } 
+
+
+  useEffect(()  => {
+    getData();
+  }, [])
+  
 
   useEffect(() => {
     console.log(checkboxValues);
   }, [checkboxValues])
   
 
+  // Seçilen checkbox değerini state'e ekleyen ana fonksiyon.
   const handleCheckboxChange = (index, feature, id, targetValue, checked, value) => {
     // Değişen checkbox değerini yeni bir nesne olarak hazırla
     const newValue = {
@@ -103,12 +156,12 @@ const DynamicTable = ({ data }) => {
 
   const cancelKeys = objectKey === "furniture" ? [
     'createdAt', 'updatedAt', 'translateEnabled', 'colourPickerEnabled',
-    'addSwatchEnabled', 'oneRangeEnabled', 'twoRangeEnabled', 'manuelDefined',
+    'addTypeEnabled', 'oneRangeEnabled', 'twoRangeEnabled', 'manuelDefined',
     'metalTypeTurkish', 'metalTypeUkrainian', 'metalTypeEnglish',
     'metalDescriptionTurkish', 'metalDescriptionUkrainian', 'metalDescriptionEnglish',
-    'turkish', 'ukrainian', 'english', 'fabricTypeTurkish', 'fabricTypeUkrainian', 'fabricTypeEnglish',
-    'fabricDescriptionTurkish', 'fabricDescriptionUkrainian', 'fabricDescriptionEnglish',
-    'fabricSwatchTurkish', 'fabricSwatchUkrainian', 'fabricSwatchEnglish',
+    'turkish', 'ukrainian', 'english', 'productTypeTurkish', 'productTypeUkrainian', 'productTypeEnglish',
+    'productDescriptionTurkish', 'productDescriptionUkrainian', 'productDescriptionEnglish',
+    'productTypeTurkish', 'productTypeUkrainian', 'productTypeEnglish',
     'colourTypeTurkish', 'colourTypeUkrainian', 'colourTypeEnglish',
     'colourDescriptionTurkish', 'colourDescriptionUkrainian', 'colourDescriptionEnglish'
   ] : [];
@@ -149,9 +202,9 @@ const DynamicTable = ({ data }) => {
       colourHex: "Renk Kodu",
 
       // Kumaş
-      fabricType: "Kumaş Tipi",
-      fabricDescription: "Kumaş Açıklaması",
-      fabricSwatch: "Kartela",
+      productType: "Kumaş Tipi",
+      productDescription: "Kumaş Açıklaması",
+      productType: "Kartela",
       image: "Resim",
 
       // Metal
@@ -165,6 +218,7 @@ const DynamicTable = ({ data }) => {
 
     };
 
+    // tablo fonksiyonu
     return (
       <div className="overflow-x-auto">
         <table className="table w-full border-collapse border border-gray-300">
@@ -328,30 +382,134 @@ const DynamicTable = ({ data }) => {
 
   return (
     <div>
-      <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full flex-wrap gap-2">
-        {getFeatureItems().map(featureItem => (
-          <li
-            key={featureItem}
-            onClick={() => handleFeatureSelect(featureItem)}
-            className={`cursor-pointer py-2 px-4 ml-2 rounded-md flex flex-row flex-nowrap gap-2 justify-center items-center
-            ${selectedFeature === featureItem ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}
-            ${ featureItem == "Ölçüler" && "order-first ml-0"}`}
-          >
-            {featureItem}
-          </li>
-        ))}
-        {/* sendData */}
-      </ul>
-      {renderTable()}
-      <div className='w-full flex justify-around items-center p-4'>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setCheckboxValues([])}>
-          Tümünü Temizle
-        </button>
-        <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(checkboxValues)}>
-          Ürünü Kaydet
-        </button>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      {isloading && <LoadingScreen isloading={isloading} />}
+
+      <div className='w-full bg-gray-100 p-2 lg:my-10 my-4 flex flex-row flex-wrap gap-4 justify-center item-center'>
+        <div className="flex flex-col justify-center items-center ">
+          <h3 className='text-xl font-semibold text-gray-700 my-2'> Ürün Adı </h3>
+          <input
+            type="text"
+            placeholder="Ürün Adı"
+            value={productName}
+            className="hover:scale-105 transition-all border border-gray-600 rounded-md p-2 mx-4 "
+            onChange={(e) => {
+              setProductName(e.target.value);
+            }}
+          />
+
+        </div>
+        <div className='flex flex-col justify-center items-center'>
+          <h3 className='text-xl font-semibold text-gray-700 my-2'> Ürün Tipi </h3>
+          <div className='flex flex-row gap-4'>
+            <div className="flex flex-col justify-center items-center ">
+                
+                {/* (Ürün Tipi Seç - yok-2 - yok-3) seçme yapısı aşağıadadır. */}
+                <select 
+                  onChange={(e) => {!addTypeEnabled && setProductType(e.target.value)}}
+                  type="select"
+                  disabled={addTypeEnabled ? true : false}
+                  defaultValue="Ürün Tipi Seç"
+                  value={!addTypeEnabled ? productType : ""}
+                  id={`productType`}
+                  name={`productType`}              
+                  className="h-10 hover:scale-105 transition-all cursor-pointer  p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  
+                  <option value="">Ürün Tipi Seç</option>
+                  {
+                    productTypes && productTypes.map((item, index) => (
+                    // productType içi boş olanları eklemiyoruz.
+                    item.productType != "" && item.productType &&
+
+                    // aynı değere sahip olanlardan sadece birini ekliyoruz.
+                    !productTypes.slice(0, index).some((item2) => item2.productType === item.productType) &&
+
+                    <option key={index} value={item.productType}>{item.productType}</option>
+                                            
+                    ))
+                  }
+                </select>
+              </div>             
+              <div className='flex flex-col justify-center items-center'>
+                <div className={`flex justify-center items-center gap-2 flex-col lg:flex-row`}>
+                  <button
+                    type='button'
+                    onClick={ () => {setAddTypeEnabled(!addTypeEnabled)}}
+                  >
+                    {
+                    addTypeEnabled ?
+                    <div 
+                    onClick={() => {setProductType("")}}
+                    className='hover:scale-105 transition-all p-2 bg-red-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                      <IoCloseOutline size={20}/> <h4 className='whitespace-nowrap'>İptal</h4>
+                    </div>
+                    :
+                    <div className='hover:scale-105 transition-all p-2 bg-green-600 text-white rounded-md flex flex-row justify-center items-center gap-2'>
+                      <IoAddOutline size={20}/> <h4 className='whitespace-nowrap'>Ürün Tipi Ekle</h4>
+                    </div>
+                    }                    
+                  </button>
+                                    
+                  <div className={`${addTypeEnabled ? "block" : "hidden"}`}>
+                    <input
+                      onChange={(e) => {addTypeEnabled && setProductType(e.target.value)}}
+                      id={`productType`}
+                      name={`productType`}
+                      value={productType}
+                      className={`hover:scale-105 transition-all border border-gray-600 rounded-md p-2 mx-4 `}
+                      type="text"
+                      placeholder="Yeni Ürün Tipi Adı Giriniz."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
-      
+
+
+      { productType && productType != "" && productType.trim().length > 0 && productName &&  productName != "" && productName.trim().length > 0 ?   
+          <div className='w-full'>
+            <ul className="flex space-x-2 w-full p-4 justify-center item-center h-full flex-wrap gap-2">
+              {getFeatureItems().map(featureItem => (
+                <li
+                  key={featureItem}
+                  onClick={() => handleFeatureSelect(featureItem)}
+                  className={`cursor-pointer py-2 px-4 ml-2 rounded-md flex flex-row flex-nowrap gap-2 justify-center items-center
+                  ${selectedFeature === featureItem ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}
+                  ${ featureItem == "Ölçüler" && "order-first ml-0"}`}
+                >
+                  {featureItem}
+                </li>
+              ))}
+
+            </ul>
+            {renderTable()}
+            <div className='w-full flex justify-around items-center p-4'>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setCheckboxValues([])}>
+                Tümünü Temizle
+              </button>
+              <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(checkboxValues)}>
+                Ürünü Kaydet
+              </button>
+            </div>
+          </div>
+          :
+          <div className='w-full flex justify-center items-center p-2 m-2'>
+            <h3 className='text-center font-bold text-red-600'>Verileri Görmeden Önce Lütfen Ürün Adını ve Ürün Tipini Giriniz.</h3>
+          </div>
+      }
     </div>
   );
 };

@@ -1,19 +1,4 @@
-import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
-
-// // req-body içerisindeki image verisini silmek için kullanılan fonksiyon.
-// const removeImageFromFabricData = (data) => {
-//   const newData = { ...data }; // Gelen veriyi kopyalayarak yeni bir nesne oluşturuyoruz
-
-//   // Eğer "fabrics" dizisi varsa ve içinde en az bir öğe varsa devam ediyoruz
-//   if (newData.fabrics && newData.fabrics.length > 0) {
-//     newData.fabrics.forEach((fabric) => {
-//       delete fabric.image; // "image" alanını her bir kumaş öğesinden kaldırıyoruz
-//     });
-//   }
-
-//   return newData; // "image" alanı kaldırılmış yeni veriyi döndürüyoruz
-// };
-
+import { getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
 // girilen verileri göndermeden önce kontrol ederiz.
 const checkData = async (fabrics) => {
@@ -54,7 +39,7 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       const {fabrics, data, processType} = req.body;
-      
+
       //silme işlemi için gelen veriyi sileriz.
       if(!fabrics && processType == "delete"){
          
