@@ -20,39 +20,39 @@ const DynamicTable = ({ data }) => {
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue2: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue3: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue4: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue5: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue6: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue7: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue8: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue9: "",
     },
     {
       id: "ekstra",
-      extraValue1: "",
+      extraValue10: "",
     }
   ];
 
@@ -70,13 +70,13 @@ const DynamicTable = ({ data }) => {
   const [productName , setProductName] = useState("");
 
 
-  const sendData = async (productName, productType, checkboxValues) =>{
+  const sendData = async (productName, productType,selectedFeature, checkboxValues) =>{
     
     setIsloading(true);
     const data = {
       productName: productName,
       productType: productType,
-      productFeatures: checkboxValues
+      features: checkboxValues
     }
 
     try {
@@ -84,7 +84,7 @@ const DynamicTable = ({ data }) => {
       if(!responseData || responseData.status !== "success"){
           throw new Error("Veri eklenemedi");
       }
-       await setIsloading(false);
+       setIsloading(false);
        toast.success("Veri başarıyla Eklendi");
   
     } catch (error) {
@@ -156,13 +156,13 @@ const DynamicTable = ({ data }) => {
 
   const cancelKeys = objectKey === "furniture" ? [
     'createdAt', 'updatedAt', 'translateEnabled', 'colourPickerEnabled',
+    "addSwatchEnabled", "fabricTypeTurkish", "fabricTypeUkrainian", "fabricTypeEnglish", 
+    "fabricDescriptionTurkish", "fabricDescriptionUkrainian", "fabricDescriptionEnglish",
+     "fabricSwatchUkrainian", "fabricSwatchEnglish", "fabricSwatchTurkish",
     'addTypeEnabled', 'oneRangeEnabled', 'twoRangeEnabled', 'manuelDefined',
     'metalTypeTurkish', 'metalTypeUkrainian', 'metalTypeEnglish',
     'metalDescriptionTurkish', 'metalDescriptionUkrainian', 'metalDescriptionEnglish',
-    'turkish', 'ukrainian', 'english', 'productTypeTurkish', 'productTypeUkrainian', 'productTypeEnglish',
-    'productDescriptionTurkish', 'productDescriptionUkrainian', 'productDescriptionEnglish',
-    'productTypeTurkish', 'productTypeUkrainian', 'productTypeEnglish',
-    'colourTypeTurkish', 'colourTypeUkrainian', 'colourTypeEnglish',
+    'turkish', 'ukrainian', 'english', 'colourTypeTurkish', 'colourTypeUkrainian', 'colourTypeEnglish',
     'colourDescriptionTurkish', 'colourDescriptionUkrainian', 'colourDescriptionEnglish'
   ] : [];
 
@@ -202,9 +202,9 @@ const DynamicTable = ({ data }) => {
       colourHex: "Renk Kodu",
 
       // Kumaş
-      productType: "Kumaş Tipi",
-      productDescription: "Kumaş Açıklaması",
-      productType: "Kartela",
+      fabricType: "Kumaş Tipi",
+      fabricDescription: "Kumaş Açıklaması",
+      fabricSwatch: "Kartela",
       image: "Resim",
 
       // Metal
@@ -348,15 +348,25 @@ const DynamicTable = ({ data }) => {
                 </td>
 
                 {Object.entries(item).map(([key, value]) => (
-                  key != "id" && key === "extraValue1" ? 
+                  key != "id" && key.includes("extraValue")  ? 
+                                 
                   
                   <td key={key}  className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
+
                     <input type="text"
+                    disabled={checkboxValues && checkboxValues.some((value) =>
+                        value.index === index &&
+                        value.feature === selectedFeature &&
+                        value.targetValue === "minus" || 
+                        value.targetValue === "plus" || 
+                        value.targetValue === "standard"
+                    ) ? true : false}
+
                     placeholder='Ekstra değer'
                     className="p-2 border border-gray-300 rounded-md ml-4 text-center w-full lg:w-2/3 "
                     onChange={(e) => {
                       e.target.value.length > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id, "minus",true, e.target.value)
+                      handleCheckboxChange(index, selectedFeature, item.id+index, checkboxValues[index].targetValue ,true, e.target.value)
                     }}
                   />
                   </td> :                   
@@ -420,7 +430,6 @@ const DynamicTable = ({ data }) => {
                   onChange={(e) => {!addTypeEnabled && setProductType(e.target.value)}}
                   type="select"
                   disabled={addTypeEnabled ? true : false}
-                  defaultValue="Ürün Tipi Seç"
                   value={!addTypeEnabled ? productType : ""}
                   id={`productType`}
                   name={`productType`}              
@@ -500,7 +509,7 @@ const DynamicTable = ({ data }) => {
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setCheckboxValues([])}>
                 Tümünü Temizle
               </button>
-              <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(checkboxValues)}>
+              <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(productName, productType, selectedFeature, checkboxValues)}>
                 Ürünü Kaydet
               </button>
             </div>

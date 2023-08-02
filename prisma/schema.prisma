@@ -112,7 +112,6 @@ model Products {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   productName   String
   productType   String
-  productGeneralType String
   features      Feature[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -121,11 +120,12 @@ model Products {
 // Feature Model
 model Feature {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  index        Int
   feature      String
+  featureId    String
   targetValue  String
   checked      Boolean
   value        Float?
-  index        Int
   product      Products? @relation(fields: [productId], references: [id])
   productId    String?  @map("productId") @db.ObjectId
   createdAt    DateTime @default(now())
