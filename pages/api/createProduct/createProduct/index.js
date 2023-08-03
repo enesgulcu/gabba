@@ -38,7 +38,7 @@ const handler = async (req, res) => {
       //silme işlemi için gelen veriyi sileriz.
       if(data && processType == "delete"){
          
-        const deleteData = await deleteDataByAny("createProducts", {id: data.id});
+        const deleteData = await deleteDataByAny("Products", {id: data.id});
         if(!deleteData || deleteData.error){
           throw deleteData;
         }
@@ -62,7 +62,7 @@ const handler = async (req, res) => {
         });
         
         // veriyi güncelliyoruz.
-        const updateData = await updateDataByAny("createProducts", {id: checkedData[0].id}, NewDatawitoutId[0]);
+        const updateData = await updateDataByAny("Products", {id: checkedData[0].id}, NewDatawitoutId[0]);
 
         if(!updateData || updateData.error){
           throw updateData;
@@ -101,7 +101,7 @@ const handler = async (req, res) => {
 
 
     if(req.method === "GET"){
-      const createProducts = await getAllData("createProducts");
+      const createProducts = await getAllData("Products");
       if (!createProducts || createProducts.error) {
         throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY4";
       }

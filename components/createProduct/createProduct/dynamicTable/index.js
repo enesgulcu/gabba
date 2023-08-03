@@ -4,6 +4,7 @@ import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
@@ -99,7 +100,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   const getData = async () => {
     try {
       setIsloading(true);
-      const response = await getAPI('/createProduct/fabrics');
+      const response = await getAPI('/createProduct/createProduct');
   
       if(!response){
         throw new Error("Veri çekilemedi 2");

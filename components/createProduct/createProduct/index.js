@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { getAPI } from '@/services/fetchAPI';
 import DropDownCatagories from "@/components/createProduct/createProduct/dropDownCatagories"
 import DynamicTable from "@/components/createProduct/createProduct/dynamicTable"
+import { ToastContainer, toast } from "react-toastify";
+
 
 // özellikler ve alt özelliklerin verilerini çekmek için kullanılır
 const catagoriesData = {
@@ -85,6 +87,18 @@ const CreateProductComponent = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <DropDownCatagories
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
