@@ -92,7 +92,7 @@ const CreateProductComponent = () => {
 
       {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 ? (
         <div>
-          <DynamicTable data={data} />
+          <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
         </div>
       ) : (
         selectedCategory && <div>Yükleniyor...</div>

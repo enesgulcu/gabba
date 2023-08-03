@@ -1,4 +1,4 @@
-import { createNewData, getAllData, createNewDataMany, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
+import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
 
 // girilen verileri göndermeden önce kontrol ederiz.
@@ -34,10 +34,9 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       const {data, processType} = req.body;
-      console.log(data);
 
       //silme işlemi için gelen veriyi sileriz.
-      if(!createProducts && processType == "delete"){
+      if(data && processType == "delete"){
          
         const deleteData = await deleteDataByAny("createProducts", {id: data.id});
         if(!deleteData || deleteData.error){
@@ -46,7 +45,7 @@ const handler = async (req, res) => {
         return res.status(200).json({ status: "success", data:deleteData, message: deleteData.message });
       }
 
-      else if(!createProducts && processType == "update"){
+      else if(data && processType == "update"){
 
         // veri doğruluğunu test ediyoruz
         const checkedData = await checkData(data.createProducts);
@@ -72,25 +71,27 @@ const handler = async (req, res) => {
         return res.status(200).json({ status: "success", data:updateData, message: updateData.message });
       }
 
-      else if(!createProducts && processType == "post"){
-        if(!createProducts){
+      else if(data && processType == "post"){
+        if(!data){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1";
         } 
         
         // gelen verinin doğruluğunu kontrol ediyoruz.
-        const checkedData = await checkData(createProducts);
+        //const checkedData = await checkData(createProducts);
 
         
-        if(!checkedData || checkedData.error){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";
-        }
-        
-        const createdNewData = await createNewDataMany("createProducts", checkedData);
+        // if(!checkedData || checkedData.error){
+        //   throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";
+        // }
+
+        // kontroller yapılacak!
+        const createdNewData = await createNewProduct("Products", data);
+
 
         if(!createdNewData || createdNewData.error){
           throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
         }
-        return res.status(200).json({ status: "success", data:checkedData, message: createProducts.message });
+        return res.status(200).json({ status: "success", data:"checkedData", message: "createProducts.message" });
       }
       
       else{

@@ -25,6 +25,7 @@ export async function createNewData(tableName, newData) {
   }
 }
 
+
 // POST MANY --> newData = [{}, {}, {}]
 export async function createNewDataMany(tableName, newData) {
   try {
@@ -100,6 +101,23 @@ export async function deleteDataAll(tableName) {
   }
 }
 
+// createNewProduct (Special Service)
+export async function createNewProduct(tableName, newData) {
+  try {
+    const data = await prisma[tableName].create({
+      data: {
+        ...newData,
+        productFeatures: {
+          create: newData.productFeatures,
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
 export default {
   getAllData,
 
@@ -115,6 +133,9 @@ export default {
 
   deleteDataByMany,
 
-  deleteDataAll
+  deleteDataAll,
+
+  // Special Service
+  createNewProduct,
   
 };

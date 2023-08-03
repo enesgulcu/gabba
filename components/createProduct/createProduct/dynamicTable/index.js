@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
-const DynamicTable = ({ data }) => {
+const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => {
   const objectKey = Object.keys(data)[0];
   const responseData = data[objectKey];
 
@@ -70,18 +70,21 @@ const DynamicTable = ({ data }) => {
   const [productName , setProductName] = useState("");
 
 
-  const sendData = async (productName, productType,selectedFeature, checkboxValues) =>{
-    
+  const sendData = async (productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues) =>{
     setIsloading(true);
     const data = {
       productName: productName,
       productType: productType,
-      features: checkboxValues
+      selectedCategoryKey: selectedCategoryKey,
+      selectedCategoryValues: selectedCategoryValues,
+      productFeatures: checkboxValues
     }
 
     try {
+      
       const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
       if(!responseData || responseData.status !== "success"){
+          console.log(responseData.error)
           throw new Error("Veri eklenemedi");
       }
        setIsloading(false);
@@ -122,21 +125,26 @@ const DynamicTable = ({ data }) => {
   }, [])
   
 
-  useEffect(() => {
-    console.log(checkboxValues);
-  }, [checkboxValues])
+  // useEffect(() => {
+  //   console.log(checkboxValues);
+  // }, [checkboxValues])
   
 
   // Seçilen checkbox değerini state'e ekleyen ana fonksiyon.
-  const handleCheckboxChange = (index, feature, id, targetValue, checked, value) => {
+  const handleCheckboxChange = (index, feature, featureId, targetValue, checked, value, productName, productType, selectedCategoryKey, selectedCategoryValues) => {
     // Değişen checkbox değerini yeni bir nesne olarak hazırla
+
     const newValue = {
       index,
       feature,
-      id,
+      featureId,
       targetValue,
       checked,
       value,
+      productName,
+      productType,
+      selectedCategoryKey,
+      selectedCategoryValues,
     };
 
     // Eski arrayi yeni değerle birleştir ve state'i güncelle
@@ -276,7 +284,7 @@ const DynamicTable = ({ data }) => {
 
 
                     onChange={(e) => {
-                      handleCheckboxChange(index, selectedFeature, item.id, "standard", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "standard", e.target.checked, null , productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
                   
@@ -290,7 +298,7 @@ const DynamicTable = ({ data }) => {
                         value.targetValue === "plus"
                     )}
                   onChange={(e) => {
-                      handleCheckboxChange(index, selectedFeature, item.id, "plus", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "plus", e.target.checked, null, productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
 
@@ -307,7 +315,7 @@ const DynamicTable = ({ data }) => {
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id, "plus",true, e.target.value)
+                      handleCheckboxChange(index, selectedFeature, item.id, "plus",true, e.target.value.toString(), productName, productType, selectedCategoryKey, selectedCategoryValues)
 
                     }}
                   />
@@ -323,7 +331,7 @@ const DynamicTable = ({ data }) => {
                       value.targetValue === "minus"
                   )}
                   onChange={(e) => {
-                      handleCheckboxChange(index, selectedFeature, item.id, "minus", e.target.checked)
+                      handleCheckboxChange(index, selectedFeature, item.id, "minus", e.target.checked, null, productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
 
@@ -340,7 +348,7 @@ const DynamicTable = ({ data }) => {
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id, "minus",true, (-1 * e.target.value))
+                      handleCheckboxChange(index, selectedFeature, item.id, "minus",true, ((-1 * e.target.value).toString()), productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
                   : null
@@ -354,19 +362,16 @@ const DynamicTable = ({ data }) => {
                   <td key={key}  className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
 
                     <input type="text"
+
                     disabled={checkboxValues && checkboxValues.some((value) =>
-                        value.index === index &&
-                        value.feature === selectedFeature &&
-                        value.targetValue === "minus" || 
-                        value.targetValue === "plus" || 
-                        value.targetValue === "standard"
-                    ) ? true : false}
+                      value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true 
+                    ) ? false : true}
 
                     placeholder='Ekstra değer'
                     className="p-2 border border-gray-300 rounded-md ml-4 text-center w-full lg:w-2/3 "
                     onChange={(e) => {
                       e.target.value.length > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id+index, checkboxValues[index].targetValue ,true, e.target.value)
+                      handleCheckboxChange(index, selectedFeature, item.id+index, checkboxValues[index].targetValue.toString() ,true, e.target.value, productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
                   </td> :                   
@@ -509,7 +514,7 @@ const DynamicTable = ({ data }) => {
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setCheckboxValues([])}>
                 Tümünü Temizle
               </button>
-              <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(productName, productType, selectedFeature, checkboxValues)}>
+              <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues)}>
                 Ürünü Kaydet
               </button>
             </div>
