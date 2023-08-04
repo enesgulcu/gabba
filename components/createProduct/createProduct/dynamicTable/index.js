@@ -120,6 +120,19 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     }
   } 
 
+  const retunExtraTargetValue = ( data, targetIndex ) => {
+    // feature == Extra olanları içinden filtrele
+    const filteredData = data.filter(item => item.feature === 'Extra');
+  
+    // targetIndex'e göre veriyi bul
+    const targetData = filteredData.find(item => item.index === targetIndex);
+  
+    // targetData varsa targetValue'yu döndür, yoksa null döndür
+    const targetValue = targetData ? targetData.targetValue : null;
+  
+    return targetValue;
+  };
+
 
   useEffect(()  => {
     getData();
@@ -372,7 +385,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                     className="p-2 border border-gray-300 rounded-md ml-4 text-center w-full lg:w-2/3 "
                     onChange={(e) => {
                       e.target.value.length > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id+index, checkboxValues[index].targetValue.toString() ,true, e.target.value, productName, productType, selectedCategoryKey, selectedCategoryValues)
+                      handleCheckboxChange(index, selectedFeature, item.id+index, retunExtraTargetValue(checkboxValues, index).toString() ,true, e.target.value, productName, productType, selectedCategoryKey, selectedCategoryValues)
                     }}
                   />
                   </td> :                   
