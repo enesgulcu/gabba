@@ -1,34 +1,5 @@
 import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
-
-// girilen verileri göndermeden önce kontrol ederiz.
-const checkData = async (createProducts) => {
-  
-  // firstValue değeri olmayan değerleri sildik.
-  const newCreateProducts = await createProducts.filter(item => item.colourType);
-  
-  //newCreateProducts içinden image ve ColourPickerEnabled key value değerlerini siliyoruz.
-  newCreateProducts.forEach((newColour, index, arr) => {
-    delete arr[index]['image'];
-    //delete arr[index]['ColourPickerEnabled'];
-  });
-
-
-  // Number gelen değerleri stringe çeviriyoruz.
-  newCreateProducts.forEach((newColour, index, arr) => {
-    arr[index]['colourType'] = newColour.colourType.toString();
-    arr[index]['colourDescription'] = newColour.colourDescription.toString();
-  });
-  
-  if(newCreateProducts.length > 0){
-
-    return newCreateProducts;
-  }
-  else{
-    return false;
-  }
-};
-
 const handler = async (req, res) => {
   
   try {
@@ -76,15 +47,6 @@ const handler = async (req, res) => {
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1";
         } 
         
-        // gelen verinin doğruluğunu kontrol ediyoruz.
-        //const checkedData = await checkData(createProducts);
-
-        
-        // if(!checkedData || checkedData.error){
-        //   throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY2";
-        // }
-
-        // kontroller yapılacak!
         const createdNewData = await createNewProduct("Products", data);
 
 
