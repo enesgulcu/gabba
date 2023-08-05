@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import { getAPI } from '@/services/fetchAPI';
 import DropDownCatagories from "@/components/createProduct/createProduct/dropDownCatagories"
 import DynamicTable from "@/components/createProduct/createProduct/dynamicTable"
-import { ToastContainer, toast } from "react-toastify";
+import LoadingScreen from '@/components/other/loading';
+import ListFeatureTable from "@/components/createProduct/createProduct/listFeatureTable"
+import { RxPlusCircled, RxListBullet, RxTriangleRight } from "react-icons/rx";
 
 
 // özellikler ve alt özelliklerin verilerini çekmek için kullanılır
@@ -26,13 +28,16 @@ const catagoriesData = {
       label: "Metaller",
       apiGetRequest: "/createProduct/metals",
     },
+
   },
 };
 
 const CreateProductComponent = () => {
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [data, setData] = useState({}); // Initialize data as an empty object
+  const [isloading, setIsloading] = useState(false);
+  const [listProductsEnabled, setListProductsEnabled] = useState(false);
 
   const getData = async (apiUrl) => {
     try {
@@ -59,8 +64,11 @@ const CreateProductComponent = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
+    
     const fetchData = async () => {
+        setIsloading(true);
       if (!selectedSubCategory) {
+        setIsloading(false);
         return;
       }
 
@@ -78,7 +86,7 @@ const CreateProductComponent = () => {
           }
         }
       }
-
+      setIsloading(false);
       setData({[selectedCategory.key]: fetchedData });
     };
 
@@ -87,30 +95,50 @@ const CreateProductComponent = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
-      <DropDownCatagories
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
+      {isloading && <LoadingScreen isloading={isloading} />}
 
-      {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 ? (
+      <div className="p-0 lg:p-2 w-full flex justify-center lg:justify-end items-center shadow-lg">
+          <button onClick={() => setListProductsEnabled(!listProductsEnabled)}
+          className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
+            ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
+          `}
+          >
+
+            {listProductsEnabled ? 
+              <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                <RxPlusCircled size={25}/>  Ürün Oluşturma Sayfasına Git <RxTriangleRight size={25}/>
+              </div> : 
+              <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+              <RxListBullet size={25}/>  Ürün Listeleme Sayfasına Git <RxTriangleRight size={25}/>
+            </div>
+            }
+          </button>
+      </div>
+
+      {
+
+        listProductsEnabled ? 
+
         <div>
-          <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
+          <ListFeatureTable/>
         </div>
-      ) : (
-        selectedCategory && <div>Yükleniyor...</div>
-      )}
+
+        : 
+
+        <div>
+          <DropDownCatagories
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
+
+          {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 && (
+            <div>
+              <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
+            </div>
+          )}
+        </div>
+      }
+        
     </>
   );
 };

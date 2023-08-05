@@ -373,7 +373,12 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                   key != "id" && key.includes("extraValue")  ? 
                                  
                   
-                  <td key={key}  className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
+                  <td key={key}  className={`
+                  ${checkboxValues && checkboxValues.some((value) =>
+                    value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true 
+                  ) ? "bg-blue-100" : " opacity-30"}
+                  p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100
+                  `}>
 
                     <input type="text"
 
@@ -441,7 +446,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
         </div>
         <div className='flex flex-col justify-center items-center'>
           <h3 className='text-xl font-semibold text-gray-700 my-2'> Ürün Tipi </h3>
-          <div className='flex flex-row gap-4'>
+          <div className='flex lg:flex-row gap-4 flex-col'>
             <div className="flex flex-col justify-center items-center ">
                 
                 {/* (Ürün Tipi Seç - yok-2 - yok-3) seçme yapısı aşağıadadır. */}
@@ -534,8 +539,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
             </div>
           </div>
           :
-          <div className='w-full flex justify-center items-center p-2 m-2'>
-            <h3 className='text-center font-bold text-red-600'>Verileri Görmeden Önce Lütfen Ürün Adını ve Ürün Tipini Giriniz.</h3>
+          <div className='w-full flex justify-center items-center p-2 '>
+            <h3 className='text-center text-red-600'>Lütfen Önce <span className='text-red-600 font-bold'>Ürün Adını</span> ve <span className='text-red-600 font-bold'>Ürün Tipini</span>  Giriniz.</h3>
           </div>
       }
     </div>
