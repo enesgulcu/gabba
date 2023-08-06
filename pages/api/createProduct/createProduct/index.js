@@ -1,6 +1,16 @@
 import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
+
+  // extra ve image verileri içi boş olanları temizlenecek.
+  const checkData = async (data) => {
+    try {
+      //####################################################### ENES BURAYA BAK!
+    } catch (error) {
+      return {error: true, message: error.message};
+    }
+  }
+
   
   try {
     if (req.method === "POST") {
@@ -46,7 +56,8 @@ const handler = async (req, res) => {
         if(!data){
           throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1SS";
         } 
-        
+
+         console.log(await checkData(data));
         const createdNewData = await createNewProduct("Products", data);
 
 

@@ -158,7 +158,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       if(response.status !== "success"){
         throw new Error("Veri çekilemedi 3");
       }
-      setProductTypes(response.data);
+      setProductTypes(response.data.createProducts);
       setIsloading(false);
   
     } catch (error) {
