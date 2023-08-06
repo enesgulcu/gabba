@@ -44,7 +44,7 @@ const handler = async (req, res) => {
 
       else if(data && processType == "post"){
         if(!data){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1";
+          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1SS";
         } 
         
         const createdNewData = await createNewProduct("Products", data);
@@ -57,20 +57,28 @@ const handler = async (req, res) => {
       }
       
       else{
-        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KGG3";
+        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KGG3SS";
       }
     }
 
 
     if(req.method === "GET"){
       const createProducts = await getAllData("Products");
-      if (!createProducts || createProducts.error) {
-        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY4";
+      const productFeatures = await getAllData("ProductFeature");
+
+      
+      if(!createProducts || createProducts.error){
+        throw createProducts;
       }
-      return res.status(200).json({ status: "success", data: createProducts, message: createProducts.message });
-     }
+      if(!productFeatures || productFeatures.error){
+        throw productFeatures;
+      }
+
+      return res.status(200).json({ status: "success", data:{createProducts, productFeatures}, message: "createProducts.message" });
+    }
 
   } catch (error) {
+
     return res.status(500).json({ status: "error", error, message: error.message  });
   }
 };

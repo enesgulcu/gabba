@@ -37,7 +37,7 @@ const CreateProductComponent = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [data, setData] = useState({}); // Initialize data as an empty object
   const [isloading, setIsloading] = useState(false);
-  const [listProductsEnabled, setListProductsEnabled] = useState(false);
+  const [listProductsEnabled, setListProductsEnabled] = useState(true);
 
   const getData = async (apiUrl) => {
     try {

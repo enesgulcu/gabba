@@ -124,6 +124,8 @@ model ProductFeature {
   targetValue  String 
   checked      Boolean
   value        String?
+  imageValue   String?
+  extraValue   String?
   product      Products   @relation(fields: [productId], references: [id]) 
   productId    String     @map("productId") @db.ObjectId
   productName  String

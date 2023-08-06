@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import ResizeImage from '@/functions/others/resizeImage';
 
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
@@ -57,9 +59,51 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     }
   ];
 
+  responseData["Image"] = [
+    {
+      id: "image",
+      imageValue1: "",
+    },
+    {
+      id: "image",
+      imageValue2: "",
+    },
+    {
+      id: "image",
+      imageValue3: "",
+    },
+    {
+      id: "image",
+      imageValue4: "",
+    },
+    {
+      id: "image",
+      imageValue5: "",
+    },
+    {
+      id: "image",
+      imageValue6: "",
+    },
+    {
+      id: "image",
+      imageValue7: "",
+    },
+    {
+      id: "image",
+      imageValue8: "",
+    },
+    {
+      id: "image",
+      imageValue9: "",
+    },
+    {
+      id: "image",
+      imageValue10: "",
+    }
+  ];
+
   const [isloading, setIsloading] = useState(false);
 
-  const [createProduct, setCreateProduct] = useState("");
   
   const [selectedFeature, setSelectedFeature] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
@@ -69,6 +113,11 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   const [productType, setProductType] = useState("");
 
   const [productName , setProductName] = useState("");
+
+  useEffect(() => {
+    console.log(checkboxValues);
+  }, [checkboxValues])
+
 
 
   const sendData = async (productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues) =>{
@@ -120,9 +169,10 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     }
   } 
 
-  const retunExtraTargetValue = ( data, targetIndex ) => {
+  // bu fonksiyon ile seçilen feature'a göre checkboxları oluşturuyoruz
+  const returnExtraTargetValue = ( data, targetIndex, itemFeature ) => {
     // feature == Extra olanları içinden filtrele
-    const filteredData = data.filter(item => item.feature === 'Extra');
+    const filteredData = data.filter(item => item.feature === itemFeature);
   
     // targetIndex'e göre veriyi bul
     const targetData = filteredData.find(item => item.index === targetIndex);
@@ -147,7 +197,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   // Seçilen checkbox değerini state'e ekleyen ana fonksiyon.
   const handleCheckboxChange = (index, feature, featureId, targetValue, checked, value, productName, productType, selectedCategoryKey, selectedCategoryValues) => {
     // Değişen checkbox değerini yeni bir nesne olarak hazırla
-
+    
     const newValue = {
       index,
       feature,
@@ -236,7 +286,10 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
 
       // Extra
       extraValue1: "Ekstra",
-      extraValue2: "Açıklama",
+
+      // Resim
+      imageValue1: "Resim",
+
 
     };
 
@@ -370,13 +423,12 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                 </td>
 
                 {Object.entries(item).map(([key, value]) => (
+
+                  // extra için tanımlama yapıldı
                   key != "id" && key.includes("extraValue")  ? 
-                                 
-                  
                   <td key={key}  className={`
                   ${checkboxValues && checkboxValues.some((value) =>
-                    value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true 
-                  ) ? "bg-blue-100" : " opacity-30"}
+                    value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true ) ? "bg-blue-100" : " opacity-30"}
                   p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100
                   `}>
 
@@ -386,14 +438,119 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                       value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true 
                     ) ? false : true}
 
+                    value={
+                      checkboxValues && checkboxValues.some((value) =>
+                      value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true && value.extraValue && value.extraValue.length > 0) ?
+                      checkboxValues.find((value) =>
+                      value.feature.toLowerCase().includes("extra") && value.index === index && value.extraValue && value.extraValue.length > 0).extraValue
+                      : ""
+                    }
+
                     placeholder='Ekstra değer'
                     className="p-2 border border-gray-300 rounded-md ml-4 text-center w-full lg:w-2/3 "
                     onChange={(e) => {
-                      e.target.value.length > 0 &&
-                      handleCheckboxChange(index, selectedFeature, item.id+index, retunExtraTargetValue(checkboxValues, index).toString() ,true, e.target.value, productName, productType, selectedCategoryKey, selectedCategoryValues)
+                      // value.feature.toLowerCase().includes("extra") && value.index === index && value.checked === true
+                      // checkboxValues içerisine yeni bir değer ekliyoruz. değer adı: "extraValue" ve değeri: e.target.value
+                      const updatedCheckboxValues = checkboxValues.map(item => {
+                        if (item.feature.toLowerCase().includes("extra") && item.index === index && item.checked === true) {
+                          return { ...item, extraValue: e.target.value };
+                        }
+                        return item;
+                      });
+                      setCheckboxValues(updatedCheckboxValues);
                     }}
                   />
-                  </td> :                   
+                  </td> : 
+
+                // image için tanımlama yapıldı
+                  key != "id" && key.includes("imageValue")  ? 
+                  <td key={key}  className={`
+                  ${checkboxValues && checkboxValues.some((value) =>
+                    value.feature.toLowerCase().includes("image") && value.index === index && value.checked === true 
+                  ) ? "bg-blue-100" : " opacity-30"}
+                  p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100
+                  `}>
+                     <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+
+                      {
+                        checkboxValues && checkboxValues.some((value) =>
+                          value.feature.toLowerCase().includes("image") && value.index === index && value.checked === true && value.imageValue && value.imageValue.length > 0) ?
+                        <div className='shadow  hover:scale-125 rounded transition-all '>    
+                        <Image width={20} height={20}  src={checkboxValues.find((value) =>
+                          value.feature.toLowerCase().includes("image") && value.index === index && value.imageValue && value.imageValue.length > 0).imageValue} alt="image" className="w-20 h-20 object-cover" />
+                        </div>
+                        :   
+                        
+                      <div className="hover:scale-105 transition-all relative border rounded-lg overflow-hidden">
+
+                        <input type="file"
+                        name={`image-${index}`}
+                        id={`image-${index}`}
+                        accept="image/*"
+                        placeholder='Resim Ekle'
+                        disabled={checkboxValues && checkboxValues.some((value) =>
+                          value.feature.toLowerCase().includes("image") && value.index === index && value.checked === true 
+                        ) ? false : true}
+
+                        className="opacity-0 cursor-pointer w-28 h-10"
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          const resizedImageBase64 = await ResizeImage(file, 400, 400);
+                          // value.feature.toLowerCase().includes("image") && value.index === index && value.checked === true
+                          // checkboxValues içerisine yeni bir değer ekliyoruz. değer adı: "imageValue" ve değeri: e.target.value
+                          const updatedCheckboxValues = checkboxValues.map(item => {
+                            if (item.feature.toLowerCase().includes("image") && item.index === index && item.checked === true) {
+                              return { ...item, imageValue: resizedImageBase64 };
+                            }
+                            return item;
+                          });
+                          setCheckboxValues(updatedCheckboxValues);
+                        }}
+                        />
+                        <label
+                          htmlFor={`image-${index}`}
+                          className={checkboxValues && checkboxValues.some((value) =>
+                            value.feature.toLowerCase().includes("image") && value.index === index && value.imageValue && value.imageValue.length > 0) ? 
+                            "absolute inset-0 text-center p-2  bg-purple-600 text-white cursor-pointer transition  whitespace-nowrap" 
+                            : 
+                            "absolute inset-0 text-center p-2  bg-blue-600 text-white cursor-pointer transition whitespace-nowrap"
+                          }
+
+                          > {checkboxValues && checkboxValues.some((value) =>
+                            value.feature.toLowerCase().includes("image") && value.index === index && value.imageValue && value.imageValue.length > 0) ? 
+                             "Resim Seçildi" : "Resim Seç"}
+                        </label> 
+                      </div>
+                      }
+                    {checkboxValues && checkboxValues.some((value) =>
+                      value.feature.toLowerCase().includes("image") && value.index === index && value.imageValue && value.imageValue.length > 0) && 
+                      <div className=' hover:scale-125 transition-all hover:rotate-6'>
+                        <button 
+                          className=''
+                          
+                          onClick={(e) => {
+                            // checkboxValues içerisinde featureId si image olan ve indexi bu satırın indexi olan değerin imageValue değerini sıfırlıyoruz.
+                            const updatedCheckboxValues = checkboxValues.map(item => {
+                              if (item.feature.toLowerCase().includes("image") && item.index === index) {
+                                return { ...item, imageValue: "" };
+                              }
+                              return item;
+                            });
+                            setCheckboxValues(updatedCheckboxValues);
+
+                          }}
+                        >
+                          <IoClose/>
+                          </button>
+                      </div> 
+                      }
+                      
+                  </div>
+                  
+                  </td> :
+                         
+                    // colourHex için tanımlama yapıldı
                   key != "id" &&
                   <td key={key} className="p-3 border-t border-gray-300 border-l border-r text-center hover:bg-blue-100">
                     {key === "colourHex" ? (
@@ -402,10 +559,12 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                       >{renderCell(key, value)}</div>
                       )
 
+                      // normal değerler için tanımlama yapıldı
                       : renderCell(key, value)
                     }
                   </td>
                 ))}
+
               </tr>
             ))}
           </tbody>
@@ -461,7 +620,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                   
                   <option value="">Ürün Tipi Seç</option>
                   {
-                    productTypes && productTypes.map((item, index) => (
+                    productTypes && productTypes.length > 0 && productTypes.map((item, index) => (
                     // productType içi boş olanları eklemiyoruz.
                     item.productType != "" && item.productType &&
 
