@@ -38,6 +38,8 @@ const CreateProductComponent = () => {
   const [isloading, setIsloading] = useState(false);
   const [listProductsEnabled, setListProductsEnabled] = useState(true);
 
+  
+
   const getData = async (apiUrl) => {
     try {
       const response = await getAPI(apiUrl);
@@ -117,7 +119,6 @@ const CreateProductComponent = () => {
       {
 
         listProductsEnabled ? 
-
         <div>
           <ListFeatureTable/>
         </div>
