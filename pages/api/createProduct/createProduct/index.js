@@ -5,37 +5,67 @@ const handler = async (req, res) => {
   // extra ve image verileri içi boş olanları temizlenecek.
   const checkData = async (data) => {
     try {
-      //####################################################### ENES BURAYA BAK!
+      if (!data || typeof data !== 'object') {
+        throw new Error("Veri eksik veya geçersiz.");
+      }
+  
+      // extraValue ve imageValue boş olanları temizliyoruz. ################## (1 start) ##################
+      if (!data.productFeatures || !Array.isArray(data.productFeatures)) {
+        throw new Error("productFeatures dizi olarak belirtilmemiş.");
+      }
+  
+      const processedFeatures = data.productFeatures.filter(item => {
+        if (item.feature === 'Extra' && (!item.extraValue || item.extraValue.trim() === '')) {
+          return false;
+        }
+        if (item.feature === 'Image' && (!item.imageValue || item.imageValue.trim() === '')) {
+          return false;
+        }
+
+        return true;
+      });
+  
+      const processedData = {
+        productName: data.productName,
+        productType: data.productType,
+        selectedCategoryKey: data.selectedCategoryKey,
+        selectedCategoryValues: data.selectedCategoryValues,
+        productFeatures: processedFeatures
+      };
+
+      return processedData;
+      // extraValue ve imageValue boş olanları temizliyoruz. ################## (1 end) ##################
+
     } catch (error) {
-      return {error: true, message: error.message};
+      return { error: true, message: error.message };
     }
   }
 
   
   try {
     if (req.method === "POST") {
-      const {data, processType} = req.body;
+      
+      const {data, processType} = await req.body;
+      
+      const checkedData = await checkData(data);
+      console.log(checkedData);
+
+      if(!checkedData && checkedData.error){
+        throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
+      }
 
       //silme işlemi için gelen veriyi sileriz.
-      if(data && processType == "delete"){
-         
-        const deleteData = await deleteDataByAny("Products", {id: data.id});
+      else if(processType == "delete"){
+
+        const deleteData = await deleteDataByAny("Products", {id: checkedData.id});
         if(!deleteData || deleteData.error){
           throw deleteData;
         }
-        return res.status(200).json({ status: "success", data:deleteData, message: deleteData.message });
+        return res.status(200).json({ status: "success", data:checkedData, message: deleteData.message });
       }
 
-      else if(data && processType == "update"){
+      else if(processType == "update"){        
 
-        // veri doğruluğunu test ediyoruz
-        const checkedData = await checkData(data.createProducts);
-       
-
-        if(!checkedData && checkedData.error){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
-        }
-        
         // id değerini silip yeni veriyi oluşturuyoruz.
         const NewDatawitoutId = checkedData.map(item => {
           const {id, ...newData} = item;
@@ -53,18 +83,14 @@ const handler = async (req, res) => {
       }
 
       else if(data && processType == "post"){
-        if(!data){
-          throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KY1SS";
-        } 
 
-         console.log(await checkData(data));
-        const createdNewData = await createNewProduct("Products", data);
+        const createProducts = await createNewProduct("Products", checkedData);
 
 
-        if(!createdNewData || createdNewData.error){
-          throw createdNewData; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
+        if(!createProducts || createProducts.error){
+          throw createProducts; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";
         }
-        return res.status(200).json({ status: "success", data:"checkedData", message: "createProducts.message" });
+        return res.status(200).json({ status: "success", data:checkedData, message: createProducts.message });
       }
       
       else{
