@@ -47,8 +47,8 @@ const handler = async (req, res) => {
       
       const {data, processType} = await req.body;
       
+      // gelen verileri kontrol fonksiyonunua gönderiyoruz.
       const checkedData = await checkData(data);
-      console.log(checkedData);
 
       if(!checkedData && checkedData.error){
         throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
@@ -64,6 +64,7 @@ const handler = async (req, res) => {
         return res.status(200).json({ status: "success", data:checkedData, message: deleteData.message });
       }
 
+      // güncelleme işlemi için gelen veriyi güncelleriz.
       else if(processType == "update"){        
 
         // id değerini silip yeni veriyi oluşturuyoruz.
@@ -82,6 +83,7 @@ const handler = async (req, res) => {
         return res.status(200).json({ status: "success", data:updateData, message: updateData.message });
       }
 
+      // yeni veri oluşturuyoruz.
       else if(data && processType == "post"){
 
         const createProducts = await createNewProduct("Products", checkedData);

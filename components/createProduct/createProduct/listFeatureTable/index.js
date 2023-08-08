@@ -29,7 +29,6 @@ const ListFeatureTable = () => {
     if(!data){
       return;
     }
-    console.log(data);
   }, [data])
   
   // gelen verileri tablo haline getiriyoruz ve listeliyoruz.

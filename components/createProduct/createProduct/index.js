@@ -27,8 +27,7 @@ const catagoriesData = {
     metals: {
       label: "Metaller",
       apiGetRequest: "/createProduct/metals",
-    },
-
+    }
   },
 };
 

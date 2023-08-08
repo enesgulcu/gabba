@@ -14,7 +14,7 @@ import {postAPI, getAPI} from '@/services/fetchAPI';
 const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => {
   const objectKey = Object.keys(data)[0];
   const responseData = data[objectKey];
-
+  
   //responseData içerisine yeni bir başlık ekle
   responseData["Extra"] = [
     {
@@ -102,6 +102,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     }
   ];
 
+
   const [isloading, setIsloading] = useState(false);
 
   
@@ -114,9 +115,9 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
 
   const [productName , setProductName] = useState("");
 
-  useEffect(() => {
-    console.log(checkboxValues);
-  }, [checkboxValues])
+  // useEffect(() => {
+  //   console.log(checkboxValues);
+  // }, [checkboxValues])
 
 
 
@@ -134,7 +135,6 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       
       const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
       if(!responseData || responseData.status !== "success"){
-          console.log(responseData.error)
           throw new Error("Veri eklenemedi");
       }
        setIsloading(false);
@@ -142,7 +142,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   
     } catch (error) {
          toast.error(error.message);
-        console.log(error);
+
     }
   }
   
@@ -682,7 +682,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                   ${selectedFeature === featureItem ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}
                   ${ featureItem == "Ölçüler" && "order-first ml-0"}`}
                 >
-                  {featureItem}
+                  
+                  {featureItem == "Extra" ? "Ekstra" : featureItem == "Image" ? "Resim" : featureItem}
                 </li>
               ))}
 
