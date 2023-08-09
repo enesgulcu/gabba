@@ -8,7 +8,7 @@ import ListFeatureTable from "@/components/createProduct/createProduct/listFeatu
 import { RxPlusCircled, RxListBullet, RxTriangleRight } from "react-icons/rx";
 
 
-// özellikler ve alt özelliklerin verilerini çekmek için kullanılır
+// özellikler ve alt özelliklerin verilerini çekmek için kullanılır yeni bir yapı eklenirse buraya eklenmelidir.
 const catagoriesData = {
   furniture: {
     label: "Mobilya",
@@ -37,6 +37,11 @@ const CreateProductComponent = () => {
   const [data, setData] = useState({}); // Initialize data as an empty object
   const [isloading, setIsloading] = useState(false);
   const [listProductsEnabled, setListProductsEnabled] = useState(true);
+
+  useEffect(() => {
+    console.log(selectedSubCategory);
+  }, [selectedSubCategory])
+  
 
   
 
@@ -120,7 +125,7 @@ const CreateProductComponent = () => {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable/>
+          <ListFeatureTable catagoriesData={catagoriesData}/>
         </div>
 
         : 
