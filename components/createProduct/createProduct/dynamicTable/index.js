@@ -123,7 +123,36 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
 
   const sendData = async (productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues) =>{
     setIsloading(true);
+
+    // her ürün için uniq olarak bir ürün kodu oluşturuyoruz #########################
+    //################################################################################
+
+    // gün - ay - yıl - saat olarak türkiye zamanını al ve her bir veriyi ayrı değişkenlere string olarak kaydet. yılın sadece son 2 rakamını al.
+    const date = new Date().toLocaleString("tr-TR", {timeZone: "Europe/Istanbul"});
+    const day = date.split(" ")[0].split(".")[0];
+    const month = date.split(" ")[0].split(".")[1];
+    const year = date.split(" ")[0].split(".")[2].slice(2,4);
+    const hour = date.split(" ")[1].split(":")[0];
+    const minute = date.split(" ")[1].split(":")[1];
+
+    // productName değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
+    const productNameFirst3Character = productName.slice(0,3).toUpperCase();
+    const productNameLast3Character = productName.slice(-3).toUpperCase();
+
+    // productType değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
+    const productTypeforCode = productType.slice(0,2).toUpperCase() + productType.slice(-2).toUpperCase();
+
+    // selectedCategoryKey değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
+    const selectedCategoryKeyforCode = selectedCategoryKey.slice(0,2).toUpperCase() + selectedCategoryKey.slice(-2).toUpperCase();
+
+    // ürün kodunu oluştur
+    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + hour + productNameLast3Character + minute).trim();
+    
+    //################################################################################
+    //################################################################################
+
     const data = {
+      productCode: productCode,
       productName: productName,
       productType: productType,
       selectedCategoryKey: selectedCategoryKey,

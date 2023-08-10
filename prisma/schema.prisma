@@ -107,6 +107,7 @@ model Colors {
 
 model Products {
   id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  productCode           String
   productName           String
   productType           String
   selectedCategoryKey   String

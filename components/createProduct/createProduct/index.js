@@ -8,8 +8,8 @@ import ListFeatureTable from "@/components/createProduct/createProduct/listFeatu
 import { RxPlusCircled, RxListBullet, RxTriangleRight } from "react-icons/rx";
 
 
-// özellikler ve alt özelliklerin verilerini çekmek için kullanılır yeni bir yapı eklenirse buraya eklenmelidir.
-const catagoriesData = {
+// özellikler ve alt özelliklerin verilerini çekmek için kullanılır yeni bir yapı eklenirse buraya eklenmelidir. enes dikkat !
+const categoriesData = {
   furniture: {
     label: "Mobilya",
     colors: {
@@ -34,13 +34,13 @@ const catagoriesData = {
 const CreateProductComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [data, setData] = useState({}); // Initialize data as an empty object
+  const [data, setData] = useState({});
   const [isloading, setIsloading] = useState(false);
   const [listProductsEnabled, setListProductsEnabled] = useState(true);
 
-  useEffect(() => {
-    console.log(selectedSubCategory);
-  }, [selectedSubCategory])
+  // useEffect(() => {
+  //   console.log(selectedSubCategory);
+  // }, [selectedSubCategory])
   
 
   
@@ -66,7 +66,7 @@ const CreateProductComponent = () => {
     }
     
     // Burada seçilen Ana kategoriye göre alt kategorileri seçin
-    setSelectedSubCategory(catagoriesData[selectedCategory.key]);
+    setSelectedSubCategory(categoriesData[selectedCategory.key]);
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const CreateProductComponent = () => {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable catagoriesData={catagoriesData}/>
+          <ListFeatureTable categoriesData={categoriesData}/>
         </div>
 
         : 

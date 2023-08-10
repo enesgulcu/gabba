@@ -26,6 +26,7 @@ const handler = async (req, res) => {
       });
   
       const processedData = {
+        productCode: data.productCode,
         productName: data.productName,
         productType: data.productType,
         selectedCategoryKey: data.selectedCategoryKey,

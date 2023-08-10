@@ -1,3 +1,4 @@
+"use client"
 import {useState, useEffect} from 'react'
 import { getAPI } from '@/services/fetchAPI';
 import Image from 'next/image';
@@ -5,15 +6,36 @@ import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "rea
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import LoadingScreen from '@/components/other/loading';
 
-const ListFeatureTable = ({catagoriesData}) => {
+// (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
+// 
+
+const ListFeatureTable = ({categoriesData}) => {
+
+  // categoriesData değerini bir state içerisine atıyoruz.
+  const [catagories, setCatagories] = useState(categoriesData);
 
   const [isloading, setIsloading] = useState(false);
   const [data, setData] = useState([]); // tüm ürünler ve tüm özellikler 
+  const [selectedProductFeatures, setSelectedProductFeatures] = useState([]); // seçilen ürünün özellikleri tutar
+  const [selectedCategory, setSelectedCategory] = useState("");  // seçilen kategori -> furniture
+  const [allFeatureData , setAllFeatureData] = useState([]); // ürün kategorisinin tüm özellikleri (hepsi)
+  const [productFeatures, setProductFeatures] = useState([]); // seçilen ürünün kendi özellikleri tam olarak
+
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
-  const [allFeatureData , setAllFeatureData] = useState([]); // ürün kategorisinin tüm özellikleri (hepsi)
-  const [selectedCategory, setSelectedCategory] = useState("");  // seçilen kategori -> furniture
-  const [productFeatures, setProductFeatures] = useState([]); // seçilen ürünün kendi özellikleri
+
+  const [selectedFeature , setSelectedFeature] = useState(""); // seçilen özellik
+  
+
+  useEffect(() => {
+    console.log(selectedFeature);
+  }, [selectedFeature])
+
+  useEffect(() => {
+      if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
+        setAllFeatureData([]);
+      }
+  }, [catagories, selectedCategory, selectedProduct])
 
   useEffect(() => {
     getData("/createProduct/createProduct");
@@ -25,8 +47,7 @@ const ListFeatureTable = ({catagoriesData}) => {
         setIsloading(true);
         const response = await getAPI(url || '/createProduct/createProduct');
         if(response.status !== "success"){
-            
-            throw new Error("Veri çekilemedi 1");
+          throw new Error("Veri çekilemedi 1");
         }
         
         setData(response.data);
@@ -38,30 +59,46 @@ const ListFeatureTable = ({catagoriesData}) => {
     }
 }
 
-// ürünlerden özellikleri gör butonuna bastıktan sonra çalışacak fonksiyon. (2)
+
+// seçilen ürünün özelliklerini data içinden getir ve selectedProductFeatures içine atar. (2)
+// seçilen ürünün kategorisini selectedCategory içine atar. (2)
 const getProductFeatures = async (data, productId) => {
   try {
+    setIsloading(true);
     if(!data || !productId){
+      setIsloading(false);
       return;
     }
-    setIsloading(true);
-    const selectedFeatures = [];
-    data.productFeatures.map((item, index) => {
-      if(item.productId === productId){
-        //id eşleşmesi olan gelen tüm item verilerini selectedProductFeatures state'ine at.
-        selectedFeatures.push(item);
-      }
-    })
 
-    if(selectedFeatures.length > 0 && selectedFeatures){
-      if(selectedFeatures[0].selectedCategoryKey === selectedCategory){
-        // eğer seçilen kategori daha önce seçilmişse, verileri tekrar çekme.
+    // ########################################################################
+    // seçilen ürünün özelliklerini selectedProductFeatures state'ine at. (2.1)
+
+      const selectedProductFeatures = [];
+
+      await data.productFeatures.map((item, index) => {
+        if(item.productId === productId){
+          //id eşleşmesi olan gelen tüm item verilerini selectedProductFeatures state'ine at.
+          selectedProductFeatures.push(item);
+        }
+      })
+
+      await setSelectedProductFeatures(selectedProductFeatures);
+
+    // seçilen ürünün özelliklerini selectedProductFeatures state'ine at. (2.1)
+    // ########################################################################
+
+    // ########################################################################
+    // seçilen ürünün kategorisini selectedCategory state'ine at. (2.2)
+
+      
+        await setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
+        await fetchData(selectedProductFeatures[0].selectedCategoryKey, productId);
         setIsloading(false);
-        return;
-      }
-      setSelectedCategory(selectedFeatures[0].selectedCategoryKey);
-      fetchData(catagoriesData, selectedFeatures);
-    }
+      
+
+    // seçilen ürünün kategorisini selectedCategory state'ine at. (2.2)
+    // ########################################################################
+
   }
   catch (error) {
     console.log(error);
@@ -69,52 +106,80 @@ const getProductFeatures = async (data, productId) => {
 }
 
  // seçilen kategoriye göre ürün özelliklerini allFeatureData state'ine at. !!! (tek amacı bu) (3)
- const fetchData = async (catagoriesData, selectedProductFeatures)  => {
+ const fetchData = async (productCategory, productId)  => {
+
   setIsloading(true);
   try {
-    if(!catagoriesData || !selectedProductFeatures){
-      return;
+
+    if(!productCategory){
+      setIsloading(false);
+      throw new Error("M2GF59KGV");
     }
 
-    // categoriKeys = ['furniture', 'electronic', 'accessories']
-    const categoriKeys = Object.keys(catagoriesData);
+    // ########################################################################
+    // categories'lerin ürününki ile eşleşen features dewğerlerini ver itabanından getiririz.(3.1)
 
-    // selectedProductFeatures[0].selectedCategoryKey = furniture
-    const featureCategoriKeys = await selectedProductFeatures[0]?.selectedCategoryKey;
+    if(allFeatureData.length > 0 && allFeatureData){
+      await matchedFeatureOfProduct(productId, allFeatureData);
+    }
 
-    // featureCategoriKeys değerini categoriKeys içinde ara ve eşleşen objeyi döndür.
-    const matchedCategories = categoriKeys.filter((item) => item === featureCategoriKeys).map((item) => catagoriesData[item]);
-    const matchedCategori = matchedCategories[0];
-
-    const keys = Object.keys(matchedCategori);
-    const results = [];
-
-    for (const key of keys) {
-      if (key !== 'label') {
-        // veri tabanından eşleşen kategorinin apiGetRequest değerini al ve verileri çek.
-        const response = await getAPI(matchedCategori[key].apiGetRequest);
-
-        if(response.status !== "success" || !response.data){
-          throw new Error("Veri çekilemedi 1");
+    else{
+      const results = [];
+      const matchedCategories = catagories[productCategory];
+      
+      //matchedCategories içerisindeki key değeri label hariç olan tüm değerleri gez. içindeki objenin apiGetRequest değerini al ve verileri çek.
+      for (const key in matchedCategories) {
+        if (Object.hasOwnProperty.call(matchedCategories, key)) {
+          const element = matchedCategories[key];
+          if(key !== "label"){
+            const response = await getAPI(element.apiGetRequest);
+            if(response.status !== "success"){
+              throw new Error("Veri çekilemedi 2");
+            }
+            results.push(response.data);
+          }
         }
-
-        // veritabanından çekilen verileri results arrayine atıyoruz.
-        results.push({
-          label: matchedCategori[key].label,
-          data: response.data,
-        })
       }
+      await matchedFeatureOfProduct(productId, results);
+      await setAllFeatureData(results);
     }
 
-    // tüm verileri allFeatureData state'ine at.
-    await setAllFeatureData(results);
     setIsloading(false);
+
+    // categories'lerin ürününki ile eşleşen features dewğerlerini ver itabanından getiririz.(3.1)
+    // ########################################################################
 
   } catch (error) {
     setIsloading(false);
     console.log(error);
   }
 }
+
+
+// seçilen ürünün özelliklerini en detaylı şekilde state e atar. (4)
+const matchedFeatureOfProduct = async (productId, results) => {
+
+  const matchedFeature = data.productFeatures.filter((item) => item.productId === productId);
+  const featureResults = [];
+
+
+  await matchedFeature.forEach((item) => {
+    if (item.feature.toLowerCase().includes("extra") || item.feature.toLowerCase().includes("image")) {
+      featureResults.push(item);
+    }
+    results.forEach((item2) => {
+      item2.forEach((item3) => {
+        if (item.featureId === item3.id) {
+          featureResults.push(item3);
+        }
+      });
+    });
+  });
+
+   const result = [{ featureResults: featureResults, matchedFeature: matchedFeature }];
+  await setProductFeatures(result);
+  setIsloading(false);
+};
 
 
   const renderHead = () => {
@@ -172,7 +237,7 @@ const renderData = () => {
               featureItem.feature.includes("Image" || "image") &&
 
               <div key={index} className='lg:p-2 p-0 m-1 lg:m-2'>
-                <Image width={50} height={50} src={featureItem.imageValue} alt={`image${index}`} 
+                <Image width={100} height={100} src={featureItem.imageValue} alt={`image${index}`} 
                 onClick={() => setSelectedImage(featureItem.imageValue)}
                 className='hover:cursor-pointer hover:scale-125 transition-all'
                 />
@@ -184,16 +249,17 @@ const renderData = () => {
 
         {/* ürün özellikleri */}
         <td className="text-center p-2 border-r border-b border-black ">
+
           <button 
-          onClick={() => selectedProduct  && selectedProduct.id === prodcutItem.id ? setSelectedProduct(null) : setSelectedProduct(prodcutItem)}
+          onClick={() => productFeatures && productFeatures.length > 0 && selectedProduct && selectedProduct.id === prodcutItem.id ? setSelectedProduct(null) : setSelectedProduct(prodcutItem)}
           
-          type='button' className={`${selectedProduct && selectedProduct.id === prodcutItem.id ? "bg-red-600" : "bg-blue-600"} rounded p-2 hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow`} >
+          type='button' className={`${productFeatures && productFeatures.length > 0 && selectedProduct && selectedProduct.id === prodcutItem.id ? "bg-red-600" : "bg-blue-600"} rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow`} >
             {
-              selectedProduct && selectedProduct.id === prodcutItem.id ? 
-              <div className='flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEyeSlash size={20}/><span className="hidden lg:block">Özellikleri Gizle</span></div> : 
+              productFeatures && productFeatures.length > 0 && selectedProduct && selectedProduct.id === prodcutItem.id ? 
+              <div className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEyeSlash size={20}/><span className="hidden lg:block">Özellikleri Gizle</span></div> : 
               <div 
               onClick={() => getProductFeatures(data, prodcutItem.id)}
-              className='flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEye size={20}/><span className="hidden lg:block">Özellikleri Gör</span></div>
+              className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEye size={20}/><span className="hidden lg:block">Özellikleri Gör</span></div>
             }
             
             </button>
@@ -208,10 +274,27 @@ const renderData = () => {
       {isloading && <LoadingScreen isloading={isloading} />}
 
       {/* Ürün Özelliklerini Listeleme */}
-      {
-        allFeatureData && allFeatureData.length > 0 &&
-        <div className='w-full'>
+      {productFeatures && productFeatures.length > 0 &&
+        <div className="w-full absolute bg-black bg-opacity-90 z-50 min-h-screen">
           
+          <div className=' m-2 flex flex-col flex-wrap justify-center items-center gap-2 text-xl'>
+            <div className='bg-red-600 rounded-full hover:cursor-pointer hover:scale-110 transition-all'
+              onClick={() =>{setProductFeatures([]); setSelectedProduct(null)}}
+              >
+                <IoCloseOutline size={50} color='white' />
+              </div>
+              <div className="p-2 m-2 flex flex-row flex-wrap justify-center items-start gap-2 text-xl">
+              {
+                [...new Set(productFeatures[0].matchedFeature.map(item => item.feature))].map((feature, index) => (
+                  <div key={index} className="p-2 bg-blue-50 hover:cursor-pointer hover:scale-110 transition-all hover:bg-blue-600 hover:text-white rounded"
+                  onClick={()=>setSelectedFeature(feature)}
+                  >                    
+                    {feature.toLowerCase().includes("image") ? "Resimler" : feature.toLowerCase().includes("extra") ? "Ekstralar" : feature}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
         </div>
       }
       
@@ -227,14 +310,14 @@ const renderData = () => {
                 <IoCloseOutline size={50} color='white' />
               </div>
             
-            <Image width={50} height={50} src={selectedImage} alt={`image`} />
+            <Image width={750} height={750} src={selectedImage} alt={`image`} />
           </div>
         </div>
       }
 
 
       {/* ürünleri listelediğimiz tablomuz */}
-      <table className={`${selectedImage && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
+      <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           {renderHead()}{" "}
         </thead>
