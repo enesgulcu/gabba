@@ -24,12 +24,13 @@ const ListFeatureTable = ({categoriesData}) => {
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
 
-  const [selectedFeature , setSelectedFeature] = useState(""); // seçilen özellik
+  const [selectedFeature , setSelectedFeature] = useState(""); // Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image başlıkları
   
+  const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
 
-  useEffect(() => {
-    console.log(selectedFeature);
-  }, [selectedFeature])
+  // useEffect(() => {
+  //   console.log(readyForListFeature);
+  // }, [readyForListFeature])
 
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
@@ -182,6 +183,37 @@ const matchedFeatureOfProduct = async (productId, results) => {
 };
 
 
+// seçilen ürünün özelliklerini en detaylı şekilde state e atar. (5)
+const prepareProductList = async (feature) => {
+  
+  await setSelectedFeature(feature);
+  
+  //feature ->  Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
+  const readyForListData = [];
+  //console.log("productFeatures :", productFeatures.matchedFeature);
+  await productFeatures.forEach((item) => {
+    item.matchedFeature.forEach((item2) => { // item2.featureId -> özelliğin gerçek id' değeri
+      if(feature === item2.feature){ // [ productFeatures.matchedFeature.item2.feature ] -> Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
+        
+        if(feature === "Image" || feature ==="Extra"){ // extra ve image değerleri farkl ıbir yerden geliyor o yüzden onları ayrı aldık.
+          readyForListData.push(item2);
+        }
+        
+        else{
+          item.featureResults.forEach((item3) => { // item3.id -> özelliğin gerçek id' değeri
+            if(item2.featureId === item3.id){
+              readyForListData.push(item3);
+            }
+          })
+        }
+      }
+    });
+  });
+
+  setReadyForListFeature(readyForListData);
+}
+
+
   const renderHead = () => {
 
     const tableHeaders = ["sıra", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri"]
@@ -268,6 +300,43 @@ const renderData = () => {
     )))
 }
 
+const renderFeaturesTable = () => {
+// readyForListFeature içerisindeki verileri burada listeleriz.
+
+  const excludedKeys = ['id', 'createdAt', 'updatedAt'];
+    const keyMappings = {
+      "firstValue": "Birinci Değer",
+      "secondValue": "İkinci Değer",
+      "unit": "Birim",
+      // Diğer anahtarları buraya ekleyebilirsiniz...
+    };
+    // Object.keys(readyForListFeature[0]).filter((key) => !excludedKeys.includes(key));
+    const filteredKeys = readyForListFeature.map((item) => Object.keys(item).filter((key) => !excludedKeys.includes(key)));
+    console.log(filteredKeys);
+ 
+  return (
+    <table>
+      <thead>
+        <tr>
+          {readyForListFeature && filteredKeys.map((key, index) => (
+            <th key={index}>{keyMappings[key] || key}</th>
+          ))}
+        </tr>
+      </thead>
+
+
+      <tbody>
+        
+      </tbody>
+    </table>
+  )
+
+}
+
+
+
+
+
   // gelen verileri tablo haline getiriyoruz ve listeliyoruz.
   return (
     <div className='w-full'>
@@ -277,22 +346,35 @@ const renderData = () => {
       {productFeatures && productFeatures.length > 0 &&
         <div className="w-full absolute bg-black bg-opacity-90 z-50 min-h-screen">
           
-          <div className=' m-2 flex flex-col flex-wrap justify-center items-center gap-2 text-xl'>
+          <div className='mt-4 flex flex-col flex-wrap justify-center items-center gap-2 text-xl'>
             <div className='bg-red-600 rounded-full hover:cursor-pointer hover:scale-110 transition-all'
-              onClick={() =>{setProductFeatures([]); setSelectedProduct(null)}}
+              onClick={() =>{setProductFeatures([]); setSelectedProduct(null) ; setSelectedFeature(null) ; readyForListFeature && readyForListFeature.length > 0 && setReadyForListFeature([])}}
               >
                 <IoCloseOutline size={50} color='white' />
               </div>
-              <div className="p-2 m-2 flex flex-row flex-wrap justify-center items-start gap-2 text-xl">
+              <div className="p-2 flex flex-row flex-wrap justify-center items-start gap-4 text-xl w-full">
               {
                 [...new Set(productFeatures[0].matchedFeature.map(item => item.feature))].map((feature, index) => (
-                  <div key={index} className="p-2 bg-blue-50 hover:cursor-pointer hover:scale-110 transition-all hover:bg-blue-600 hover:text-white rounded"
-                  onClick={()=>setSelectedFeature(feature)}
-                  >                    
+                  <div key={index} className={`p-2 rounded bg-blue-50 hover:cursor-pointer hover:scale-110 transition-all hover:bg-blue-600 hover:text-white
+                   ${selectedFeature === feature ? "bg-blue-600 text-white" : ""}`}
+                  onClick={() => prepareProductList(feature)}
+                  >                  
                     {feature.toLowerCase().includes("image") ? "Resimler" : feature.toLowerCase().includes("extra") ? "Ekstralar" : feature}
                   </div>
                 ))
               }
+              {
+                
+                readyForListFeature && readyForListFeature.length > 0 &&
+                <div className="w-full p-2 bg-white">
+                  {
+                    renderFeaturesTable()
+                  }
+
+                </div>
+
+              }
+              
             </div>
           </div>
         </div>
