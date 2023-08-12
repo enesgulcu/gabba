@@ -316,7 +316,7 @@ const renderFeaturesTable = () => {
     console.log(filteredKeys);
  
   return (
-    <div className="w-full overflow-x-scroll overflow-y-visible">
+    <div className="w-full overflow-auto ">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           <tr className="bg-blue-600 w-full">
@@ -354,9 +354,6 @@ const renderFeaturesTable = () => {
               ))}
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
-                  <button onClick={() => handleEditFeature(item)} className='bg-yellow-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
-                    <FaEdit size={20} />
-                  </button>
                   <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                     <FaTrash size={20} />
                   </button>
