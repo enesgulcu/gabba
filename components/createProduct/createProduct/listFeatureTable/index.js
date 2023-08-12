@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react'
 import { getAPI } from '@/services/fetchAPI';
 import Image from 'next/image';
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import LoadingScreen from '@/components/other/loading';
 
@@ -303,7 +304,7 @@ const renderData = () => {
 const renderFeaturesTable = () => {
 // readyForListFeature içerisindeki verileri burada listeleriz.
 
-  const excludedKeys = ['id', 'createdAt', 'updatedAt'];
+  const excludedKeys = ["id", "oneRangeEnabled", "twoRangeEnabled", "manuelDefined", "translateEnabled", "createdAt", "updatedAt"];
     const keyMappings = {
       "firstValue": "Birinci Değer",
       "secondValue": "İkinci Değer",
@@ -315,20 +316,59 @@ const renderFeaturesTable = () => {
     console.log(filteredKeys);
  
   return (
-    <table>
-      <thead>
-        <tr>
-          {readyForListFeature && filteredKeys.map((key, index) => (
-            <th key={index}>{keyMappings[key] || key}</th>
+    <div className="w-full overflow-x-scroll overflow-y-visible">
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
+          <tr className="bg-blue-600 w-full">
+
+            <th className=" text-center py-4 border-l border-white  p-2 bg-gray-700 text-white">Sıra</th>
+
+            {
+              filteredKeys[0].map((key, index) => (
+                <th key={index} scope="col" className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2">
+                  {keyMappings[key] && keyMappings[key].length > 0 ? keyMappings[key] : key}
+                </th>
+                
+              ))
+            }
+
+            <th className=" text-center py-4 border-l border-white  p-2 bg-gray-700 text-white">İşlemler</th>
+          </tr>
+        </thead>
+
+
+        <tbody>
+          {readyForListFeature && readyForListFeature.map((item, index) => (
+            <tr key={index} className="bg-white border-b border-gray-200">
+              <td className="text-center py-2 border-r border-b border-black">
+                <div>{index + 1}</div>
+              </td>
+
+              {filteredKeys[0].map((key, index) => (
+                console.log(key),
+                <td key={index} className="text-center py-2 border-r border-b border-black">
+                  <div>
+                    {item[key]}
+                  </div>
+                </td>
+              ))}
+              <td className="text-center py-2 border-r border-b border-black">
+                <div className='flex flex-row justify-center items-center gap-2'>
+                  <button onClick={() => handleEditFeature(item)} className='bg-yellow-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                    <FaEdit size={20} />
+                  </button>
+                  <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                    <FaTrash size={20} />
+                  </button>
+                </div>
+              </td>
+            </tr>
           ))}
-        </tr>
-      </thead>
 
-
-      <tbody>
-        
-      </tbody>
-    </table>
+          
+        </tbody>
+      </table>
+    </div>
   )
 
 }
@@ -366,7 +406,7 @@ const renderFeaturesTable = () => {
               {
                 
                 readyForListFeature && readyForListFeature.length > 0 &&
-                <div className="w-full p-2 bg-white">
+                <div className="w-full bg-white">
                   {
                     renderFeaturesTable()
                   }
