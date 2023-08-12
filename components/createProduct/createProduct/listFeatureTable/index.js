@@ -304,16 +304,35 @@ const renderData = () => {
 const renderFeaturesTable = () => {
 // readyForListFeature içerisindeki verileri burada listeleriz.
 
-  const excludedKeys = ["id", "oneRangeEnabled", "twoRangeEnabled", "manuelDefined", "translateEnabled", "createdAt", "updatedAt"];
+  const excludedKeys = ["id", "oneRangeEnabled", "twoRangeEnabled", "manuelDefined", "translateEnabled", "createdAt", "updatedAt","colourPickerEnabled","addSwatchEnabled",
+  "index","feature","featureId","checked","productId","productName", "productType","selectedCategoryKey","selectedCategoryValues","targetValue","value"];
     const keyMappings = {
       "firstValue": "Birinci Değer",
       "secondValue": "İkinci Değer",
-      "unit": "Birim",
+      "unit": "Ölçü Tipi",
+
+      "colourType": "Renk",
+      "colourDescription": "Renk Açıklaması",
+      "colourHex": "Renk Kodu",
+
+      "fabricType": "Kumaş Türü",
+      "fabricDescription": "Kumaş Açıklaması",
+      "fabricSwatch": "Kumaş Tipi",
+      "image": "Resim",
+
+      "metalType": "Metal Türü",
+      "metalDescription": "Metal Açıklaması",
+
+
+      "imageValue": "Resim",
+      "extraValue": "Ekstra",
       // Diğer anahtarları buraya ekleyebilirsiniz...
     };
     // Object.keys(readyForListFeature[0]).filter((key) => !excludedKeys.includes(key));
-    const filteredKeys = readyForListFeature.map((item) => Object.keys(item).filter((key) => !excludedKeys.includes(key)));
-    console.log(filteredKeys);
+    const filteredKeys = readyForListFeature.map((item) => Object.keys(item).filter((key) => 
+    !excludedKeys.includes(key) && 
+    !key.toLowerCase().includes("turkish") && !key.toLowerCase().includes("ukrainian") && !key.toLowerCase().includes("english") 
+    ));
  
   return (
     <div className="w-full overflow-auto ">
@@ -321,18 +340,23 @@ const renderFeaturesTable = () => {
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           <tr className="bg-blue-600 w-full">
 
-            <th className=" text-center py-4 border-l border-white  p-2 bg-gray-700 text-white">Sıra</th>
+            <th className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">Sıra</th>
 
             {
               filteredKeys[0].map((key, index) => (
-                <th key={index} scope="col" className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2">
-                  {keyMappings[key] && keyMappings[key].length > 0 ? keyMappings[key] : key}
+                selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
+                selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
+                <th key={index} scope="col" className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">
+                  {
+                   
+                    keyMappings[key] && keyMappings[key].length > 0 ? keyMappings[key] : key 
+                  }
                 </th>
                 
               ))
             }
 
-            <th className=" text-center py-4 border-l border-white  p-2 bg-gray-700 text-white">İşlemler</th>
+            <th className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white bg-gray-700">İşlemler</th>
           </tr>
         </thead>
 
@@ -345,13 +369,22 @@ const renderFeaturesTable = () => {
               </td>
 
               {filteredKeys[0].map((key, index) => (
-                console.log(key),
+                selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
+                selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
                 <td key={index} className="text-center py-2 border-r border-b border-black">
-                  <div>
-                    {item[key]}
+                  <div className="text center flex justify-center item-center">
+                    {
+                      key.toLowerCase().includes("image")  ? 
+                      item[key] && item[key].length> 0 && 
+                      <Image width={100} height={100} src={item[key]} alt={`image${index}`} /> :
+                      item[key]  
+                      
+                    }
                   </div>
                 </td>
               ))}
+
+
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
                   <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
