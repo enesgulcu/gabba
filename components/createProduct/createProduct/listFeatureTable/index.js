@@ -10,7 +10,7 @@ import LoadingScreen from '@/components/other/loading';
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData}) => {
+const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -29,9 +29,6 @@ const ListFeatureTable = ({categoriesData}) => {
   
   const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
 
-  // useEffect(() => {
-  //   console.log(readyForListFeature);
-  // }, [readyForListFeature])
 
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
@@ -60,6 +57,16 @@ const ListFeatureTable = ({categoriesData}) => {
         console.log(error);
     }
 }
+
+useEffect(() => {
+  //enes buraya bak
+  //veriler anlık buraya geliyor. gelen veriye gore -> data yı filtreleyerek listeleyeceksin.
+  // 241. satıra bak orayı filtreleyeceksin...
+  console.log(filterProductName)
+  console.log(filterProductType)
+  console.log(filterProductCategory)
+}, [filterProductName, filterProductType, filterProductCategory]);
+
 
 
 // seçilen ürünün özelliklerini data içinden getir ve selectedProductFeatures içine atar. (2)
@@ -92,9 +99,9 @@ const getProductFeatures = async (data, productId) => {
     // ########################################################################
     // seçilen ürünün kategorisini selectedCategory state'ine at. (2.2)
 
-      
+
         await setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
-        await fetchData(selectedProductFeatures[0].selectedCategoryKey, productId);
+        await fetchData(selectedProductFeatures[0].selectedCategoryKey, productId || "furniture");
         setIsloading(false);
       
 
@@ -191,7 +198,6 @@ const prepareProductList = async (feature) => {
   
   //feature ->  Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
   const readyForListData = [];
-  //console.log("productFeatures :", productFeatures.matchedFeature);
   await productFeatures.forEach((item) => {
     item.matchedFeature.forEach((item2) => { // item2.featureId -> özelliğin gerçek id' değeri
       if(feature === item2.feature){ // [ productFeatures.matchedFeature.item2.feature ] -> Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
@@ -217,9 +223,9 @@ const prepareProductList = async (feature) => {
 
   const renderHead = () => {
 
-    const tableHeaders = ["sıra", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri"]
+    const tableHeaders = ["sıra", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri", "işlem" ]
     return (
-        <tr className=''>
+        <tr className='bg-blue-600 text-white'>
             {tableHeaders.map((header, index) => (
                 <th key={index} scope="col" className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2">
                      {header}
@@ -297,6 +303,13 @@ const renderData = () => {
             
             </button>
         </td>
+
+        {/* işlem */}
+        <td className="text-center py-2 border-r border-b border-black">
+          <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+            <FaTrash size={20} />
+          </button>
+        </td>
       </tr>
     )))
 }
@@ -335,7 +348,7 @@ const renderFeaturesTable = () => {
     ));
  
   return (
-    <div className="w-full overflow-auto ">
+    <div className="w-full overflow-auto min-h-[200px] bg-gray-600">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           <tr className="bg-blue-600 w-full">
@@ -365,7 +378,11 @@ const renderFeaturesTable = () => {
           {readyForListFeature && readyForListFeature.map((item, index) => (
             <tr key={index} className="bg-white border-b border-gray-200">
               <td className="text-center py-2 border-r border-b border-black">
-                <div>{index + 1}</div>
+                <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
+                  <div className="bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center">
+                    {index + 1}
+                  </div>
+                </div>
               </td>
 
               {filteredKeys[0].map((key, index) => (
@@ -376,7 +393,7 @@ const renderFeaturesTable = () => {
                     {
                       key.toLowerCase().includes("image")  ? 
                       item[key] && item[key].length> 0 && 
-                      <Image width={100} height={100} src={item[key]} alt={`image${index}`} /> :
+                      <Image className="hover:scale-150 transition-all rounded shadow" width={100} height={100} src={item[key]} alt={`image${index}`} /> :
                       item[key]  
                       
                     }
@@ -469,6 +486,7 @@ const renderFeaturesTable = () => {
 
 
       {/* ürünleri listelediğimiz tablomuz */}
+      
       <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           {renderHead()}{" "}
