@@ -1,4 +1,4 @@
-import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny } from "@/services/serviceOperations";
+import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny, deleteDataByMany } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
 
@@ -33,7 +33,6 @@ const handler = async (req, res) => {
         selectedCategoryValues: data.selectedCategoryValues,
         productFeatures: processedFeatures
       };
-
       return processedData;
       // extraValue ve imageValue boş olanları temizliyoruz. ################## (1 end) ##################
 
@@ -56,13 +55,36 @@ const handler = async (req, res) => {
       }
 
       //silme işlemi için gelen veriyi sileriz.
-      else if(processType == "delete"){
+      else if (processType == "delete") {
+        // NOT: Burada productFeature ve product verileri birbirine bağlı olduğu için önce productFeature verileri silinmesi gerekiyor. bu sayade bağ koparılır.
+        try {
+          // Önce ProductFeature verilerini sil
+          const deleteProductFeatureData = await deleteDataByMany("ProductFeature", {
+            productId: data,
+          });
+          console.log(deleteProductFeatureData);
 
-        const deleteData = await deleteDataByAny("Products", {id: checkedData.id});
-        if(!deleteData || deleteData.error){
-          throw deleteData;
+          if (!deleteProductFeatureData || deleteProductFeatureData.error) {
+            throw new Error("Ürün özellikleri silinemedi.");
+          }
+      
+          // ProductFeature verileri başarılı şekilde silindiyse, şimdi Products verisini sil
+          const deleteProductData = await deleteDataByAny("Products", { id: data });
+      
+          if (!deleteProductData || deleteProductData.error) {
+            throw new Error("Ürün silinemedi.");
+          }
+      
+          return res.status(200).json({
+            status: "success",
+            message: "Ürün ve ürün özellikleri başarıyla silindi.",
+          });
+        } catch (error) {
+          return res.status(500).json({
+            status: "error",
+            message: error.message,
+          });
         }
-        return res.status(200).json({ status: "success", data:checkedData, message: deleteData.message });
       }
 
       // güncelleme işlemi için gelen veriyi güncelleriz.
@@ -86,9 +108,9 @@ const handler = async (req, res) => {
 
       // yeni veri oluşturuyoruz.
       else if(data && processType == "post"){
-
+        
         const createProducts = await createNewProduct("Products", checkedData);
-
+        
 
         if(!createProducts || createProducts.error){
           throw createProducts; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";

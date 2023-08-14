@@ -136,17 +136,17 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     const minute = date.split(" ")[1].split(":")[1];
 
     // productName değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
-    const productNameFirst3Character = productName.slice(0,3).toUpperCase();
-    const productNameLast3Character = productName.slice(-3).toUpperCase();
+    const productNameFirst3Character = productName.slice(0,2).toUpperCase();
+    const productNameLast3Character = productName.slice(-2).toUpperCase();
 
     // productType değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
-    const productTypeforCode = productType.slice(0,2).toUpperCase() + productType.slice(-2).toUpperCase();
+    const productTypeforCode = productType.slice(0,2).toUpperCase();
 
     // selectedCategoryKey değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
-    const selectedCategoryKeyforCode = selectedCategoryKey.slice(0,2).toUpperCase() + selectedCategoryKey.slice(-2).toUpperCase();
+    const selectedCategoryKeyforCode = selectedCategoryKey.slice(0,2).toUpperCase();
 
     // ürün kodunu oluştur
-    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + hour + productNameLast3Character + minute).trim();
+    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + hour).trim();
     
     //################################################################################
     //################################################################################

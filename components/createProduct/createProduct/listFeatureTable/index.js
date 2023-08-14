@@ -1,11 +1,13 @@
 "use client"
 import {useState, useEffect} from 'react'
-import { getAPI } from '@/services/fetchAPI';
+import { getAPI, postAPI } from '@/services/fetchAPI';
 import Image from 'next/image';
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import LoadingScreen from '@/components/other/loading';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
@@ -28,13 +30,19 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
   const [selectedFeature , setSelectedFeature] = useState(""); // Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image başlıkları
   
   const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
+  const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
+  // useEffect(() => {
+  //   console.log(filteredData);
+  // }, [filteredData])
+  
 
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
         setAllFeatureData([]);
       }
   }, [catagories, selectedCategory, selectedProduct])
+
 
   useEffect(() => {
     getData("/createProduct/createProduct");
@@ -59,13 +67,31 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
 }
 
 useEffect(() => {
-  //enes buraya bak
-  //veriler anlık buraya geliyor. gelen veriye gore -> data yı filtreleyerek listeleyeceksin.
-  // 241. satıra bak orayı filtreleyeceksin...
-  console.log(filterProductName)
-  console.log(filterProductType)
-  console.log(filterProductCategory)
-}, [filterProductName, filterProductType, filterProductCategory]);
+  // Ürün filtreleme işlemleri
+  if (
+    (!filterProductName && !filterProductType && !filterProductCategory) ||
+    !data.createProducts
+  ) {
+    setFilteredData(data);
+    return; // Eğer herhangi bir filtre yoksa veya veri yoksa işlemi burada sonlandırın.
+  }
+
+  const filteredProducts = data.createProducts.filter(item => {
+
+    const productNameMatch = !filterProductName || 
+    item.productName.toLowerCase().includes(filterProductName.toLowerCase());
+
+    const productTypeMatch = !filterProductType || 
+    item.productType.toLowerCase().includes(filterProductType.toLowerCase());
+
+    const productCategoryMatch = !filterProductCategory || 
+    item.selectedCategoryValues.toLowerCase().includes(filterProductCategory.toLowerCase());
+
+    return productNameMatch && productTypeMatch && productCategoryMatch;
+  });
+
+  setFilteredData({ ...data, createProducts: filteredProducts });
+}, [data, filterProductName, filterProductType, filterProductCategory]);
 
 
 
@@ -220,10 +246,27 @@ const prepareProductList = async (feature) => {
   setReadyForListFeature(readyForListData);
 }
 
+const deleteProdcut = async (productId) => {
+  try {
+    setIsloading(true);
+    const responseData = await postAPI("/createProduct/createProduct",{data:productId, processType:"delete"});
+    if(!responseData || responseData.status !== "success"){
+        throw new Error("Veri silinemedi");  
+    }
+     await getData("/createProduct/createProduct");
+     toast.success("Veri başarıyla Silindi");
+     setIsloading(false);
+
+  } catch (error) {
+      toast.error(error.message);
+      setIsloading(false);
+  }
+}
+
 
   const renderHead = () => {
 
-    const tableHeaders = ["sıra", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri", "işlem" ]
+    const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri", "işlem" ]
     return (
         <tr className='bg-blue-600 text-white'>
             {tableHeaders.map((header, index) => (
@@ -238,9 +281,9 @@ const prepareProductList = async (feature) => {
 const renderData = () => {
   
   
-  return data && data.createProducts && (
-    data.createProducts.map((prodcutItem, index) => (
-      <tr key={index} className="border-b hover:bg-blue-100">
+  return filteredData && filteredData.createProducts && (
+    filteredData.createProducts.map((prodcutItem, index) => (
+      <tr key={index} className="border-b hover:bg-blue-50">
 
         {/* sıra numarası */}
         <td className="  border-r border-b border-black">
@@ -249,6 +292,11 @@ const renderData = () => {
               {index + 1}
             </div>
           </div>
+        </td>
+
+        {/* ürün kodu */}
+        <td className="text-center py-2 border-r border-b border-black">
+          <div>{prodcutItem.productCode}</div>
         </td>
 
         {/* ürün adı */}
@@ -306,7 +354,7 @@ const renderData = () => {
 
         {/* işlem */}
         <td className="text-center py-2 border-r border-b border-black">
-          <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+          <button onClick={() => deleteProdcut(prodcutItem.id)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
             <FaTrash size={20} />
           </button>
         </td>
@@ -404,7 +452,7 @@ const renderFeaturesTable = () => {
 
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
-                  <button onClick={() => handleDeleteFeature(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                  <button onClick={() => deleteProdcut(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                     <FaTrash size={20} />
                   </button>
                 </div>
@@ -427,6 +475,18 @@ const renderFeaturesTable = () => {
   // gelen verileri tablo haline getiriyoruz ve listeliyoruz.
   return (
     <div className='w-full'>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       {isloading && <LoadingScreen isloading={isloading} />}
 
       {/* Ürün Özelliklerini Listeleme */}

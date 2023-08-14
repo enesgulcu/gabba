@@ -115,7 +115,7 @@ const CreateProductComponent = () => {
             <div className={`${filterEnabled ? "bg-green-500" : "bg-green-500"} p-4 text-white rounded text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0`}
               onClick={() => setFilterEnabled(!filterEnabled)}
             >
-              <div className={`${filterEnabled && " rotate-90" } transition-all flex justify-center items-center gap-2 w-full h-full`}>
+              <div className={`transition-all flex justify-center items-center gap-2 w-full h-full`}>
                 <BiFilterAlt size={25}/>
                 {!filterEnabled && "Filtre"}
               </div>
@@ -189,7 +189,7 @@ const CreateProductComponent = () => {
 
           {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 && (
             <div>
-              {/* <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} /> */}
+              <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
             </div>
           )}
         </div>
