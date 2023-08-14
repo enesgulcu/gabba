@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
+import { useRouter } from 'next/navigation'
 
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
@@ -12,6 +13,8 @@ import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
 const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => {
+  const router = useRouter();
+
   const objectKey = Object.keys(data)[0];
   const responseData = data[objectKey];
   
@@ -113,11 +116,19 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   const [productTypes, setProductTypes] = useState("");
   const [productType, setProductType] = useState("");
 
+
+
   const [productName , setProductName] = useState("");
 
-  // useEffect(() => {
-  //   console.log(checkboxValues);
-  // }, [checkboxValues])
+  useEffect(() => {
+    console.log("productName :", productName);
+    console.log("productType :", productType);
+    console.log("productTypes :", productTypes);
+    console.log("addTypeEnabled :", addTypeEnabled);
+    console.log("checkboxValues :", checkboxValues);
+    console.log("selectedFeature :", selectedFeature);
+    
+  }, [productName, productType, productTypes, addTypeEnabled, checkboxValues, selectedFeature])
 
 
 
@@ -145,8 +156,12 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     // selectedCategoryKey değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
     const selectedCategoryKeyforCode = selectedCategoryKey.slice(0,2).toUpperCase();
 
+    // rasgele 2 tane tam sayı rakam oluştur sonra bunları string olarak yan yana yaz.
+    const randomAlphabet = Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10);
+
+
     // ürün kodunu oluştur
-    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + hour).trim();
+    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + randomAlphabet).trim();
     
     //################################################################################
     //################################################################################
@@ -167,6 +182,14 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
           throw new Error("Veri eklenemedi");
       }
        setIsloading(false);
+       
+       setCheckboxValues([]);
+        setProductName("");
+        setProductType("");
+        setAddTypeEnabled(false);
+        setProductTypes("");
+        setSelectedFeature("Ölçüler");
+        router.refresh();
        toast.success("Veri başarıyla Eklendi");
   
     } catch (error) {
@@ -601,6 +624,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       </div>
     );
   };
+
+  
 
   return (
     <div>

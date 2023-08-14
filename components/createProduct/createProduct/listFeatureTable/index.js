@@ -246,10 +246,13 @@ const prepareProductList = async (feature) => {
   setReadyForListFeature(readyForListData);
 }
 
-const deleteProdcut = async (productId) => {
+const deleteProdcut = async (id, process) => {
+  // id -> productId ya da özelliğin orjinal id değeri.
+  // process -> deleteProduct | deleteFeature
+  console.log(x1);
   try {
     setIsloading(true);
-    const responseData = await postAPI("/createProduct/createProduct",{data:productId, processType:"delete"});
+    const responseData = await postAPI("/createProduct/createProduct",{data:id, processType:"delete", process});
     if(!responseData || responseData.status !== "success"){
         throw new Error("Veri silinemedi");  
     }
@@ -354,7 +357,7 @@ const renderData = () => {
 
         {/* işlem */}
         <td className="text-center py-2 border-r border-b border-black">
-          <button onClick={() => deleteProdcut(prodcutItem.id)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+          <button onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
             <FaTrash size={20} />
           </button>
         </td>
@@ -452,7 +455,10 @@ const renderFeaturesTable = () => {
 
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
-                  <button onClick={() => deleteProdcut(item)} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                {/* item -> özeeliğin kendi verisini tutar 
+                 enes burada kaldın !!!
+                */}
+                  <button onClick={() => deleteProdcut(item, "deleteFeature")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                     <FaTrash size={20} />
                   </button>
                 </div>
@@ -546,16 +552,16 @@ const renderFeaturesTable = () => {
 
 
       {/* ürünleri listelediğimiz tablomuz */}
-      
-      <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
-        <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
-          {renderHead()}{" "}
-        </thead>
-        <tbody>
-          {renderData()}{" "}  
-        </tbody>
-      </table>
-
+      <div className="w-full overflow-auto">
+        <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
+          <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
+            {renderHead()}{" "}
+          </thead>
+          <tbody >
+            {renderData()}{" "}  
+          </tbody>
+        </table>
+      </div>
 
     </div>
   )
