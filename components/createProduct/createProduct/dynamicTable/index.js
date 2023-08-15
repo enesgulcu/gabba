@@ -118,17 +118,14 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
 
 
 
+
+
   const [productName , setProductName] = useState("");
 
   useEffect(() => {
-    console.log("productName :", productName);
-    console.log("productType :", productType);
     console.log("productTypes :", productTypes);
-    console.log("addTypeEnabled :", addTypeEnabled);
-    console.log("checkboxValues :", checkboxValues);
-    console.log("selectedFeature :", selectedFeature);
     
-  }, [productName, productType, productTypes, addTypeEnabled, checkboxValues, selectedFeature])
+  }, [productTypes])
 
 
 
@@ -182,13 +179,17 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
           throw new Error("Veri eklenemedi");
       }
        setIsloading(false);
-       
+
+       // ÜRÜN EKLEME İŞLEMİ TAMAMLANDIKTAN SONRA VAR OLAN VERİLERİ TEMİZLER VE PANELLERİ KAPATIR.
        setCheckboxValues([]);
         setProductName("");
         setProductType("");
         setAddTypeEnabled(false);
         setProductTypes("");
         setSelectedFeature("Ölçüler");
+        getData();
+        // ÜRÜN EKLEME İŞLEMİ TAMAMLANDIKTAN SONRA VAR OLAN VERİLERİ TEMİZLER VE PANELLERİ KAPATIR.
+        
         router.refresh();
        toast.success("Veri başarıyla Eklendi");
   

@@ -45,7 +45,7 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       
-      const {data, processType} = await req.body;
+      const {data, processType, process=null} = await req.body;
       
       // gelen verileri kontrol fonksiyonunua gönderiyoruz.
       const checkedData = await checkData(data);
@@ -59,26 +59,41 @@ const handler = async (req, res) => {
         // NOT: Burada productFeature ve product verileri birbirine bağlı olduğu için önce productFeature verileri silinmesi gerekiyor. bu sayade bağ koparılır.
         try {
           // Önce ProductFeature verilerini sil
-          const deleteProductFeatureData = await deleteDataByMany("ProductFeature", {
-            productId: data,
-          });
-          console.log(deleteProductFeatureData);
+          if(process == "deleteProduct"){
+            // data: 64c4ac2c36677515eec15f85
+            const deleteProductFeatureData = await deleteDataByMany("ProductFeature", {
+              productId: data,
+            });
+  
+            if (!deleteProductFeatureData || deleteProductFeatureData.error) {
+              throw new Error("Ürün özellikleri silinemedi.");
+            }
 
-          if (!deleteProductFeatureData || deleteProductFeatureData.error) {
-            throw new Error("Ürün özellikleri silinemedi.");
+            // ProductFeature verileri başarılı şekilde silindiyse, şimdi Products verisini sil
+            const deleteProductData = await deleteDataByAny("Products", { id: data });
+        
+            if (!deleteProductData || deleteProductData.error) {
+              throw new Error("Ürün silinemedi.");
+            }
+        
+            return res.status(200).json({status: "success",message: "Ürün ve ürün özellikleri başarıyla silindi."});
           }
-      
-          // ProductFeature verileri başarılı şekilde silindiyse, şimdi Products verisini sil
-          const deleteProductData = await deleteDataByAny("Products", { id: data });
-      
-          if (!deleteProductData || deleteProductData.error) {
-            throw new Error("Ürün silinemedi.");
+
+
+          if(process == "deleteFeature"){
+            // data:{
+            //   featureId: '64c4ac3336677515eec15f86',
+            //   productId: '64daeb7ef75baae29340e3d7'
+            // }
+            const deleteProductFeatureData = await deleteDataByMany("ProductFeature", data);
+            console.log(deleteProductFeatureData);  
+            if (!deleteProductFeatureData || deleteProductFeatureData.error) {
+              throw new Error("Ürün özellikleri silinemedi.");
+            }
+
+            return res.status(200).json({status: "success",message: "Ürün özelliği başarıyla silindi."});
+            
           }
-      
-          return res.status(200).json({
-            status: "success",
-            message: "Ürün ve ürün özellikleri başarıyla silindi.",
-          });
         } catch (error) {
           return res.status(500).json({
             status: "error",
@@ -110,7 +125,6 @@ const handler = async (req, res) => {
       else if(data && processType == "post"){
         
         const createProducts = await createNewProduct("Products", checkedData);
-        
 
         if(!createProducts || createProducts.error){
           throw createProducts; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";

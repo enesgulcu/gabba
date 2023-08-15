@@ -125,7 +125,11 @@ const getProductFeatures = async (data, productId) => {
     // ########################################################################
     // seçilen ürünün kategorisini selectedCategory state'ine at. (2.2)
 
-
+      if(!selectedProductFeatures[0]){
+          setIsloading(false);
+          toast.error("ürün özellikleri tanımlanmamış!");
+          return;
+        }
         await setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
         await fetchData(selectedProductFeatures[0].selectedCategoryKey, productId || "furniture");
         setIsloading(false);
@@ -249,14 +253,19 @@ const prepareProductList = async (feature) => {
 const deleteProdcut = async (id, process) => {
   // id -> productId ya da özelliğin orjinal id değeri.
   // process -> deleteProduct | deleteFeature
-  console.log(x1);
   try {
     setIsloading(true);
+    console.log(id);
     const responseData = await postAPI("/createProduct/createProduct",{data:id, processType:"delete", process});
     if(!responseData || responseData.status !== "success"){
         throw new Error("Veri silinemedi");  
     }
      await getData("/createProduct/createProduct");
+
+      // silme işleminden sonra açılı özellik liste pnaelini kapatır ve state'leri sıfırlar.
+      setProductFeatures([]); 
+      setReadyForListFeature([]);
+
      toast.success("Veri başarıyla Silindi");
      setIsloading(false);
 
@@ -351,13 +360,14 @@ const renderData = () => {
               onClick={() => getProductFeatures(data, prodcutItem.id)}
               className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEye size={20}/><span className="hidden lg:block">Özellikleri Gör</span></div>
             }
-            
             </button>
         </td>
 
         {/* işlem */}
         <td className="text-center py-2 border-r border-b border-black">
-          <button onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+          <button 
+          onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} 
+          className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
             <FaTrash size={20} />
           </button>
         </td>
@@ -392,7 +402,7 @@ const renderFeaturesTable = () => {
       "extraValue": "Ekstra",
       // Diğer anahtarları buraya ekleyebilirsiniz...
     };
-    // Object.keys(readyForListFeature[0]).filter((key) => !excludedKeys.includes(key));
+
     const filteredKeys = readyForListFeature.map((item) => Object.keys(item).filter((key) => 
     !excludedKeys.includes(key) && 
     !key.toLowerCase().includes("turkish") && !key.toLowerCase().includes("ukrainian") && !key.toLowerCase().includes("english") 
@@ -408,8 +418,8 @@ const renderFeaturesTable = () => {
 
             {
               filteredKeys[0].map((key, index) => (
-                selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
-                selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
+                selectedFeature && selectedFeature.length > 0 && selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
+                selectedFeature && selectedFeature.length > 0 && selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
                 <th key={index} scope="col" className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">
                   {
                    
@@ -437,8 +447,8 @@ const renderFeaturesTable = () => {
               </td>
 
               {filteredKeys[0].map((key, index) => (
-                selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
-                selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
+                selectedFeature && selectedFeature.length > 0 && selectedFeature.toLowerCase().includes("extra") && !key.toLowerCase().includes("extra") ||
+                selectedFeature && selectedFeature.length > 0 && selectedFeature.toLowerCase().includes("image") && !key.toLowerCase().includes("image") ||
                 <td key={index} className="text-center py-2 border-r border-b border-black">
                   <div className="text center flex justify-center item-center">
                     {
@@ -455,10 +465,8 @@ const renderFeaturesTable = () => {
 
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
-                {/* item -> özeeliğin kendi verisini tutar 
-                 enes burada kaldın !!!
-                */}
-                  <button onClick={() => deleteProdcut(item, "deleteFeature")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                                  {/* item -> özeeliğin kendi verisini tutar*/}
+                  <button onClick={() => deleteProdcut({featureId:item.id, productId:selectedProduct.id}, "deleteFeature")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                     <FaTrash size={20} />
                   </button>
                 </div>
