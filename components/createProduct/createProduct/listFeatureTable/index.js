@@ -552,7 +552,7 @@ const renderFeaturesTable = () => {
                 </td>
               ))}
 
-
+                  
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
                                   {/* item -> özeeliğin kendi verisini tutar*/}

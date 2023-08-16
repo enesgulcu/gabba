@@ -105,9 +105,25 @@ const handler = async (req, res) => {
             //   featureId: '64c4ac3336677515eec15f86',
             //   productId: '64daeb7ef75baae29340e3d7'
             // }
-            const deleteProductFeatureData = await deleteDataByMany("ProductFeature", data);
+            let deleteProductFeatureData = await deleteDataByMany("ProductFeature", data);
+
             if (!deleteProductFeatureData || deleteProductFeatureData.error) {
               throw new Error("Ürün özellikleri silinemedi.");
+            }
+
+            if(!deleteProductFeatureData.count){
+              // IAMGE ve EXTRA için özel olarak silme işlemi yapılıyor.
+              // featureId yerine direk id ile eşleştiririz.
+              deleteProductFeatureData = await deleteDataByAny("ProductFeature", {id: data.featureId});
+            }
+
+            if (!deleteProductFeatureData || deleteProductFeatureData.error) {
+              throw new Error("Ürün özellikleri silinemedi.");
+            }
+
+          
+            if(deleteProductFeatureData.count == 0){
+              throw new Error("Silinecek ürün özellikleri bulunamadı.");
             }
 
             return res.status(200).json({status: "success",message: "Ürün özelliği başarıyla silindi."});
