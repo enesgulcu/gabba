@@ -27,14 +27,17 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
 
-  const [selectedFeature , setSelectedFeature] = useState(""); // Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image başlıkları
+  const [selectedFeature , setSelectedFeature] = useState(""); // Ölçüler - Renkler - Ürünlar - Metaller - Extra - Image başlıkları
   
   const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
   const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
+  const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
+
   // useEffect(() => {
-  //   console.log(filteredData);
-  // }, [filteredData])
+  //   console.log(selectedProductLanguage);
+  // }, [selectedProductLanguage])
+
   
 
   useEffect(() => {
@@ -226,11 +229,11 @@ const prepareProductList = async (feature) => {
   
   await setSelectedFeature(feature);
   
-  //feature ->  Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
+  //feature ->  Ölçüler - Renkler - Ürünlar - Metaller - Extra - Image
   const readyForListData = [];
   await productFeatures.forEach((item) => {
     item.matchedFeature.forEach((item2) => { // item2.featureId -> özelliğin gerçek id' değeri
-      if(feature === item2.feature){ // [ productFeatures.matchedFeature.item2.feature ] -> Ölçüler - Renkler - Kumaşlar - Metaller - Extra - Image
+      if(feature === item2.feature){ // [ productFeatures.matchedFeature.item2.feature ] -> Ölçüler - Renkler - Ürünlar - Metaller - Extra - Image
         
         if(feature === "Image" || feature ==="Extra"){ // extra ve image değerleri farkl ıbir yerden geliyor o yüzden onları ayrı aldık.
           readyForListData.push(item2);
@@ -277,7 +280,7 @@ const deleteProdcut = async (id, process) => {
 
   const renderHead = () => {
 
-    const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi", "Ürün Özellikleri", "işlem" ]
+    const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Adı", "Seçilen Kategori", "Ürün Resmi","Dil Çevirisi", "Ürün Özellikleri", "işlem" ]
     return (
         <tr className='bg-blue-600 text-white'>
             {tableHeaders.map((header, index) => (
@@ -344,6 +347,94 @@ const renderData = () => {
           }
           </div>
         </td>
+        <td className="text-center p-2 border-r border-b border-black">
+          <div className='h-20 flex justify-center items-center'>
+            <Image
+              onClick={() => setSelectedProductLanguage(prodcutItem)}
+              className="hover:scale-125 transition-all cursor-pointer"
+              src="/translate_book.svg"
+              height={30}
+              width={40}
+              alt="TrFlag"
+            />
+          </div>
+          {/*  ürünlerin çevirilerini gösterir */}
+              {selectedProductLanguage && selectedProductLanguage !== "" &&
+                <div className='absolute top-0 left-0 w-full z-40 bg-black bg-opacity-90 h-screen flex justify-center items-center'>
+                  <div className='relative top-0 left-0 w-full flex justify-center item-center'>
+                    <div className=' bg-white rounded-lg min-h-screen lg:min-h-min'>
+                      <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                        <div className='flex flex-col justify-center items-center gap-2 p-2'>
+      
+                          <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-black lg:bg-opacity-0 p-2 rounded'>
+                            <div className=' rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className=' p-2 w-full bg-black rounded-lg text-white text-center text-xl'>
+                                Dil Çevrisi - Ürün bilgileri
+                              </h3>
+                            </div>
+                          </div>
+      
+                          <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-blue-200 lg:bg-opacity-0 p-2 rounded'>
+                            <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Adı Türkçe :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productNameTR}</h4>
+                            </div>
+                            <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Tipi Türkçe :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productTypeTR}</h4>
+                            </div>
+                            <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Kategorisi Türkçe :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productCategoryTR}</h4>
+                            </div>
+                          </div>
+      
+                          <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-orange-200 lg:bg-opacity-0 p-2 rounded'>
+                            <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Adı İngilizce :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productNameUA}</h4>
+                            </div>
+                            <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Tipi İngilizce :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productTypeUA}</h4>
+                            </div>
+                            <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Kategorisi İngilizce :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productCategoryUA}</h4>
+                            </div>
+                          </div>
+      
+                          <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-green-200 lg:bg-opacity-0 p-2 rounded'>
+                            <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Adı Ukraynaca :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productNameEN}</h4>
+                            </div>
+                            <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Tipi Ukraynaca :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productTypeEN}</h4>
+                            </div>
+                            <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                              <h3 className='text-center font-bold text-black'>Ürün Kategorisi Ukraynaca :</h3>
+                              <h4 className='text-center text-black'>{selectedProductLanguage.productCategoryEN  }</h4>
+                            </div>
+                          </div>
+      
+                          <div>
+
+                          <div className='bg-red-600 m-2 p-2 rounded-full cursor-pointer hover:scale-105 transition hover:rotate-6 hover:border-2 hover:border-white '
+                            onClick={()=>{setSelectedProductLanguage("")}}
+                            >
+                            <IoClose color="white" size={40} />
+                            </div>
+                          </div>
+      
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+        </td>
 
         {/* ürün özellikleri */}
         <td className="text-center p-2 border-r border-b border-black ">
@@ -385,16 +476,16 @@ const renderFeaturesTable = () => {
       "unit": "Ölçü Tipi",
 
       "colourType": "Renk",
-      "colourDescription": "Renk Açıklaması",
+      "colourDescription": "Renk Ürün Tipisı",
       "colourHex": "Renk Kodu",
 
-      "fabricType": "Kumaş Türü",
-      "fabricDescription": "Kumaş Açıklaması",
-      "fabricSwatch": "Kumaş Tipi",
+      "fabricType": "Ürün Türü",
+      "fabricDescription": "Ürün Ürün Tipisı",
+      "fabricSwatch": "Ürün Adı",
       "image": "Resim",
 
       "metalType": "Metal Türü",
-      "metalDescription": "Metal Açıklaması",
+      "metalDescription": "Metal Ürün Tipisı",
 
 
       "imageValue": "Resim",
