@@ -255,7 +255,6 @@ const deleteProdcut = async (id, process) => {
   // process -> deleteProduct | deleteFeature
   try {
     setIsloading(true);
-    console.log(id);
     const responseData = await postAPI("/createProduct/createProduct",{data:id, processType:"delete", process});
     if(!responseData || responseData.status !== "success"){
         throw new Error("Veri silinemedi");  

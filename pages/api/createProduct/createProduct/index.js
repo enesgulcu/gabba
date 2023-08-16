@@ -31,8 +31,28 @@ const handler = async (req, res) => {
         productType: data.productType,
         selectedCategoryKey: data.selectedCategoryKey,
         selectedCategoryValues: data.selectedCategoryValues,
-        productFeatures: processedFeatures
+        productFeatures: processedFeatures,
+
+        productNameTR: data.productNameTR,
+        productTypeTR: data.productTypeTR,
+        productCategoryTR: data.productCategoryTR,
+
+        productNameUA: data.productNameUA,
+        productTypeUA: data.productTypeUA,
+        productCategoryUA: data.productCategoryUA,
+
+        productNameEN: data.productNameEN,
+        productTypeEN: data.productTypeEN,
+        productCategoryEN: data.productCategoryEN,
       };
+
+      // processedData içerisinde boş olan değer olmayanları temizliyoruz.
+      Object.keys(processedData).forEach(key => {
+        if (processedData[key] === undefined || processedData[key] === null || processedData[key] === '') {
+          delete processedData[key];
+        }
+      });
+      
       return processedData;
       // extraValue ve imageValue boş olanları temizliyoruz. ################## (1 end) ##################
 
@@ -46,7 +66,7 @@ const handler = async (req, res) => {
     if (req.method === "POST") {
       
       const {data, processType, process=null} = await req.body;
-      
+      ;
       // gelen verileri kontrol fonksiyonunua gönderiyoruz.
       const checkedData = await checkData(data);
 
@@ -86,7 +106,6 @@ const handler = async (req, res) => {
             //   productId: '64daeb7ef75baae29340e3d7'
             // }
             const deleteProductFeatureData = await deleteDataByMany("ProductFeature", data);
-            console.log(deleteProductFeatureData);  
             if (!deleteProductFeatureData || deleteProductFeatureData.error) {
               throw new Error("Ürün özellikleri silinemedi.");
             }
@@ -122,9 +141,11 @@ const handler = async (req, res) => {
       }
 
       // yeni veri oluşturuyoruz.
+      
       else if(data && processType == "post"){
-        
+        console.log(checkedData)
         const createProducts = await createNewProduct("Products", checkedData);
+
 
         if(!createProducts || createProducts.error){
           throw createProducts; //"Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU3";

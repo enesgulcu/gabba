@@ -610,9 +610,12 @@ import ProcessBase64Array from '@/functions/others/base64SizeCalculate';
                                           <h2 className="text-xl font-semibold p-2 bg-blue-600 text-white rounded-lg w-full text-center">
                                             {`${index + 1}`} - Kumaş Ekle (Çeviri İşlemleri)
                                           </h2>
-                                          <h2 className="text-center w-full m-2">
+                                          {props.values.fabrics[index].fabricType &&
+                                            <h2 className="text-center w-full m-2">
                                               Girilen Orjinal Değer
                                             </h2>
+                                          }
+                                          
                                           <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
                                             
                                             {props.values.fabrics[index].fabricType && (

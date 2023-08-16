@@ -3,12 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowDown, MdDone } from "react-icons/md";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import { useRouter } from 'next/navigation'
-
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ResizeImage from '@/functions/others/resizeImage';
-
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
@@ -114,18 +112,30 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   
   const [addTypeEnabled, setAddTypeEnabled] = useState(false);
   const [productTypes, setProductTypes] = useState("");
-  const [productType, setProductType] = useState("");
-
-
-
-
 
   const [productName , setProductName] = useState("");
+  const [productType, setProductType] = useState("");
+  const [languageIsEnabled, setLanguageIsEnabled] = useState(false);
 
-  useEffect(() => {
-    console.log("productTypes :", productTypes);
+
+
+
+  const [productNameTR , setProductNameTR] = useState("");
+  const [productTypeTR, setProductTypeTR] = useState("");
+  const [productCategoryTR, setProductCategoryTR] = useState("");
+
+  const [productNameEN , setProductNameEN] = useState("");
+  const [productTypeEN, setProductTypeEN] = useState("");
+  const [productCategoryEN, setProductCategoryEN] = useState("");
+
+  const [productNameUA , setProductNameUA] = useState("");
+  const [productTypeUA, setProductTypeUA] = useState("");
+  const [productCategoryUA, setProductCategoryUA] = useState("");
+
+  // useEffect(() => {
+  //   console.log("languageIsEnabled :", languageIsEnabled);
     
-  }, [productTypes])
+  // }, [languageIsEnabled])
 
 
 
@@ -169,7 +179,19 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       productType: productType,
       selectedCategoryKey: selectedCategoryKey,
       selectedCategoryValues: selectedCategoryValues,
-      productFeatures: checkboxValues
+      productFeatures: checkboxValues,
+
+      productNameTR: productNameTR,
+      productTypeTR: productTypeTR,
+      productCategoryTR: productCategoryTR,
+
+      productNameUA: productNameUA,
+      productTypeUA: productTypeUA,
+      productCategoryUA: productCategoryUA,
+
+      productNameEN: productNameEN,
+      productTypeEN: productTypeEN,
+      productCategoryEN: productCategoryEN,
     }
 
     try {
@@ -187,6 +209,20 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
         setAddTypeEnabled(false);
         setProductTypes("");
         setSelectedFeature("Ölçüler");
+        setLanguageIsEnabled(false);
+
+        setProductNameTR("");
+        setProductTypeTR("");
+        setProductCategoryTR("");
+
+        setProductNameEN("");
+        setProductTypeEN("");
+        setProductCategoryEN("");
+        
+        setProductNameUA("");
+        setProductTypeUA("");
+        setProductCategoryUA("");
+
         getData();
         // ÜRÜN EKLEME İŞLEMİ TAMAMLANDIKTAN SONRA VAR OLAN VERİLERİ TEMİZLER VE PANELLERİ KAPATIR.
         
@@ -722,7 +758,261 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                 </div>
               </div>
             </div>
+        </div>
+        <div className="flex flex-col justify-end items-center hover:scale-110 transition-all hover:cursor-pointer"
+        onClick={()=>setLanguageIsEnabled(!languageIsEnabled)}>
+          <Image src="/translate.svg" width={40} height={40} alt="image"/>
+        </div>
+
+        {languageIsEnabled && (
+          <div className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
+            <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
+              <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
+
+                {/* çeviri kapatma iconu */}
+                <div>
+                {
+                  productNameTR.trim().length > 0 || productTypeTR.trim().length > 0 || productCategoryTR.trim().length > 0 ||
+                  productNameEN.trim().length > 0 || productTypeEN.trim().length > 0 || productCategoryEN.trim().length > 0 ||
+                  productNameUA.trim().length > 0 || productTypeUA.trim().length > 0 || productCategoryUA.trim().length > 0
+                  ?
+                  <div className="w-full flex justify-center items-center relative"
+                    onClick={() => setLanguageIsEnabled(false)} 
+                  >
+                    <div className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center">
+
+                      <IoCheckmarkDoneSharp color="white" size={40} />
+
+                    </div>
+                  </div>
+                 :
+                  <div className="w-full flex justify-center items-center relative"
+                    onClick={() => setLanguageIsEnabled(false)} 
+                  >
+                    <div className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-red-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center">
+                      <IoClose color="white" size={40} />
+                    </div>
+                  </div>
+                }
+                </div>
+
+
+                {/* çeviri başlığı */}
+                <div>
+                  {(productName || productType) && selectedCategoryValues &&
+                    <h2 className="text-center w-full m-2">
+                      Girilen Orjinal Değer
+                    </h2>
+                  }
+                                          
+                  <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
+                                              
+                    {productName && productName.trim().length > 0 && (
+                      <div className="bg-black p-1 w-full rounded-lg text-white mb-2">
+                        <h3 className='font-bold text-black bg-gray-200 inline-block p-2 rounded mr-2 min-w-[115px] text-end'>Ürün Adı :</h3>
+                          {productName}
+                      </div>
+                    )}
+                    {productType && productType.trim().length > 0 && (
+                      <div className="bg-black p-1 w-full rounded-lg text-white mb-2">
+                        <h3 className='font-bold text-black bg-gray-200 inline-block p-2 rounded mr-2 min-w-[115px] text-end'>Ürün Tipi :</h3>
+                        {productType}
+                      </div>
+                    )}
+                    {selectedCategoryValues && selectedCategoryValues.trim().length > 0 && (
+                      <div className="bg-black p-1 w-full rounded-lg text-white mb-2">
+                        <h3 className='font-bold text-black bg-gray-200 inline-block p-2 rounded mr-2 min-w-[115px] text-end'>Kategori :</h3>
+                        {selectedCategoryValues}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* çeviri inputları */}
+
+                {/* Türkçe çeviri alanı */}
+                <div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/tr_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+
+                    <input
+                      onChange={(e) =>  setProductNameTR(e.target.value)}
+                      id={`ProductNameTR`}
+                      name={`ProductNameTR`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productNameTR}
+                      placeholder="Ürün Adı Türkçe"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/tr_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) =>  setProductTypeTR(e.target.value)}
+                      id={`ProductNameTR`}
+                      name={`ProductNameTR`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productTypeTR}
+                      placeholder="Ürün Tipi Türkçe"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/tr_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) =>  setProductCategoryTR(e.target.value)}
+                      id={`ProductNameTR`}
+                      name={`ProductNameTR`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productCategoryTR}
+                      placeholder="Ürün Kategorisi Türkçe"
+                    />
+                  </div>
+                </div>
+
+                {/* Ukraynaca çeviri alanı */}
+                <div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/ua_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+
+                    <input
+                      onChange={(e) => setProductNameUA(e.target.value)}
+                      id={`ProductNameUA`}
+                      name={`ProductNameUA`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productNameUA}
+                      placeholder="Ürün Adı Ukraynaca"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/ua_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) => setProductTypeUA(e.target.value)}
+                      id={`ProductNameUA`}
+                      name={`ProductNameUA`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productTypeUA}
+                      placeholder="Ürün Tipi Ukraynaca"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/ua_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) => setProductCategoryUA(e.target.value)}
+                      id={`ProductNameUA`}
+                      name={`ProductNameUA`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productCategoryUA}
+                      placeholder="Ürün Kategorisi Ukraynaca"
+                    />
+                  </div>
+                </div>
+
+                {/* İngilizce çeviri alanı */}
+                <div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/en_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+
+                    <input
+                      onChange={(e) => setProductNameEN(e.target.value)}
+                      id={`ProductNameEN`}
+                      name={`ProductNameEN`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productNameEN}
+                      placeholder="Ürün Adı İngilizce"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/en_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) => setProductTypeEN(e.target.value)}
+                      id={`ProductNameEN`}
+                      name={`ProductNameEN`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productTypeEN}
+                      placeholder="Ürün Tipi İngilizce"
+                    />
+                  </div>
+                  <div className="w-full flex pl-1 justify-center item-center flex-row flex-nowrap gap-2">
+                    <Image
+                      className="hover:scale-105 transition-all"
+                      src="/en_flag.svg"
+                      height={40}
+                      width={40}
+                      alt="TrFlag"
+                    />
+                    <input
+                      onChange={(e) => setProductCategoryEN(e.target.value)}
+                      id={`ProductNameEN`}
+                      name={`ProductNameEN`}
+                      className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
+                      type="text"
+                      value = {productCategoryEN}
+                      placeholder="Ürün Kategorisi İngilizce"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </div>
           </div>
+        )}
+
+
       </div>
 
 

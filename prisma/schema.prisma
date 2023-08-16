@@ -115,6 +115,18 @@ model Products {
   productFeatures       ProductFeature [] 
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+
+  productNameTR String?
+  productTypeTR String?
+  productCategoryTR String?
+
+  productNameUA String?
+  productTypeUA String?
+  productCategoryUA String?
+
+  productNameEN String?
+  productTypeEN String?
+  productCategoryEN String?
 }
 
 model ProductFeature {
