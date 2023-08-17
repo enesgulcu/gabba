@@ -159,7 +159,7 @@ const handler = async (req, res) => {
       // yeni veri oluşturuyoruz.
       
       else if(data && processType == "post"){
-        console.log(checkedData)
+
         const createProducts = await createNewProduct("Products", checkedData);
 
 

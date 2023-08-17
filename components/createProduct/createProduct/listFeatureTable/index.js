@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled}) => {
+const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -24,31 +24,30 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
   const [allFeatureData , setAllFeatureData] = useState([]); // ürün kategorisinin tüm özellikleri (hepsi)
   const [productFeatures, setProductFeatures] = useState([]); // seçilen ürünün kendi özellikleri tam olarak
 
+  const [productIdUpdate, setProductIdUpdate] = useState("");
+  const [productFeaturesUpdate, setProductFeaturesUpdate] = useState(""); 
+
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
 
   const [selectedFeature , setSelectedFeature] = useState(""); // Ölçüler - Renkler - Ürünlar - Metaller - Extra - Image başlıkları
-  
   const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
   const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
 
-  // useEffect(() => {
-  //   console.log(selectedProductLanguage);
-  // }, [selectedProductLanguage])
-
-  
-
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
         setAllFeatureData([]);
       }
-  }, [catagories, selectedCategory, selectedProduct])
-
+  }, [catagories, selectedCategory, selectedProduct]) 
+  
 
   useEffect(() => {
     getData("/createProduct/createProduct");
+    setProductFeaturesUpdate("");
+    setProductIdUpdate("");
+    setNewUpdateData("");
   }, [])
 
   // veritabanından verileri çek. (1)
@@ -100,10 +99,10 @@ useEffect(() => {
 
 // seçilen ürünün özelliklerini data içinden getir ve selectedProductFeatures içine atar. (2)
 // seçilen ürünün kategorisini selectedCategory içine atar. (2)
-const getProductFeatures = async (data, productId) => {
+const getProductFeatures = async (data, prodcutItem, updateStatus) => {
   try {
     setIsloading(true);
-    if(!data || !productId){
+    if(!data || !prodcutItem.id){
       setIsloading(false);
       return;
     }
@@ -114,7 +113,7 @@ const getProductFeatures = async (data, productId) => {
       const selectedProductFeatures = [];
 
       await data.productFeatures.map((item, index) => {
-        if(item.productId === productId){
+        if(item.productId === prodcutItem.id){
           //id eşleşmesi olan gelen tüm item verilerini selectedProductFeatures state'ine at.
           selectedProductFeatures.push(item);
         }
@@ -134,7 +133,7 @@ const getProductFeatures = async (data, productId) => {
           return;
         }
         await setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
-        await fetchData(selectedProductFeatures[0].selectedCategoryKey, productId || "furniture");
+        await fetchData(selectedProductFeatures[0].selectedCategoryKey, prodcutItem || "furniture", updateStatus);
         setIsloading(false);
       
 
@@ -148,7 +147,7 @@ const getProductFeatures = async (data, productId) => {
 }
 
  // seçilen kategoriye göre ürün özelliklerini allFeatureData state'ine at. !!! (tek amacı bu) (3)
- const fetchData = async (productCategory, productId)  => {
+ const fetchData = async (productCategory, prodcutItem, updateStatus)  => {
 
   setIsloading(true);
   try {
@@ -162,7 +161,7 @@ const getProductFeatures = async (data, productId) => {
     // categories'lerin ürününki ile eşleşen features dewğerlerini ver itabanından getiririz.(3.1)
 
     if(allFeatureData.length > 0 && allFeatureData){
-      await matchedFeatureOfProduct(productId, allFeatureData);
+      await matchedFeatureOfProduct(prodcutItem, allFeatureData, updateStatus);
     }
 
     else{
@@ -182,7 +181,7 @@ const getProductFeatures = async (data, productId) => {
           }
         }
       }
-      await matchedFeatureOfProduct(productId, results);
+      await matchedFeatureOfProduct(prodcutItem, results, updateStatus);
       await setAllFeatureData(results);
     }
 
@@ -199,9 +198,10 @@ const getProductFeatures = async (data, productId) => {
 
 
 // seçilen ürünün özelliklerini en detaylı şekilde state e atar. (4)
-const matchedFeatureOfProduct = async (productId, results) => {
+const matchedFeatureOfProduct = async (prodcutItem, results, updateStatus) => {
 
-  const matchedFeature = data.productFeatures.filter((item) => item.productId === productId);
+
+  const matchedFeature = data.productFeatures.filter((item) => item.productId === prodcutItem.id);
   const featureResults = [];
 
 
@@ -219,7 +219,19 @@ const matchedFeatureOfProduct = async (productId, results) => {
   });
 
    const result = [{ featureResults: featureResults, matchedFeature: matchedFeature }];
-  await setProductFeatures(result);
+   
+   if(updateStatus){
+      await setNewUpdateData({
+        createProducts:prodcutItem,
+        productFeatures:matchedFeature
+      });
+      await setIsUpdateEnabled(true);
+    }
+
+    else{
+      await setProductFeatures(result);
+    }
+
   setIsloading(false);
 };
 
@@ -447,7 +459,12 @@ const renderData = () => {
               productFeatures && productFeatures.length > 0 && selectedProduct && selectedProduct.id === prodcutItem.id ? 
               <div className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEyeSlash size={20}/><span className="hidden lg:block">Özellikleri Gizle</span></div> : 
               <div 
-              onClick={() => getProductFeatures(data, prodcutItem.id)}
+              onClick={() => {
+                // setIsUpdateEnabled(false);
+                setProductFeaturesUpdate("");
+                setProductIdUpdate("");
+                getProductFeatures(data, prodcutItem, false)
+              }}
               className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEye size={20}/><span className="hidden lg:block">Özellikleri Gör</span></div>
             }
             </button>
@@ -455,11 +472,21 @@ const renderData = () => {
 
         {/* işlem */}
         <td className="text-center py-2 border-r border-b border-black">
-          <button 
-          onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} 
-          className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
-            <FaTrash size={20} />
-          </button>
+          <div className="flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap">
+            <button 
+              onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} 
+              className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                <FaTrash size={20} />
+            </button>
+            <button 
+              onClick={async () => {
+                //await setIsUpdateEnabled(true);
+                await getProductFeatures(data, prodcutItem, true);                               
+              }} 
+              className='bg-blue-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
+                <FaEdit size={20} />
+            </button>
+          </div>
         </td>
       </tr>
     )))
@@ -555,9 +582,9 @@ const renderFeaturesTable = () => {
                   
               <td className="text-center py-2 border-r border-b border-black">
                 <div className='flex flex-row justify-center items-center gap-2'>
-                                  {/* item -> özeeliğin kendi verisini tutar*/}
+                                  {/* item -> özelliğin kendi verisini tutar*/}
                   <button onClick={() => deleteProdcut({featureId:item.id, productId:selectedProduct.id}, "deleteFeature")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
-                    <FaTrash size={20} />
+                    <FaTrash size={20} />FaEdit
                   </button>
                 </div>
               </td>

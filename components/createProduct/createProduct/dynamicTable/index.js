@@ -10,7 +10,7 @@ import ResizeImage from '@/functions/others/resizeImage';
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
-const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => {
+const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUpdateData }) => {
   const router = useRouter();
 
   const objectKey = Object.keys(data)[0];
@@ -116,9 +116,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   const [productName , setProductName] = useState("");
   const [productType, setProductType] = useState("");
   const [languageIsEnabled, setLanguageIsEnabled] = useState(false);
-
-
-
+  const [updateData, setUpdateData] = useState("");
 
   const [productNameTR , setProductNameTR] = useState("");
   const [productTypeTR, setProductTypeTR] = useState("");
@@ -132,12 +130,28 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
   const [productTypeUA, setProductTypeUA] = useState("");
   const [productCategoryUA, setProductCategoryUA] = useState("");
 
-  // useEffect(() => {
-  //   console.log("languageIsEnabled :", languageIsEnabled);
+  useEffect( () => {
+  if(newUpdateData){
+
+    setCheckboxValues(newUpdateData.productFeatures);
+  
+    setProductName(newUpdateData.createProducts.productName);
+    setProductType(newUpdateData.createProducts.productType);
+  
+    setProductNameTR(newUpdateData.createProducts.productNameTR);
+    setProductTypeTR(newUpdateData.createProducts.productTypeTR);
+    setProductCategoryTR(newUpdateData.createProducts.productCategoryTR);
     
-  // }, [languageIsEnabled])
-
-
+    setProductNameEN(newUpdateData.createProducts.productNameEN);
+    setProductTypeEN(newUpdateData.createProducts.productTypeEN);
+    setProductCategoryEN(newUpdateData.createProducts.productCategoryEN);
+  
+    setProductNameUA(newUpdateData.createProducts.productNameUA);
+    setProductTypeUA(newUpdateData.createProducts.productTypeUA);
+    setProductCategoryUA(newUpdateData.createProducts.productCategoryUA);
+  }
+    
+  }, [newUpdateData])
 
   const sendData = async (productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues) =>{
     setIsloading(true);
@@ -195,12 +209,23 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
     }
 
     try {
-      
-      const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
-      if(!responseData || responseData.status !== "success"){
-          throw new Error("Veri eklenemedi");
-      }
+      if(newUpdateData){
+        const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"update"});
+        if(!responseData || responseData.status !== "success"){
+            throw new Error("Veri eklenemedi");
+        }
        setIsloading(false);
+
+      }
+      else{
+        const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"post"});
+        if(!responseData || responseData.status !== "success"){
+            throw new Error("Veri eklenemedi");
+        }
+       setIsloading(false);
+
+      }
+      
 
        // ÜRÜN EKLEME İŞLEMİ TAMAMLANDIKTAN SONRA VAR OLAN VERİLERİ TEMİZLER VE PANELLERİ KAPATIR.
        setCheckboxValues([]);
@@ -240,13 +265,10 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       setIsloading(true);
       const response = await getAPI('/createProduct/createProduct');
   
-      if(!response){
-        throw new Error("Veri çekilemedi 2");
+      if(!response || response.status !== "success"){
+        throw new Error("Veri çekilemedi JJKY7TB");
       }
-  
-      if(response.status !== "success"){
-        throw new Error("Veri çekilemedi 3");
-      }
+
       setProductTypes(response.data.createProducts);
       setIsloading(false);
   
@@ -680,7 +702,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
       />
       {isloading && <LoadingScreen isloading={isloading} />}
 
-      <div className='w-full bg-gray-100 p-2 lg:my-10 my-4 flex flex-row flex-wrap gap-4 justify-center item-center'>
+      <div className='w-full bg-gray-100 p-2 lg:my-10 my-4 flex flex-col lg:flex-row flex-wrap gap-4 justify-center item-center'>
         <div className="flex flex-col justify-center items-center ">
           <h3 className='text-xl font-semibold text-gray-700 my-2'> Ürün Adı </h3>
           <input
@@ -1039,7 +1061,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues }) => 
                 Tümünü Temizle
               </button>
               <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" onClick={()=>sendData(productName, productType, selectedCategoryKey, selectedCategoryValues, checkboxValues)}>
-                Ürünü Kaydet
+                {newUpdateData ? "Ürünü Güncelle" : "Ürünü Kaydet"}
               </button>
             </div>
           </div>

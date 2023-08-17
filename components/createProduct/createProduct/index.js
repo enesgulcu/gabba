@@ -42,10 +42,17 @@ const CreateProductComponent = () => {
   const [filterProductName, setFilterProductName] = useState("");
   const [filterProductType, setFilterProductType] = useState("");
   const [filterProductCategory, setFilterProductCategory] = useState("");
+  const [isUpdateEnabled, setIsUpdateEnabled] = useState(false);
+  const [newUpdateData, setNewUpdateData] = useState({}); 
 
-  // useEffect(() => {
-  //   console.log(selectedSubCategory);
-  // }, [selectedSubCategory])
+  useEffect(() => {
+    
+    if(isUpdateEnabled && newUpdateData && newUpdateData.createProducts && newUpdateData){
+      // kategori ataması otomatik yapılır.
+      setSelectedCategory({key: newUpdateData.createProducts.selectedCategoryKey, value: newUpdateData.createProducts.selectedCategoryValues})
+      setListProductsEnabled(false);
+    }
+  }, [isUpdateEnabled, newUpdateData, setIsUpdateEnabled])
   
 
   
@@ -155,7 +162,11 @@ const CreateProductComponent = () => {
           </div>
         }
         
-          <button onClick={() => setListProductsEnabled(!listProductsEnabled)}
+          <button onClick={() => {
+            setListProductsEnabled(!listProductsEnabled)
+            setIsUpdateEnabled(false);
+            setNewUpdateData({});
+          }}
           className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
             ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
           `}
@@ -176,7 +187,7 @@ const CreateProductComponent = () => {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable categoriesData={categoriesData} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled}/>
+          <ListFeatureTable categoriesData={categoriesData} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData}/>
         </div>
 
         : 
@@ -188,9 +199,37 @@ const CreateProductComponent = () => {
             />
 
           {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 && (
-            <div>
-              <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
-            </div>
+            <div className={`${isUpdateEnabled && "border-4 border-purple-600 lg:rounded"} mt-4`}>
+              {isUpdateEnabled &&
+              <div className="flex flex-col justify-center items-center bg-purple-400 w-full p-2">
+                <div className=" flex justify-center items-center gap-4 w-full p-2">
+                  <h3 className="text-white font-bold lg:text-xl text-lg">GÜNCELLEME MODU</h3>
+                  <button
+                  type="button"
+                  className="bg-white text-purple-600 font-bold p-2 rounded hover:scale-110 transition-all"
+                  onClick={() => {
+                    setIsUpdateEnabled(false);
+                    setNewUpdateData({});
+                    setListProductsEnabled(true);
+                  }}
+                  >
+                    İptal Et
+                  </button>
+                </div>
+
+                <div className="p-2">
+                  <p className="text-white text-center">ürününüzün son halini aşağıdan kontrol edebilir ve güncelelyebilirsiniz.</p>
+                </div>
+              </div>
+              }
+              {
+                isUpdateEnabled && newUpdateData ? 
+                <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} newUpdateData={newUpdateData} />
+                : 
+                <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
+
+              }
+              </div>
           )}
         </div>
       }
