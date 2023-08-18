@@ -1,4 +1,4 @@
-import {createNewProduct, getAllData, deleteDataByAny, updateDataByAny, deleteDataByMany } from "@/services/serviceOperations";
+import {createNewProduct, getAllData, deleteDataByAny, updateProduct, deleteDataByMany } from "@/services/serviceOperations";
 
 const handler = async (req, res) => {
 
@@ -69,7 +69,7 @@ const handler = async (req, res) => {
       ;
       // gelen verileri kontrol fonksiyonunua gönderiyoruz.
       const checkedData = await checkData(data);
-
+      
       if(!checkedData && checkedData.error){
         throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
       }
@@ -138,22 +138,41 @@ const handler = async (req, res) => {
       }
 
       // güncelleme işlemi için gelen veriyi güncelleriz.
-      else if(processType == "update"){        
+      else if(processType == "update"){ 
 
-        // id değerini silip yeni veriyi oluşturuyoruz.
-        const NewDatawitoutId = checkedData.map(item => {
-          const {id, ...newData} = item;
-          return newData;
-        });
+        // checkedData {
+        //   productCode: '23T108T218FU37',
+        //   productName: 't1',
+        //   productType: 't2',
+        //   selectedCategoryKey: 'furniture',
+        //   selectedCategoryValues: 'Mobilya',
+        //   productFeatures: [
+        //     {
+        //       id: '64df87e9c8efeeb303c3c905',
+        //       index: 1,
+        //       feature: 'Ölçüler',
+        //       featureId: '64c4ac3336677515eec15f86',
+        //       targetValue: 'standard',
+        //       checked: true,
+        //       value: null,
+        //       imageValue: null,
+        //       extraValue: null,
+        //       productId: '64df87e8c8efeeb303c3c903',
+        //       productName: 't1',
+        //       productType: 't2',
+        //       selectedCategoryKey: 'furniture',
+        //       selectedCategoryValues: 'Mobilya',
+        //       createdAt: '2023-08-18T15:02:00.250Z',
+        //       updatedAt: '2023-08-18T15:02:00.250Z'
+        //     }
+        //   ]
+        // }
         
-        // veriyi güncelliyoruz.
-        const updateData = await updateDataByAny("Products", {id: checkedData[0].id}, NewDatawitoutId[0]);
+        // enes burada kaldın.
+        console.log("checkedData", checkedData);
 
-        if(!updateData || updateData.error){
-          throw updateData;
-        }
+        return res.status(200).json({ status: "success", data:checkedData, message: createProducts.message });
         
-        return res.status(200).json({ status: "success", data:updateData, message: updateData.message });
       }
 
       // yeni veri oluşturuyoruz.

@@ -193,13 +193,17 @@ const CreateProductComponent = () => {
         : 
 
         <div>
-          <DropDownCatagories
+          {
+            !isUpdateEnabled &&
+            <DropDownCatagories
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
             />
+          }
+          
 
           {selectedCategory && selectedSubCategory && Object.keys(data).length > 0 && (
-            <div className={`${isUpdateEnabled && "border-4 border-purple-600 lg:rounded"} mt-4`}>
+            <div className={`${isUpdateEnabled && "border-4 border-purple-600 lg:rounded"} mt-2`}>
               {isUpdateEnabled &&
               <div className="flex flex-col justify-center items-center bg-purple-400 w-full p-2">
                 <div className=" flex justify-center items-center gap-4 w-full p-2">
