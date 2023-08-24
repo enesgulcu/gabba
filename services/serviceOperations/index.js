@@ -70,6 +70,21 @@ export async function updateDataByAny(tableName, where, newData) {
   }
 }
 
+// UPDATE MANY
+export async function updateDataByMany(tableName, where, newData) {
+  try {
+    const data = await prisma[tableName].updateMany({
+      where: where,
+      data: newData,
+    });
+    return data;
+  } catch (error) {
+    return { error: error.message};
+  }
+}
+
+
+
 
 //DELETE
 export async function deleteDataByAny(tableName, where) {
@@ -118,6 +133,29 @@ export async function createNewProduct(tableName, newData) {
   }
 }
 
+export async function updateProduct(productId, updatedProductData) {
+  try {
+    const updatedProduct = await prisma.products.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        ...updatedProductData,
+        // prisma - mon go db ye göre update işlemi uygula.
+        productFeatures: {
+          deleteMany: {}, // hepsini sil
+          create: updatedProductData.productFeatures // yeni verileri ekle
+        }
+      },
+    });
+
+    return updatedProduct;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+
 export default {
   getAllData,
 
@@ -128,6 +166,8 @@ export default {
   getDataByUnique,
 
   updateDataByAny,
+
+  updateDataByMany,
   
   deleteDataByAny,
 
@@ -137,5 +177,8 @@ export default {
 
   // Special Service
   createNewProduct,
+
+  // Special Service
+  updateProduct
   
 };

@@ -3,7 +3,7 @@ import {createNewProduct, getAllData, deleteDataByAny, updateProduct, deleteData
 const handler = async (req, res) => {
 
   // extra ve image verileri içi boş olanları temizlenecek.
-  const checkData = async (data) => {
+  const checkData = async (data, productId=null) => {
     try {
       if (!data || typeof data !== 'object') {
         throw new Error("Veri eksik veya geçersiz.");
@@ -21,6 +21,17 @@ const handler = async (req, res) => {
         if (item.feature === 'Image' && (!item.imageValue || item.imageValue.trim() === '')) {
           return false;
         }
+
+        //processedFeatures içine productId var mı kontrol et yoksa ekle.
+        // if(!item.productId){
+        //   item.productId = productId;
+        // }
+
+        //processedFeatures içine productId var mı kontrol et varsa sil.
+        if(item.productId){
+          delete item.productId;
+        }
+
 
         return true;
       });
@@ -65,10 +76,10 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST") {
       
-      const {data, processType, process=null} = await req.body;
+      const {data, processType, process=null, productId=null} = await req.body;
       ;
       // gelen verileri kontrol fonksiyonunua gönderiyoruz.
-      const checkedData = await checkData(data);
+      const checkedData = await checkData(data, productId);
       
       if(!checkedData && checkedData.error){
         throw "Bir hata oluştu. Lütfen teknik birimle iletişime geçiniz. XR09KU2";
@@ -139,39 +150,20 @@ const handler = async (req, res) => {
 
       // güncelleme işlemi için gelen veriyi güncelleriz.
       else if(processType == "update"){ 
+        console.log("checkedData :", checkedData);
+        const updatedProduct = await updateProduct(productId, checkedData);
 
-        // checkedData {
-        //   productCode: '23T108T218FU37',
-        //   productName: 't1',
-        //   productType: 't2',
-        //   selectedCategoryKey: 'furniture',
-        //   selectedCategoryValues: 'Mobilya',
-        //   productFeatures: [
-        //     {
-        //       id: '64df87e9c8efeeb303c3c905',
-        //       index: 1,
-        //       feature: 'Ölçüler',
-        //       featureId: '64c4ac3336677515eec15f86',
-        //       targetValue: 'standard',
-        //       checked: true,
-        //       value: null,
-        //       imageValue: null,
-        //       extraValue: null,
-        //       productId: '64df87e8c8efeeb303c3c903',
-        //       productName: 't1',
-        //       productType: 't2',
-        //       selectedCategoryKey: 'furniture',
-        //       selectedCategoryValues: 'Mobilya',
-        //       createdAt: '2023-08-18T15:02:00.250Z',
-        //       updatedAt: '2023-08-18T15:02:00.250Z'
-        //     }
-        //   ]
-        // }
+        console.log("updatedProduct :::::::::", updatedProduct);
         
-        // enes burada kaldın.
-        console.log("checkedData", checkedData);
-
-        return res.status(200).json({ status: "success", data:checkedData, message: createProducts.message });
+        if (!updatedProduct || updatedProduct.error) {
+          throw new Error("Ürün güncellenemedi.");
+        }        
+        
+        return res.status(200).json({
+          status: "success",
+          data: checkedData,
+          message: "Ürün ve ürün özellikleri başarıyla güncellendi.",
+        });
         
       }
 

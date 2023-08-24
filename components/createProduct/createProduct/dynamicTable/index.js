@@ -10,7 +10,7 @@ import ResizeImage from '@/functions/others/resizeImage';
 import Image from 'next/image';
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
-const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUpdateData }) => {
+const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUpdateData, setIsUpdateEnabled }) => {
   const router = useRouter();
 
   const objectKey = Object.keys(data)[0];
@@ -132,7 +132,6 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
 
   useEffect( () => {
   if(newUpdateData){
-
     setCheckboxValues(newUpdateData.productFeatures);
   
     setProductName(newUpdateData.createProducts.productName);
@@ -180,10 +179,14 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
     // rasgele 2 tane tam sayı rakam oluştur sonra bunları string olarak yan yana yaz.
     const randomAlphabet = Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10);
 
-
+    let productCode;
     // ürün kodunu oluştur
-    const productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + randomAlphabet).trim();
-    
+    if(!newUpdateData){
+      productCode = (year + productNameFirst3Character + month + productTypeforCode + day + selectedCategoryKeyforCode + randomAlphabet).trim();
+    }
+    else{
+      productCode = newUpdateData.createProducts.productCode;
+    }
     //################################################################################
     //################################################################################
 
@@ -210,10 +213,11 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
 
     try {
       if(newUpdateData){
-        const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"update"});
+        const responseData = await postAPI("/createProduct/createProduct",{data:data, processType:"update", productId:newUpdateData.createProducts.id});
         if(!responseData || responseData.status !== "success"){
             throw new Error("Veri eklenemedi");
         }
+        setIsUpdateEnabled(false);
        setIsloading(false);
 
       }
@@ -793,11 +797,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
 
                 {/* çeviri kapatma iconu */}
                 <div>
-                {
-                  productNameTR.trim().length > 0 || productTypeTR.trim().length > 0 || productCategoryTR.trim().length > 0 ||
-                  productNameEN.trim().length > 0 || productTypeEN.trim().length > 0 || productCategoryEN.trim().length > 0 ||
-                  productNameUA.trim().length > 0 || productTypeUA.trim().length > 0 || productCategoryUA.trim().length > 0
-                  ?
+                {productNameTR || productTypeTR || productCategoryTR   ?
                   <div className="w-full flex justify-center items-center relative"
                     onClick={() => setLanguageIsEnabled(false)} 
                   >

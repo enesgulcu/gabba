@@ -45,6 +45,9 @@ const CreateProductComponent = () => {
   const [isUpdateEnabled, setIsUpdateEnabled] = useState(false);
   const [newUpdateData, setNewUpdateData] = useState({}); 
 
+  
+  
+
   useEffect(() => {
     
     if(isUpdateEnabled && newUpdateData && newUpdateData.createProducts && newUpdateData){
@@ -187,7 +190,7 @@ const CreateProductComponent = () => {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable categoriesData={categoriesData} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData}/>
+          <ListFeatureTable categoriesData={categoriesData} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData} newUpdateData={newUpdateData}/>
         </div>
 
         : 
@@ -228,7 +231,7 @@ const CreateProductComponent = () => {
               }
               {
                 isUpdateEnabled && newUpdateData ? 
-                <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} newUpdateData={newUpdateData} />
+                <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} newUpdateData={newUpdateData} setIsUpdateEnabled={setIsUpdateEnabled}/>
                 : 
                 <DynamicTable data={data} selectedCategoryKey={selectedCategory.key} selectedCategoryValues={selectedCategory.value} />
 

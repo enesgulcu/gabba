@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData}) => {
+const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -35,6 +35,11 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
   const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
+
+  // useEffect(() => {
+  //  console.log("filteredData : ", filteredData);
+  // }, [filteredData])
+  
 
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
@@ -110,7 +115,12 @@ const getProductFeatures = async (data, prodcutItem, updateStatus) => {
     // ########################################################################
     // seçilen ürünün özelliklerini selectedProductFeatures state'ine at. (2.1)
 
-      const selectedProductFeatures = [];
+    let selectedProductFeatures = [];
+
+    if(updateStatus){
+      selectedProductFeatures = [{ selectedCategoryKey: prodcutItem.selectedCategoryKey}];
+    }
+      
 
       await data.productFeatures.map((item, index) => {
         if(item.productId === prodcutItem.id){
@@ -119,21 +129,20 @@ const getProductFeatures = async (data, prodcutItem, updateStatus) => {
         }
       })
 
-      await setSelectedProductFeatures(selectedProductFeatures);
-
+      setSelectedProductFeatures(selectedProductFeatures);
     // seçilen ürünün özelliklerini selectedProductFeatures state'ine at. (2.1)
     // ########################################################################
 
     // ########################################################################
     // seçilen ürünün kategorisini selectedCategory state'ine at. (2.2)
 
-      if(!selectedProductFeatures[0]){
+      if(!selectedProductFeatures[0] && !updateStatus){
           setIsloading(false);
           toast.error("ürün özellikleri tanımlanmamış!");
           return;
         }
-        await setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
-        await fetchData(selectedProductFeatures[0].selectedCategoryKey, prodcutItem || "furniture", updateStatus);
+        setSelectedCategory(selectedProductFeatures[0].selectedCategoryKey);
+        await fetchData(selectedProductFeatures[0].selectedCategoryKey, prodcutItem , updateStatus);
         setIsloading(false);
       
 
@@ -182,7 +191,7 @@ const getProductFeatures = async (data, prodcutItem, updateStatus) => {
         }
       }
       await matchedFeatureOfProduct(prodcutItem, results, updateStatus);
-      await setAllFeatureData(results);
+      setAllFeatureData(results);
     }
 
     setIsloading(false);
@@ -229,7 +238,7 @@ const matchedFeatureOfProduct = async (prodcutItem, results, updateStatus) => {
     }
 
     else{
-      await setProductFeatures(result);
+      setProductFeatures(result);
     }
 
   setIsloading(false);
@@ -310,7 +319,6 @@ const renderData = () => {
   return filteredData && filteredData.createProducts && (
     filteredData.createProducts.map((prodcutItem, index) => (
       <tr key={index} className="border-b hover:bg-blue-50">
-
         {/* sıra numarası */}
         <td className="  border-r border-b border-black">
           <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
@@ -359,6 +367,7 @@ const renderData = () => {
           }
           </div>
         </td>
+
         <td className="text-center p-2 border-r border-b border-black">
           <div className='h-20 flex justify-center items-center'>
             <Image
@@ -463,6 +472,9 @@ const renderData = () => {
                 // setIsUpdateEnabled(false);
                 setProductFeaturesUpdate("");
                 setProductIdUpdate("");
+                // data -> tüm ürünler ve tüm özellikler
+                // prodcutItem -> seçilen ürün
+                // false -> update işlemi değil.
                 getProductFeatures(data, prodcutItem, false)
               }}
               className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap'><FaEye size={20}/><span className="hidden lg:block">Özellikleri Gör</span></div>
@@ -480,7 +492,10 @@ const renderData = () => {
             </button>
             <button 
               onClick={async () => {
-                //await setIsUpdateEnabled(true);
+                
+                // data -> tüm ürünler ve tüm özellikler
+                // prodcutItem -> seçilen ürün
+                // true -> update işlemi.
                 await getProductFeatures(data, prodcutItem, true);                               
               }} 
               className='bg-blue-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
@@ -584,7 +599,7 @@ const renderFeaturesTable = () => {
                 <div className='flex flex-row justify-center items-center gap-2'>
                                   {/* item -> özelliğin kendi verisini tutar*/}
                   <button onClick={() => deleteProdcut({featureId:item.id, productId:selectedProduct.id}, "deleteFeature")} className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
-                    <FaTrash size={20} />FaEdit
+                    <FaTrash size={20} />
                   </button>
                 </div>
               </td>
