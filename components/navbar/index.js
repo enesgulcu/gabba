@@ -43,7 +43,7 @@ const Navbar = ({ links }) => {
     <>
       {isloading && <LoadingScreen isloading={isloading} />}
       
-      <nav className="bg-gray-800 p-4">
+      <nav className="bg-gray-800 p-4 relative z-50">
         
         <div className="w-full mx-auto">
           <div
@@ -71,7 +71,6 @@ const Navbar = ({ links }) => {
                   {link.submenu ?(
                     <>
                     <Link href={link.url}
-                    onClick={()=>setIsloading(true)}
                     >
                       <button
                         onMouseEnter={() => handleSubMenuToggle(index)}
@@ -93,7 +92,7 @@ const Navbar = ({ links }) => {
                         >
                           {link.submenu.map((sublink, subIndex) => (
                             <Link href={sublink.url} key={subIndex}
-                            onClick={()=>setIsloading(true)}
+                            onClick={()=>{setIsMenuOpen(!isMenuOpen);}}
                             >
                               <div className="block text-white hover:bg-gray-700 px-3 py-2 rounded-md">
                                 {sublink.text}
@@ -106,7 +105,7 @@ const Navbar = ({ links }) => {
                   ) : (
                     !link.button ? (
                     <Link href={link.url} key={index}
-                    onClick={()=>setIsloading(true)}
+
                     >
                       <div className="text-white hover:bg-gray-700 px-3 py-2 rounded-md md:inline-block">
                         {link.text}
@@ -114,7 +113,7 @@ const Navbar = ({ links }) => {
                     </Link>
                     ) : (
                       <Link href={link.url} key={index}
-                      onClick={()=>setIsloading(true)}
+
                       >
                       <button className="text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md md:inline-block">
                         {link.text}
