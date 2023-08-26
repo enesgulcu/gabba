@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData}) => {
+const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -76,7 +76,7 @@ const ListFeatureTable = ({categoriesData, filterProductName, filterProductType,
 useEffect(() => {
   // Ürün filtreleme işlemleri
   if (
-    (!filterProductName && !filterProductType && !filterProductCategory) ||
+    (!filterProductCode && !filterProductName && !filterProductType && !filterProductCategory) ||
     !data.createProducts
   ) {
     setFilteredData(data);
@@ -84,6 +84,9 @@ useEffect(() => {
   }
 
   const filteredProducts = data.createProducts.filter(item => {
+
+    const productCodeMatch = !filterProductCode ||
+    item.productCode.toLowerCase().includes(filterProductCode.toLowerCase());
 
     const productNameMatch = !filterProductName || 
     item.productName.toLowerCase().includes(filterProductName.toLowerCase());
@@ -94,11 +97,11 @@ useEffect(() => {
     const productCategoryMatch = !filterProductCategory || 
     item.selectedCategoryValues.toLowerCase().includes(filterProductCategory.toLowerCase());
 
-    return productNameMatch && productTypeMatch && productCategoryMatch;
+    return productCodeMatch && productNameMatch && productTypeMatch && productCategoryMatch;
   });
 
   setFilteredData({ ...data, createProducts: filteredProducts });
-}, [data, filterProductName, filterProductType, filterProductCategory]);
+}, [data,filterProductCode, filterProductName, filterProductType, filterProductCategory]);
 
 
 
@@ -541,7 +544,7 @@ const renderFeaturesTable = () => {
     ));
  
   return (
-    <div className="w-full overflow-auto min-h-[200px] bg-gray-600">
+    <div className="w-full overflow-auto  lg:min-h-[200px] bg-gray-600">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
           <tr className="bg-blue-600 w-full">

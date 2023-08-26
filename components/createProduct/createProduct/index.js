@@ -40,6 +40,7 @@ const CreateProductComponent = () => {
   const [listProductsEnabled, setListProductsEnabled] = useState(true);
   const [filterEnabled, setFilterEnabled] = useState(false);
   const [filterProductName, setFilterProductName] = useState("");
+  const [filterProductCode, setFilterProductCode] = useState("");
   const [filterProductType, setFilterProductType] = useState("");
   const [filterProductCategory, setFilterProductCategory] = useState("");
   const [isUpdateEnabled, setIsUpdateEnabled] = useState(false);
@@ -133,10 +134,19 @@ const CreateProductComponent = () => {
             {filterEnabled &&
             <div className="rounded text-white flex justify-center items-center flex-col lg:flex-row gap-2 ">
                   <div className="flex justify-center items-center flex-col">
+                    <h3 className="text-black">Ürün Kodu</h3>
+                    <div className="border-2 border-gray-400 rounded-md">
+                      <input type="text" 
+                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded max-w-[200px]"
+                      onChange={(e) => setFilterProductCode(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center flex-col">
                     <h3 className="text-black">Ürün Adı</h3>
                     <div className="border-2 border-gray-400 rounded-md">
                       <input type="text" 
-                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded"
+                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded max-w-[200px]"
                       onChange={(e) => setFilterProductName(e.target.value)}
                       />
                     </div>
@@ -145,7 +155,7 @@ const CreateProductComponent = () => {
                     <h3 className="text-black">Ürün Tipi</h3>
                     <div className="border-2 border-gray-400 rounded-md">
                       <input type="text" 
-                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded"
+                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded max-w-[200px]"
                       onChange={(e) => setFilterProductType(e.target.value)}
                       />
                     </div>
@@ -154,7 +164,7 @@ const CreateProductComponent = () => {
                     <h3 className="text-black">Ürün Kategorisi</h3>
                     <div className="border-2 border-gray-400 rounded-md">
                       <input type="text" 
-                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded"
+                      className=" outline-none border-none text-lg text-black bg-white p-2 rounded max-w-[200px]"
                       onChange={(e) => setFilterProductCategory(e.target.value)}
                       />
                     </div>
@@ -190,7 +200,7 @@ const CreateProductComponent = () => {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable categoriesData={categoriesData} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData} newUpdateData={newUpdateData}/>
+          <ListFeatureTable categoriesData={categoriesData} filterProductCode={filterProductCode} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData} newUpdateData={newUpdateData}/>
         </div>
 
         : 

@@ -104,8 +104,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
   ];
 
 
-  const [isloading, setIsloading] = useState(false);
-
+  const [isloading, setIsloading] = useState(false);  
   
   const [selectedFeature, setSelectedFeature] = useState("Ölçüler");
   const [checkboxValues, setCheckboxValues] = useState([]);
