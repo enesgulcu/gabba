@@ -198,7 +198,7 @@ const handler = async (req, res) => {
         throw productFeatures;
       }
 
-      return res.status(200).json({ status: "success", data:{createProducts, productFeatures}, message: "createProducts.message" });
+      return res.status(200).json({ status: "success", data:{createProducts, productFeatures}, message: createProducts.message });
     }
 
   } catch (error) {

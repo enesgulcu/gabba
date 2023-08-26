@@ -10,13 +10,15 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 const Navbar = ({ links }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubMenuIndex, setOpenSubMenuIndex] = useState(null);
-  const [isloading, setIsloading] = useState(false);
+  const [isloading, setIsloading] = useState(true);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     setIsloading(false);
+    setOpenSubMenuIndex(null);
+
  }, [pathname, searchParams])
 
   const handleMenuToggle = () => {
@@ -55,7 +57,7 @@ const Navbar = ({ links }) => {
               <div className="text-white font-bold text-xl">Logo</div>
               <div className="md:hidden">
                 <button
-                  onClick={handleMenuToggle}
+                  onClick={()=>{handleMenuToggle; setIsloading(true)}}
                   className="text-white focus:outline-none px-3 py-2"
                 >
                   {isMenuOpen ? <MdOutlineClose size={30}/> : <MdOutlineMenu size={30}/> }

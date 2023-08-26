@@ -14,15 +14,19 @@ export default function RootLayout({ children }) {
   const links = [
     { url: '/', text: 'Ana Sayfa' },
     {
-        url: '/createProduct/createProduct',
-        text: 'Ürün Oluştur',
-        submenu: [
-          { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },
-          { url: '/createProduct/fabrics', text: 'Kartela Oluştur' },
-          { url: '/createProduct/metals', text: 'Metal Oluştur' },
-          { url: '/createProduct/colors', text: 'Renk Oluştur' },
-        ],
-      },
+      url: '/createProduct/createProduct',
+      text: 'Ürün Oluştur',
+      submenu: [
+        { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },
+        { url: '/createProduct/fabrics', text: 'Kartela Oluştur' },
+        { url: '/createProduct/metals', text: 'Metal Oluştur' },
+        { url: '/createProduct/colors', text: 'Renk Oluştur' },
+      ],
+    },
+    {
+      url: '/createCollection',
+      text: 'Koleksiyon Oluştur',
+    },
     
     // {
     //   url: '/products',

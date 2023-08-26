@@ -53,6 +53,7 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
     setProductFeaturesUpdate("");
     setProductIdUpdate("");
     setNewUpdateData("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // veritabanından verileri çek. (1)

@@ -415,8 +415,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
             <tr>
               <th className="p-3 text-white bg-blue-600 font-bold border-l border-white">Sıra</th>
               <th className="p-3 text-white bg-red-600 font-bold border-l border-white">Standart</th>
-              <th className="p-3 text-white bg-red-600 font-bold border-l border-white">+ ücret</th>
-              <th className="p-3 text-white bg-red-600 font-bold border-l border-white">- ücret</th>
+              <th className="p-3 text-white bg-red-600 font-bold border-l border-white">+ Ücret</th>
+              <th className="p-3 text-white bg-red-600 font-bold border-l border-white">- Ücret</th>
               {Object.keys(filteredData[0]).map(header => (
                 // tablo başlıklarının listelendiği bölüm
                 header != "id" &&
