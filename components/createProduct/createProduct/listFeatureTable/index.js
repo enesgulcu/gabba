@@ -27,6 +27,9 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
   const [productIdUpdate, setProductIdUpdate] = useState("");
   const [productFeaturesUpdate, setProductFeaturesUpdate] = useState(""); 
 
+  const [collectionModeEnabled, setCollectionModeEnabled] = useState(true); // koleksiyon modu aktif mi ?
+  const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
+
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
 
@@ -37,8 +40,8 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
 
   // useEffect(() => {
-  //  console.log("filteredData : ", filteredData);
-  // }, [filteredData])
+  //  console.log("chooseProducts : ", chooseProducts);
+  // }, [chooseProducts])
   
 
   useEffect(() => {
@@ -304,8 +307,11 @@ const deleteProdcut = async (id, process) => {
 
 
   const renderHead = () => {
-
     const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Adı", "Seçilen Kategori", "Ürün Resmi","Dil Çevirisi", "Ürün Özellikleri", "işlem" ]
+
+    // koleksiyon modu aktif ise header bölümüne "Seç" ifadesi eklenir.
+    collectionModeEnabled && tableHeaders.unshift("Seç");
+    
     return (
         <tr className='bg-blue-600 text-white'>
             {tableHeaders.map((header, index) => (
@@ -323,6 +329,29 @@ const renderData = () => {
   return filteredData && filteredData.createProducts && (
     filteredData.createProducts.map((prodcutItem, index) => (
       <tr key={index} className="border-b hover:bg-blue-50">
+
+        {/* // checkbox buraya gelecek */}
+        {
+          collectionModeEnabled &&
+          <td className="text-center py-2 border-r border-b border-black">
+            <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
+            onChange={
+              (e) => {
+                // eğer seçilmiş ise seçilen ürünleri state içerisine atar.
+                if(e.target.checked){
+                  setChooseProducts([...chooseProducts, prodcutItem]);
+                }
+                // eğer seçilmemiş ise seçilen ürünleri state içerisinden çıkarır.
+                else{
+                  setChooseProducts(chooseProducts.filter((item) => item.id !== prodcutItem.id));
+                }
+              }
+            }
+            />
+          </td>
+        }
+        
+        
         {/* sıra numarası */}
         <td className="  border-r border-b border-black">
           <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">

@@ -23,10 +23,6 @@ export default function RootLayout({ children }) {
         { url: '/createProduct/colors', text: 'Renk Oluştur' },
       ],
     },
-    {
-      url: '/createCollection',
-      text: 'Koleksiyon Oluştur',
-    },
     
     // {
     //   url: '/products',
