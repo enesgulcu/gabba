@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData}) => {
+const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData, collectionModeEnabled, setCollectionModeEnabled, chooseProducts, setChooseProducts}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -26,9 +26,6 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   const [productIdUpdate, setProductIdUpdate] = useState("");
   const [productFeaturesUpdate, setProductFeaturesUpdate] = useState(""); 
-
-  const [collectionModeEnabled, setCollectionModeEnabled] = useState(true); // koleksiyon modu aktif mi ?
-  const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
 
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi

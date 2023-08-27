@@ -6,6 +6,7 @@ import DynamicTable from "@/components/createProduct/createProduct/dynamicTable"
 import LoadingScreen from '@/components/other/loading';
 import ListFeatureTable from "@/components/createProduct/createProduct/listFeatureTable"
 import { RxPlusCircled, RxListBullet, RxTriangleRight } from "react-icons/rx";
+import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import { BiFilterAlt } from "react-icons/bi";
 
 
@@ -46,6 +47,13 @@ const CreateProductComponent = () => {
   const [isUpdateEnabled, setIsUpdateEnabled] = useState(false);
   const [newUpdateData, setNewUpdateData] = useState({}); 
 
+  const [collectionModeEnabled, setCollectionModeEnabled] = useState(false); // koleksiyon modu aktif mi ?
+  const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
+  
+  
+  useEffect(() => {
+    console.log(chooseProducts);
+  }, [chooseProducts])
   
   
 
@@ -119,8 +127,10 @@ const CreateProductComponent = () => {
     <>
       {isloading && <LoadingScreen isloading={isloading} />}
 
-      <div className="p-0 lg:p-2 w-full flex flex-col lg:flex-row justify-center lg:justify-between items-center shadow-lg lg:px-10 bg-gray-100">
+      <div className="p-0 lg:p-2 w-full flex flex-col lg:flex-row justify-center lg:justify-between items-center shadow-lg lg:px-10 bg-gray-100 gap-2">
+        
         {
+          // Filtreleme butonu
           listProductsEnabled &&
           <div className="flex justify-center item-center flex-col lg:flex-row gap-2">
             <div className={`${filterEnabled ? "bg-green-500" : "bg-green-500"} p-4 text-white rounded text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0`}
@@ -174,33 +184,78 @@ const CreateProductComponent = () => {
             }
           </div>
         }
-        
-          <button onClick={() => {
-            setListProductsEnabled(!listProductsEnabled)
-            setIsUpdateEnabled(false);
-            setNewUpdateData({});
-          }}
-          className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
-            ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
-          `}
-          >
-
-            {listProductsEnabled ? 
-              <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
-                <RxPlusCircled size={25}/>  Ürün Oluşturma Sayfasına Git <RxTriangleRight size={25}/>
-              </div> : 
-              <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
-              <RxListBullet size={25}/>  Ürün Listeleme Sayfasına Git <RxTriangleRight size={25}/>
-            </div>
+        <div className="flex flex-row flex-wrap justify-center items-center">
+          {
+            // Kolleksiyon oluşturma butonu
+            listProductsEnabled &&
+            <button onClick={() => {
+              setCollectionModeEnabled(!collectionModeEnabled)
+            }}
+            className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
+              ${!collectionModeEnabled ? "bg-green-500" : "bg-purple-500"}
+            `}
+            >
+  
+              {!collectionModeEnabled ? 
+                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                  <RxPlusCircled size={25}/>  Koleksiyon Oluştur <RxTriangleRight size={25} className="rotate-90"/>
+                </div> : 
+                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                <IoClose size={25}/>  İptal Et
+              </div>
+              }
+            </button>
+          }
+          
+            {
+              // ürün oluşturma sayfasına gider (button)
             }
-          </button>
+            <button onClick={() => {
+              setListProductsEnabled(!listProductsEnabled)
+              setIsUpdateEnabled(false);
+              setNewUpdateData({});
+            }}
+            className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
+              ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
+            `}
+            >
+
+              {listProductsEnabled ? 
+                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                  <RxPlusCircled size={25}/>  Ürün Oluşturma Sayfasına Git <RxTriangleRight size={25}/>
+                </div> : 
+                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                <RxListBullet size={25}/>  Ürün Listeleme Sayfasına Git <RxTriangleRight size={25}/>
+              </div>
+              }
+            </button>
+          </div>
       </div>
 
       {
 
         listProductsEnabled ? 
         <div>
-          <ListFeatureTable categoriesData={categoriesData} filterProductCode={filterProductCode} filterProductName={filterProductName} filterProductType={filterProductType} filterProductCategory={filterProductCategory} filterEnabled={filterEnabled} setIsUpdateEnabled={setIsUpdateEnabled} isUpdateEnabled={isUpdateEnabled}  setNewUpdateData={setNewUpdateData} newUpdateData={newUpdateData}/>
+          <ListFeatureTable 
+            categoriesData={categoriesData} 
+            filterProductCode={filterProductCode} 
+            filterProductName={filterProductName} 
+            filterProductType={filterProductType} 
+            filterProductCategory={filterProductCategory} 
+            filterEnabled={filterEnabled} 
+            setIsUpdateEnabled={setIsUpdateEnabled} 
+            isUpdateEnabled={isUpdateEnabled}  
+            setNewUpdateData={setNewUpdateData} 
+            newUpdateData={newUpdateData} 
+            collectionModeEnabled={collectionModeEnabled} 
+            setCollectionModeEnabled={setCollectionModeEnabled}
+            chooseProducts={chooseProducts}
+            setChooseProducts={setChooseProducts}            
+            />
+            
+
+
+
         </div>
 
         : 
