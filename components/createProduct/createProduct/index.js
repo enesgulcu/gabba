@@ -51,9 +51,9 @@ const CreateProductComponent = () => {
   const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
   
   
-  useEffect(() => {
-    console.log(chooseProducts);
-  }, [chooseProducts])
+  // useEffect(() => {
+  //   console.log(chooseProducts);
+  // }, [chooseProducts])
   
   
 
@@ -192,7 +192,7 @@ const CreateProductComponent = () => {
               setCollectionModeEnabled(!collectionModeEnabled)
             }}
             className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
-              ${!collectionModeEnabled ? "bg-green-500" : "bg-purple-500"}
+              ${!collectionModeEnabled ? "bg-green-500" : "bg-red-600"}
             `}
             >
   
@@ -200,7 +200,12 @@ const CreateProductComponent = () => {
                 <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
                   <RxPlusCircled size={25}/>  Koleksiyon Oluştur <RxTriangleRight size={25} className="rotate-90"/>
                 </div> : 
-                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center"
+                onClick={() => {
+                  setChooseProducts([]);
+                  setCollectionModeEnabled(false);
+                }}
+                >
                 <IoClose size={25}/>  İptal Et
               </div>
               }

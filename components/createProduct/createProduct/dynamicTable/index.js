@@ -882,8 +882,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) =>  setProductTypeTR(e.target.value)}
-                      id={`ProductNameTR`}
-                      name={`ProductNameTR`}
+                      id={`productTypeTR`}
+                      name={`productTypeTR`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productTypeTR}
@@ -900,8 +900,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) =>  setProductCategoryTR(e.target.value)}
-                      id={`ProductNameTR`}
-                      name={`ProductNameTR`}
+                      id={`productCategoryTR`}
+                      name={`productCategoryTR`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productCategoryTR}
@@ -941,8 +941,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) => setProductTypeUA(e.target.value)}
-                      id={`ProductNameUA`}
-                      name={`ProductNameUA`}
+                      id={`productTypeUA`}
+                      name={`productTypeUA`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productTypeUA}
@@ -959,8 +959,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) => setProductCategoryUA(e.target.value)}
-                      id={`ProductNameUA`}
-                      name={`ProductNameUA`}
+                      id={`productCategoryUA`}
+                      name={`productCategoryUA`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productCategoryUA}
@@ -1000,8 +1000,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) => setProductTypeEN(e.target.value)}
-                      id={`ProductNameEN`}
-                      name={`ProductNameEN`}
+                      id={`productTypeEN`}
+                      name={`productTypeEN`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productTypeEN}
@@ -1018,8 +1018,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     />
                     <input
                       onChange={(e) => setProductCategoryEN(e.target.value)}
-                      id={`ProductNameEN`}
-                      name={`ProductNameEN`}
+                      id={`productCategoryEN`}
+                      name={`productCategoryEN`}
                       className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-[300px] m-2`}
                       type="text"
                       value = {productCategoryEN}

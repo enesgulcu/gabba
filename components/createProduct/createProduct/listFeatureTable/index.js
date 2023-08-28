@@ -8,6 +8,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import LoadingScreen from '@/components/other/loading';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import CreateCollection from '@/components/createProduct/createProduct/createCollection';
 
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
@@ -36,9 +37,9 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
 
-  // useEffect(() => {
-  //  console.log("chooseProducts : ", chooseProducts);
-  // }, [chooseProducts])
+  useEffect(() => {
+   console.log("chooseProducts : ", chooseProducts);
+  }, [chooseProducts])
   
 
   useEffect(() => {
@@ -330,7 +331,10 @@ const renderData = () => {
         {/* // checkbox buraya gelecek */}
         {
           collectionModeEnabled &&
-          <td className="text-center py-2 border-r border-b border-black">
+          <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } text-center py-2 border-r border-b border-black` 
+        }>
             <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
             onChange={
               (e) => {
@@ -350,7 +354,13 @@ const renderData = () => {
         
         
         {/* sıra numarası */}
-        <td className="  border-r border-b border-black">
+        {
+          // eğer collectionProducts içerisinde seçilen ürün var ise bu td elementinin css rengini mavi yap
+        }
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } border-r border-b border-black text-center` 
+        }>
           <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
             <div className="bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center">
               {index + 1}
@@ -359,27 +369,42 @@ const renderData = () => {
         </td>
 
         {/* ürün kodu */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } border-r border-b border-black text-center` 
+        }>
           <div>{prodcutItem.productCode}</div>
         </td>
 
         {/* ürün adı */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } border-r border-b border-black text-center` 
+        }>
           <div>{prodcutItem.productName}</div>
         </td>
 
         {/* ürün tipi */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } border-r border-b border-black text-center` 
+        }>
           <div>{prodcutItem.productType}</div>
         </td>
 
         {/* seçilen kategori */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } border-r border-b border-black text-center` 
+        }>
           <div>{prodcutItem.selectedCategoryValues}</div>
         </td>
 
         {/* ürün resmi */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } text-center py-2 border-r border-b border-black` 
+        }>
           <div className='w-full flex justify-center item-center flex-wrap'>
           {
             data.productFeatures.map((featureItem, index) => (
@@ -398,7 +423,10 @@ const renderData = () => {
           </div>
         </td>
 
-        <td className="text-center p-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } text-center py-2 border-r border-b border-black` 
+        }>
           <div className='h-20 flex justify-center items-center'>
             <Image
               onClick={() => setSelectedProductLanguage(prodcutItem)}
@@ -488,7 +516,10 @@ const renderData = () => {
         </td>
 
         {/* ürün özellikleri */}
-        <td className="text-center p-2 border-r border-b border-black ">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } text-center py-2 border-r border-b border-black` 
+        }>
 
           <button 
           onClick={() => productFeatures && productFeatures.length > 0 && selectedProduct && selectedProduct.id === prodcutItem.id ? setSelectedProduct(null) : setSelectedProduct(prodcutItem)}
@@ -513,7 +544,10 @@ const renderData = () => {
         </td>
 
         {/* işlem */}
-        <td className="text-center py-2 border-r border-b border-black">
+        <td className={`${
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+        } text-center py-2 border-r border-b border-black` 
+        }>
           <div className="flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap">
             <button 
               onClick={() => deleteProdcut(prodcutItem.id, "deleteProduct")} 
@@ -723,6 +757,11 @@ const renderFeaturesTable = () => {
 
       {/* ürünleri listelediğimiz tablomuz */}
       <div className="w-full overflow-auto">
+        {
+          collectionModeEnabled &&
+          <CreateCollection/>
+          
+        }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
           <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
             {renderHead()}{" "}
