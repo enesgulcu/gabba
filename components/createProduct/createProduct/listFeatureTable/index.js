@@ -334,13 +334,34 @@ const renderData = () => {
           <td className={`${
           collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
-        }>
+        }>  
+        {
+          chooseProducts.map((item) => {
+            if(item.id === prodcutItem.id){
+              console.log("item.id :", item.id);
+              console.log("prodcutItem.id :", prodcutItem.id);
+              console.log("chooseProducts :", chooseProducts);
+            }
+          })
+        }
+
             <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
+
+            // eğer seçilen ürün var ise checkbox'ı işaretler.
+            checked={chooseProducts.some(item => item.id === prodcutItem.id)}
+
             onChange={
               (e) => {
-                // eğer seçilmiş ise seçilen ürünleri state içerisine atar.
+                
                 if(e.target.checked){
-                  setChooseProducts([...chooseProducts, prodcutItem]);
+                  // eğer seçilmiş ise seçilen ürünleri state içerisine atar.
+                  // eğer chooseProducts içerisinde seçilen ürün var ise tekrar atmaz.
+                  if(chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0){
+                    return;
+                  }
+                  else{
+                    setChooseProducts([...chooseProducts, prodcutItem]);
+                  }
                 }
                 // eğer seçilmemiş ise seçilen ürünleri state içerisinden çıkarır.
                 else{
@@ -546,7 +567,7 @@ const renderData = () => {
         {/* işlem */}
         <td className={`${
           collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
-        } text-center py-2 border-r border-b border-black` 
+        } text-center py-2 border-r border-b border-black px-1` 
         }>
           <div className="flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap">
             <button 
@@ -759,7 +780,7 @@ const renderFeaturesTable = () => {
       <div className="w-full overflow-auto">
         {
           collectionModeEnabled &&
-          <CreateCollection/>
+          <CreateCollection chooseProducts={chooseProducts}/>
           
         }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>

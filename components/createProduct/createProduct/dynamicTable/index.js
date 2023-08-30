@@ -790,9 +790,9 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
         </div>
 
         {languageIsEnabled && (
-          <div className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
-            <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
-              <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
+          <div className=" cursor-default absolute lg:fixed w-screen h-[1600px] lg:h-screen z-50 left-0 top-0 bg-black bg-opacity-90">
+            <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-start lg:items-center ">
+              <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2 flex justify-center items-center flex-col">
 
                 {/* çeviri kapatma iconu */}
                 <div>
@@ -826,7 +826,7 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     </h2>
                   }
                                           
-                  <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
+                  <div className="flex flex-col gap-2 md:gap-2 justify-center items-center w-full ">
                                               
                     {productName && productName.trim().length > 0 && (
                       <div className="bg-black p-1 w-full rounded-lg text-white mb-2">

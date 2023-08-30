@@ -458,9 +458,9 @@ import EditComponent from '@/components/createProduct/Metals/editComponent';
                                     </div>
 
                                 {props.values.metals[index].translateEnabled && (
-                                  <div className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
-                                    <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
-                                      <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
+                                  <div className=" cursor-default absolute w-screen h-[1600px] max-h-screen lg:h-screen z-50 left-0 top-0 bg-black bg-opacity-90">
+                                    <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-start lg:items-center">
+                                      <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2 flex justify-center items-center flex-col">
 
                                         {props.values.metals[index].metalTypeTurkish == "" &&
                                         props.values.metals[index].metalTypeUkrainian == "" &&
@@ -511,7 +511,7 @@ import EditComponent from '@/components/createProduct/Metals/editComponent';
                                           <h2 className="text-center w-full m-2">
                                               Girilen Orjinal Değer
                                             </h2>
-                                          <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
+                                          <div className="flex flex-col gap-2 md:gap-2 justify-center items-center w-full ">
                                             
                                             {props.values.metals[index].metalType && (
                                               <div className="bg-black p-1 w-full rounded-lg text-white mb-2">

@@ -4,12 +4,8 @@ import Image from 'next/image'
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import {postAPI, getAPI} from '@/services/fetchAPI';
 
-const CreateCollection = () => {
+const CreateCollection = ({chooseProducts}) => {
 
-  
-
-
-  
   const [addTypeEnabled, setAddTypeEnabled] = useState(false);
   const [collectionTypes, setCollectionTypes] = useState("");
 
@@ -165,9 +161,9 @@ const CreateCollection = () => {
         </div>
 
         {languageIsEnabled && (
-          <div className=" cursor-default absolute w-screen h-[1600px] lg:h-screen z-10 left-0 top-0 bg-black bg-opacity-90">
-            <div className="relative top-0 left-0 w-screen h-screen z-20 flex justify-center items-center">
-              <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
+          <div className=" cursor-default fixed min-h-screen w-full h-full  lg:h-screen z-50 left-0 top-0 bg-black bg-opacity-90">
+            <div className="relative top-2 left-0 w-screen h-screen z-20 flex lg:justify-center lg:items-center justify-center items-start">
+              <div className="p-2 bg-white rounded-lg relative lg:pt-2 w-full lg:w-auto lg:mt-10 scale-90 lg:scale-100">
 
                 {/* çeviri kapatma iconu */}
                 <div>
@@ -175,7 +171,7 @@ const CreateCollection = () => {
                   <div className="w-full flex justify-center items-center relative"
                     onClick={() => setLanguageIsEnabled(false)} 
                   >
-                    <div className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all my-4 lg:absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center">
+                    <div className="cursor-pointer hover:scale-105 hover:rotate-6 transition-all lg:absolute bg-green-600 p-2 lg:-right-10 -top-20 scale-125 lg:-top-10 rounded-full w-10 h-10 flex justify-center items-center text-center">
 
                       <IoCheckmarkDoneSharp color="white" size={40} />
 
@@ -201,7 +197,7 @@ const CreateCollection = () => {
                     </h2>
                   }
                                           
-                  <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
+                  <div className="flex flex-col gap-2 md:gap-2 justify-center items-center w-full ">
                                               
                     {collectionName && collectionName.trim().length > 0 && (
                       <div className="bg-black p-1 w-full rounded-lg text-white mb-2">
@@ -415,6 +411,15 @@ const CreateCollection = () => {
 
 
       </div>
+
+      {true  &&
+      <div className='bg-gray-900 p-2 rounded inline-block'>
+        
+        <h3 className='text-white text-xl'>
+          Toplam seçilen Ürün : <span className={`${ chooseProducts.length ? "text-green-600" : "text-red-600"} font-bold text-xl`}> {chooseProducts.length} </span> 
+        </h3>
+      </div>
+      }
     </div>
   )
 }

@@ -338,7 +338,7 @@ import FabricsValidationSchema from './formikData';
                             {/* translateEnabled true ise çeviri alanı açılır. */}
                             <div>
                             {props.values.fabrics[index].translateEnabled && (
-                            <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2">
+                            <div className="p-2 bg-white rounded-lg relative pt-10 lg:pt-2 flex justify-center items-center flex-col">
 
                               {props.values.fabrics[index].fabricTypeTurkish == "" &&
                               props.values.fabrics[index].fabricTypeUkrainian == "" &&
@@ -390,7 +390,7 @@ import FabricsValidationSchema from './formikData';
                                 <h2 className="text-center w-full m-2">
                                     Girilen Orjinal Değer
                                   </h2>
-                                <div className="flex flex-col gap-2 md:gap-2 justify-center items-center ">
+                                <div className="flex flex-col gap-2 md:gap-2 justify-center items-center w-full ">
                                   
                                   {props.values.fabrics[index].fabricType && (
                                     <div className="bg-black p-1 w-full rounded-lg text-white mb-2">

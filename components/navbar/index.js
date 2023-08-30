@@ -54,7 +54,7 @@ const Navbar = ({ links }) => {
             onMouseLeave={handleMenuMouseLeave}
           >
             <div className="w-full md:w-auto flex flex-row md:justify-around justify-between items-center">
-              <div className="text-white font-bold text-xl">Logo</div>
+              <Link href="/"><div className="text-white font-bold text-xl hover:scale-110 transition-all hover:cursor-pointer">Logo</div></Link>
               <div className="md:hidden">
                 <button
                   onClick={()=>{handleMenuToggle; setIsloading(true)}}

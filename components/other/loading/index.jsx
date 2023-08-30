@@ -6,7 +6,7 @@ const LoadingScreen = ({ isloading = false , windowsHeight}) => {
     <>
     { isloading && 
         <div className='relative h-full'>
-            <div className={`absolute w-full min-h-[900px] md:min-h-screen h-full  min-w-screen  bg-black opacity-90 z-50 flex justify-center items-center flex-col gap-6`}>
+            <div className={`fixed w-full min-h-screen md:min-h-screen h-full  min-w-screen  bg-black opacity-90 z-50 flex justify-center items-center flex-col gap-6`}>
                 <HashLoader
                 color="#3d7bf1"
                 aria-label="Loading Spinner"
