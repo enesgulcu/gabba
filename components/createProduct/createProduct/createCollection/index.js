@@ -7,8 +7,7 @@ import {postAPI, getAPI} from '@/services/fetchAPI';
 import ResizeImage from '@/functions/others/resizeImage';
 import VisibleImage from '@/components/other/visibleImage';
 
-const CreateCollection = ({chooseProducts, setIsloading}) => {
-
+const CreateCollection = ({collectionProducts, setIsloading}) => {
   const [addTypeEnabled, setAddTypeEnabled] = useState(false);
   const [collectionTypes, setCollectionTypes] = useState("");
 
@@ -63,6 +62,41 @@ const CreateCollection = ({chooseProducts, setIsloading}) => {
       console.log(error);
     }
   } 
+
+  const submitCollection = async () => {
+    try {
+      setIsloading(true);
+      const response = await postAPI('/createProduct/createProduct/createCollection', {
+        collectionName,
+        collectionType,
+        collectionDescription,
+        collectionImages,
+        collectionNameTR,
+        collectionTypeTR,
+        collectionDescriptionTR,
+        collectionNameEN,
+        collectionTypeEN,
+        collectionDescriptionEN,
+        collectionNameUA,
+        collectionTypeUA,
+        collectionDescriptionUA,
+        collectionProducts
+      });
+  
+      if(!response || response.status !== "success"){
+        throw new Error("Veri eklenemedi JJKY7TB");
+      }
+      setIsloading(false);
+      console.log(response);
+      //toast.success(response.message);
+  
+    } catch (error) {
+      setIsloading(false);
+  
+      //toast.error(error.message);
+      console.log(error);
+    }
+  }
 
 
   return (
@@ -279,7 +313,8 @@ const CreateCollection = ({chooseProducts, setIsloading}) => {
                         Girilen Orjinal Değer
                       </h2>
                     }
-                                            
+
+                    {/* Koleksiyon inputları */}                   
                     <div className="flex flex-col gap-2 md:gap-2 justify-center items-center w-full ">
                                                 
                       {collectionName && collectionName.trim().length > 0 && (
@@ -492,46 +527,53 @@ const CreateCollection = ({chooseProducts, setIsloading}) => {
           )}
 
         </div>
+
+        {/* Koleksiyon submit butonu */}         
         <div className='w-full flex justify-center items-center lg:mt-4'>
-        <button className={`${
+
+        <button 
+        className={`${
           !collectionName || collectionName.trim().length < 1 ||
-          !chooseProducts || chooseProducts.length < 1 ||
+          !collectionProducts || collectionProducts.length < 1 ||
           !collectionType || collectionType.trim().length < 1 ? 
-          "border-gray-700 bg-gray-600 opacity-20": 
+          "opacity-20 border-gray-700 bg-gray-600 ": 
           "border-purple-700 bg-purple-600 hover:scale-110 cursor-pointer opacity-100"
-        }' p-2 rounded text-white font-bold w-full lg:w-1/3  border-2 bg-gray-700 transition-all`}
-        onClick={(e) => {
-          console.log("çalıştı")
+        }' p-2 rounded text-white font-bold w-full lg:w-1/3  border-2 transition-all`}
+        onClick={async (e)  => {
+          //Koleksiyonu veritabanına kaydetmek üzere fonksiyona gönderir.
+          if(collectionName && collectionProducts  && collectionType){
+            await submitCollection();
+          }
+          
         }}
         
         disabled = {
           !collectionName || collectionName.trim().length < 1 ||
-          !chooseProducts || chooseProducts.length < 1 ||
+          !collectionProducts || collectionProducts.length < 1 ||
           !collectionType || collectionType.trim().length < 1
         }
         >Koleksiyon Oluştur</button>
         </div>
-
+        {/* Koleksiyon uyarı mesaj bölümü */}         
         <div className='flex w-full justify-center items-center flex-wrap gap-4'>
         
-        {collectionName.trim().length < 1 &&
+        {collectionName.trim().length < 1 ?
           <div className='bg-red-600 p-2 text-white rounded flex flex-row flex-nowrap gap-2'>
             <IoWarningOutline size={25}/> Koleksiyon adı giriniz.
           </div>
-        }
-        {collectionType.trim().length < 1 &&
+        :
+        collectionType.trim().length < 1 ?
           <div className='bg-red-600 p-2 text-white rounded flex flex-row flex-nowrap gap-2'>
             <IoWarningOutline size={25}/> Koleksiyon tipi ekleyiniz.
           </div>
-        }
-        {!chooseProducts[0] &&
+        :
+        !collectionProducts[0] &&
           <div className='bg-red-600 p-2 text-white rounded flex flex-row flex-nowrap gap-2'>
             <IoWarningOutline size={25}/> Koleksiyon için ürün seçiniz.
           </div>
         }
 
         </div>
-
       </div>
 
 
@@ -539,7 +581,7 @@ const CreateCollection = ({chooseProducts, setIsloading}) => {
       <div className='bg-gray-900 p-2 rounded inline-block'>
         
         <h3 className='text-white text-xl'>
-          Toplam seçilen Ürün : <span className={`${ chooseProducts.length ? "text-green-600" : "text-red-600"} font-bold text-xl`}> {chooseProducts.length} </span> 
+          Toplam seçilen Ürün : <span className={`${ collectionProducts.length ? "text-green-600" : "text-red-600"} font-bold text-xl`}> {collectionProducts.length} </span> 
         </h3>
       </div>
       }

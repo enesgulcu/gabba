@@ -447,7 +447,8 @@ const renderData = () => {
           </div>
           {/*  ürünlerin çevirilerini gösterir */}
               {selectedProductLanguage && selectedProductLanguage !== "" &&
-                <div className='absolute top-0 left-0 w-full z-40 bg-black bg-opacity-90 h-screen flex justify-center items-center'>
+                <div className='absolute top-0 left-0 w-full z-40 bg-black bg-opacity-90 h-screen flex justify-center item-start lg:items-center'>
+                  <div className='absolute top-0 left-0 w-full h-[2500px] bg-black bg-opacity-90'></div>
                   <div className='relative top-0 left-0 w-full flex justify-center item-center'>
                     <div className=' bg-white rounded-lg min-h-screen lg:min-h-min'>
                       <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
@@ -763,7 +764,7 @@ const renderFeaturesTable = () => {
       <div className="w-full overflow-auto">
         {
           collectionModeEnabled &&
-          <CreateCollection chooseProducts={chooseProducts} setIsloading={setIsloading}/>
+          <CreateCollection collectionProducts={chooseProducts} setIsloading={setIsloading}/>
           
         }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>

@@ -149,3 +149,36 @@ model ProductFeature {
   updatedAt    DateTime   @updatedAt
 }
 
+model Collections{
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  collectionName String
+  collectionType String
+  collectionDescription String?
+
+  collectionNameTR String?
+  collectionTypeTR String?
+  collectionDescriptionTR String?
+
+  collectionNameUA String?
+  collectionTypeUA String?
+  collectionDescriptionUA String?
+
+  collectionNameEN String?
+  collectionTypeEN String?
+  collectionDescriptionEN String?
+}
+
+model collectionProducts{
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  collectionId String
+  productId    String
+  prodcutCode  String
+  productName  String
+}
+
+model collectionImages{
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  collectionId    String
+  collectionImage String
+}
+
