@@ -25,9 +25,6 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
   const [allFeatureData , setAllFeatureData] = useState([]); // ürün kategorisinin tüm özellikleri (hepsi)
   const [productFeatures, setProductFeatures] = useState([]); // seçilen ürünün kendi özellikleri tam olarak
 
-  const [productIdUpdate, setProductIdUpdate] = useState("");
-  const [productFeaturesUpdate, setProductFeaturesUpdate] = useState(""); 
-
   const [selectedImage, setSelectedImage] = useState(null); // seçilen resim
   const [selectedProduct, setSelectedProduct] = useState(null); // seçilen ürün bilgisi
 
@@ -37,9 +34,9 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
 
-  useEffect(() => {
-   console.log("chooseProducts : ", chooseProducts);
-  }, [chooseProducts])
+  // useEffect(() => {
+  //  console.log("chooseProducts : ", chooseProducts);
+  // }, [chooseProducts])
   
 
   useEffect(() => {
@@ -51,8 +48,7 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   useEffect(() => {
     getData("/createProduct/createProduct");
-    setProductFeaturesUpdate("");
-    setProductIdUpdate("");
+
     setNewUpdateData("");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -335,15 +331,6 @@ const renderData = () => {
           collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
         }>  
-        {
-          chooseProducts.map((item) => {
-            if(item.id === prodcutItem.id){
-              console.log("item.id :", item.id);
-              console.log("prodcutItem.id :", prodcutItem.id);
-              console.log("chooseProducts :", chooseProducts);
-            }
-          })
-        }
 
             <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
 
@@ -360,7 +347,7 @@ const renderData = () => {
                     return;
                   }
                   else{
-                    setChooseProducts([...chooseProducts, prodcutItem]);
+                    setChooseProducts([...chooseProducts, { id:prodcutItem.id, prodcutCode: prodcutItem.productCode, productName: prodcutItem.productName }]);
                   }
                 }
                 // eğer seçilmemiş ise seçilen ürünleri state içerisinden çıkarır.
@@ -552,8 +539,7 @@ const renderData = () => {
               <div 
               onClick={() => {
                 // setIsUpdateEnabled(false);
-                setProductFeaturesUpdate("");
-                setProductIdUpdate("");
+
                 // data -> tüm ürünler ve tüm özellikler
                 // prodcutItem -> seçilen ürün
                 // false -> update işlemi değil.
@@ -700,9 +686,6 @@ const renderFeaturesTable = () => {
 }
 
 
-
-
-
   // gelen verileri tablo haline getiriyoruz ve listeliyoruz.
   return (
     <div className='w-full'>
@@ -780,7 +763,7 @@ const renderFeaturesTable = () => {
       <div className="w-full overflow-auto">
         {
           collectionModeEnabled &&
-          <CreateCollection chooseProducts={chooseProducts}/>
+          <CreateCollection chooseProducts={chooseProducts} setIsloading={setIsloading}/>
           
         }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>

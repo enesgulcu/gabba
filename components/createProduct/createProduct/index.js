@@ -51,9 +51,9 @@ const CreateProductComponent = () => {
   const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
   
   
-  // useEffect(() => {
-  //   console.log(chooseProducts);
-  // }, [chooseProducts])
+  useEffect(() => {
+    console.log(chooseProducts);
+  }, [chooseProducts])
   
   
 
