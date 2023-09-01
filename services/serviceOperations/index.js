@@ -21,6 +21,7 @@ export async function createNewData(tableName, newData) {
     const data = await prisma[tableName].create({ data: newData });
     return data;
   } catch (error) {
+   
    return { error: error.message};
   }
 }
@@ -29,11 +30,12 @@ export async function createNewData(tableName, newData) {
 // POST MANY --> newData = [{}, {}, {}]
 export async function createNewDataMany(tableName, newData) {
   try {
+
     const data = await prisma[tableName].createMany({ data: newData } );
     return data;
   } catch (error) {
    return { error: error.message};
-  }s
+  }
 }
 
 // GET BY UNIQUE ONE VALUE

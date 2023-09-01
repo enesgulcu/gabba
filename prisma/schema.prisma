@@ -168,17 +168,17 @@ model Collections{
   collectionDescriptionEN String?
 }
 
-model collectionProducts{
+model CollectionProducts{
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   collectionId String
   productId    String
-  prodcutCode  String
+  productCode  String
   productName  String
 }
 
-model collectionImages{
+model CollectionImages{
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  collectionId    String
-  collectionImage String
+  collectionId    String?
+  collectionImage String?
 }
 

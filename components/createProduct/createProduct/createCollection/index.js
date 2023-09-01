@@ -6,6 +6,7 @@ import { RxPlusCircled, RxListBullet, RxTriangleRight,  } from "react-icons/rx";
 import {postAPI, getAPI} from '@/services/fetchAPI';
 import ResizeImage from '@/functions/others/resizeImage';
 import VisibleImage from '@/components/other/visibleImage';
+import { ToastContainer, toast } from "react-toastify";
 
 const CreateCollection = ({collectionProducts, setIsloading}) => {
   const [addTypeEnabled, setAddTypeEnabled] = useState(false);
@@ -31,15 +32,17 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
   const [collectionTypeUA, setCollectionTypeUA] = useState("");
   const [collectionDescriptionUA, setCollectionDescriptionUA] = useState("");
 
-  useEffect(() => {
-    // enes burada kaldın api oluşturulacak veriler çekilecek...
-    //getData();
+  const [collectionAllData, setCollectionAllData] = useState("");
 
+  useEffect(() => {
+    getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   console.log("collectionImages", collectionImages)
-  // }, [collectionImages])
+  useEffect(() => {
+    console.log("collectionTypes :", collectionTypes);
+  }, [ collectionTypes])
+  
   
 
 
@@ -47,12 +50,28 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
     try {
       //setIsloading(true);
       const response = await getAPI('/createProduct/createProduct/createCollection');
-  
+      
+
       if(!response || response.status !== "success"){
         throw new Error("Veri çekilemedi JJKY7TB");
       }
+      // tüm getirilen verileri collectionAllData içerisine atıyoruz.
+      setCollectionAllData(response.data);
 
-      setCollectionTypes(response.data.createProducts);
+      // collectionTypes içerisine response.data içindeki tüm collectionTypes verilerini atıyoruz.
+
+        const uniqueCollectionTypes = [];
+        
+        response.data.forEach((item) => {
+          if (!uniqueCollectionTypes.includes(item.collectionType)) {
+            uniqueCollectionTypes.push(item.collectionType);
+          }
+        });
+    
+        // State'i güncelleyin
+        setCollectionTypes(uniqueCollectionTypes);
+      
+
       //setIsloading(false);
   
     } catch (error) {
@@ -86,14 +105,14 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
       if(!response || response.status !== "success"){
         throw new Error("Veri eklenemedi JJKY7TB");
       }
+
       setIsloading(false);
-      console.log(response);
-      //toast.success(response.message);
+      toast.success(response.message);
   
     } catch (error) {
       setIsloading(false);
   
-      //toast.error(error.message);
+      toast.error(error.message);
       console.log(error);
     }
   }
@@ -101,6 +120,18 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
 
   return (
     <div className='w-full p-2'>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
 
         <VisibleImage collectionImages={collectionImages} visibleImages={visibleImages} setVisibleImages={setVisibleImages}/>
 
@@ -153,13 +184,8 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
                     <option value="">Koleksiyon Tipi Seç</option>
                     {
                       collectionTypes && collectionTypes.length > 0 && collectionTypes.map((item, index) => (
-                      // collectionType içi boş olanları eklemiyoruz.
-                      item.collectionType != "" && item.collectionType &&
-
-                      // aynı değere sahip olanlardan sadece birini ekliyoruz.
-                      !collectionTypes.slice(0, index).some((item2) => item2.collectionType === item.collectionType) &&
-
-                      <option key={index} value={item.collectionType}>{item.collectionType}</option>
+                        // collectionType içi boş olanları eklemiyoruz.
+                        <option key={index} value={item}>{item}</option>
                                               
                       ))
                     }
@@ -226,8 +252,14 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
                 if (!file) return;
 
                 const resizedImageBase64 = await ResizeImage(file, 400, 400);
-                updatedImages.push(resizedImageBase64);
+                updatedImages.push(
+                  {
+                    collectionImage: resizedImageBase64,
+                  }
+                );
               }
+
+
 
               setCollectionImages(updatedImages);
               e.target.value = null;

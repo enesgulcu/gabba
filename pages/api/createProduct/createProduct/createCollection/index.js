@@ -1,4 +1,4 @@
-import {createNewDataMany, createNewProduct,  getAllData, deleteDataByAny, updateProduct, deleteDataByMany } from "@/services/serviceOperations";
+import {createNewDataMany, createNewData, getAllData} from "@/services/serviceOperations";
 
 /* 
   model Collections{
@@ -24,7 +24,7 @@ import {createNewDataMany, createNewProduct,  getAllData, deleteDataByAny, updat
     id           String    @id @default(auto()) @map("_id") @db.ObjectId
     collectionId String
     productId    String
-    prodcutCode  String
+    productCode  String
     productName  String
   }
 
@@ -40,7 +40,7 @@ const handler = async (req, res) => {
   // extra ve image verileri içi boş olanları temizlenecek.
   const checkData = async (data) => {
     try {
-     
+      
       const collectionProductsData = await data.collectionProducts;
       const collectionImagesData = await data.collectionImages;
 
@@ -69,39 +69,74 @@ const handler = async (req, res) => {
     if (req.method === "POST"){
 
       const data = await req.body;
-      const result = await checkData(data);
       
-      console.log("result :", result);
+      const result = await checkData(data);
 
       if (result.error || !result) {
         throw new Error(result.message);
       }
+//____________________________________________________________________________________________________________________
+//collectionsData ####################################################################################################
       
-      const collectionsData = await createNewProduct("Collections", result.collectionsData);
-      console.log("collectionsData :", collectionsData)
-      if (collectionsData.error || !collectionsData) {
-        throw new Error(collectionsData.message);
-      }
+        // Koleksiyon oluşturuldu veri tabanına kaydedildi
+        const collectionsData = await createNewData("Collections", result.collectionsData);
 
+        if (collectionsData.error || !collectionsData) {
+          throw new Error(collectionsData.message);
+        }
+
+
+//ProductsData #############################################################################################
+
+      if(result.collectionProductsData){
+        
+        // collectionsData.id değerini collectionProductsData içerisine collectionId olarak ekle.
+        await result.collectionProductsData.map((item) => {
+          item.collectionId = collectionsData.id;
+      });
+      
+      // Koleksiyonun sahip olduğu ürünler oluşturuldu veri tabanına kaydedildi
       const collectionProductsData = await createNewDataMany("CollectionProducts", result.collectionProductsData);
-      console.log("collectionProductsData :", collectionProductsData);
 
       if (collectionProductsData.error || !collectionProductsData) {
         throw new Error(collectionProductsData.message);
       }
-
-      const collectionImagesData = await createNewDataMany("CollectionImages", result.collectionImagesData);
-      console.log("collectionImagesData :", collectionImagesData);
-
-      if (collectionImagesData.error || !collectionImagesData) {
-        throw new Error(collectionImagesData.message);
       }
 
-      return res.status(200).json({ error: false, message: "Koleksiyon başarıyla oluşturuldu.", data: createNewDataManyResult });
+
+//ImagesData ###############################################################################################
+      
+      let collectionImagesData;
+      if(result.collectionImagesData && result.collectionImagesData.length > 0){ 
+
+        //collectionsData.id değerini collectionImagesData içerisine collectionId olarak ekle.
+        await result.collectionImagesData.map((item) => {
+          item.collectionId = collectionsData.id;
+        });
+
+        // Koleksiyonun sahip olduğu resimler oluşturuldu veri tabanına kaydedildi
+        collectionImagesData = await createNewDataMany("CollectionImages", result.collectionImagesData);
+
+
+        if (collectionImagesData.error || !collectionImagesData) {
+          throw new Error(collectionImagesData.message);
+        }
+      }
+//____________________________________________________________________________________________________________________
+      
+
+      return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla oluşturuldu."});
 
     }
 
     if (req.method === "GET"){
+      const collectionsData = await getAllData("Collections");
+
+      if (collectionsData.error || !collectionsData) {
+        throw new Error(collectionsData.message);
+      }
+
+      return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla getirildi.", data: collectionsData});
 
     }
 

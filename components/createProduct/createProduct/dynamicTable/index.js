@@ -303,11 +303,6 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
   }, [])
   
 
-  // useEffect(() => {
-  //   console.log(checkboxValues);
-  // }, [checkboxValues])
-  
-
   // Seçilen checkbox değerini state'e ekleyen ana fonksiyon.
   const handleCheckboxChange = (index, feature, featureId, targetValue, checked, value, productName, productType, selectedCategoryKey, selectedCategoryValues) => {
     // Değişen checkbox değerini yeni bir nesne olarak hazırla

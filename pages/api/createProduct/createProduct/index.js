@@ -150,10 +150,8 @@ const handler = async (req, res) => {
 
       // güncelleme işlemi için gelen veriyi güncelleriz.
       else if(processType == "update"){ 
-        console.log("checkedData :", checkedData);
-        const updatedProduct = await updateProduct(productId, checkedData);
 
-        console.log("updatedProduct :::::::::", updatedProduct);
+        const updatedProduct = await updateProduct(productId, checkedData);
         
         if (!updatedProduct || updatedProduct.error) {
           throw new Error("Ürün güncellenemedi.");

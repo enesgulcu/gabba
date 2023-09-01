@@ -49,13 +49,6 @@ const CreateProductComponent = () => {
 
   const [collectionModeEnabled, setCollectionModeEnabled] = useState(false); // koleksiyon modu aktif mi ?
   const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
-  
-  
-  useEffect(() => {
-    console.log(chooseProducts);
-  }, [chooseProducts])
-  
-  
 
   useEffect(() => {
     

@@ -32,12 +32,7 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
   const [readyForListFeature, setReadyForListFeature] = useState([]); // ürün özelliklerini listelemek için hazır mıyız ?
   const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
-  const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili
-
-  // useEffect(() => {
-  //  console.log("chooseProducts : ", chooseProducts);
-  // }, [chooseProducts])
-  
+  const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili  
 
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
@@ -328,14 +323,14 @@ const renderData = () => {
         {
           collectionModeEnabled &&
           <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
         }>  
 
             <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
 
             // eğer seçilen ürün var ise checkbox'ı işaretler.
-            checked={chooseProducts.some(item => item.id === prodcutItem.id)}
+            checked={chooseProducts.some(item => item.productId === prodcutItem.id)}
 
             onChange={
               (e) => {
@@ -343,16 +338,16 @@ const renderData = () => {
                 if(e.target.checked){
                   // eğer seçilmiş ise seçilen ürünleri state içerisine atar.
                   // eğer chooseProducts içerisinde seçilen ürün var ise tekrar atmaz.
-                  if(chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0){
+                  if(chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0){
                     return;
                   }
                   else{
-                    setChooseProducts([...chooseProducts, { id:prodcutItem.id, prodcutCode: prodcutItem.productCode, productName: prodcutItem.productName }]);
+                    setChooseProducts([...chooseProducts, { productId:prodcutItem.id, productCode: prodcutItem.productCode, productName: prodcutItem.productName }]);
                   }
                 }
                 // eğer seçilmemiş ise seçilen ürünleri state içerisinden çıkarır.
                 else{
-                  setChooseProducts(chooseProducts.filter((item) => item.id !== prodcutItem.id));
+                  setChooseProducts(chooseProducts.filter((item) => item.productId !== prodcutItem.id));
                 }
               }
             }
@@ -366,7 +361,7 @@ const renderData = () => {
           // eğer collectionProducts içerisinde seçilen ürün var ise bu td elementinin css rengini mavi yap
         }
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } border-r border-b border-black text-center` 
         }>
           <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
@@ -378,7 +373,7 @@ const renderData = () => {
 
         {/* ürün kodu */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } border-r border-b border-black text-center` 
         }>
           <div>{prodcutItem.productCode}</div>
@@ -386,7 +381,7 @@ const renderData = () => {
 
         {/* ürün adı */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } border-r border-b border-black text-center` 
         }>
           <div>{prodcutItem.productName}</div>
@@ -394,7 +389,7 @@ const renderData = () => {
 
         {/* ürün tipi */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } border-r border-b border-black text-center` 
         }>
           <div>{prodcutItem.productType}</div>
@@ -402,7 +397,7 @@ const renderData = () => {
 
         {/* seçilen kategori */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } border-r border-b border-black text-center` 
         }>
           <div>{prodcutItem.selectedCategoryValues}</div>
@@ -410,7 +405,7 @@ const renderData = () => {
 
         {/* ürün resmi */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
         }>
           <div className='w-full flex justify-center item-center flex-wrap'>
@@ -432,7 +427,7 @@ const renderData = () => {
         </td>
 
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
         }>
           <div className='h-20 flex justify-center items-center'>
@@ -526,7 +521,7 @@ const renderData = () => {
 
         {/* ürün özellikleri */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black` 
         }>
 
@@ -553,7 +548,7 @@ const renderData = () => {
 
         {/* işlem */}
         <td className={`${
-          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.id === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
+          collectionModeEnabled && chooseProducts && chooseProducts.length > 0 && chooseProducts.filter((item) => item.productId === prodcutItem.id).length > 0 ? "bg-white" : "bg-gray-100"
         } text-center py-2 border-r border-b border-black px-1` 
         }>
           <div className="flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap">
