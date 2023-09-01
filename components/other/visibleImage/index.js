@@ -22,7 +22,7 @@ const VisibleImage = ({collectionImages, visibleImages, setVisibleImages}) => {
                 <div className='flex flex-row flex-wrap justify-center items-center gap-6 '>
                   {collectionImages && collectionImages.length > 0 && collectionImages.map((item, index) => (
                     <div key={index} className='relative w-40 h-40 '>
-                      <Image className='hover:scale-125 hover:cursor-pointer transition-all' src={item} layout='fill' objectFit='contain' alt="image"/>
+                      <Image className='hover:scale-125 hover:cursor-pointer transition-all' src={item.collectionImage} layout='fill' objectFit='contain' alt="image"/>
                     </div>
                   ))}
                 </div>

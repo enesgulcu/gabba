@@ -13,7 +13,26 @@ import CreateCollection from '@/components/createProduct/createProduct/createCol
 // (1) Data -> kayıtlı ürün ve tüm ürünlerin kayıtlı özelliklerini getirir.
 // 
 
-const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName, filterProductType, filterProductCategory, filterEnabled, setIsUpdateEnabled, isUpdateEnabled, setNewUpdateData, newUpdateData, collectionModeEnabled, setCollectionModeEnabled, chooseProducts, setChooseProducts}) => {
+const ListFeatureTable = ({
+  categoriesData, 
+  filterProductCode, 
+  filterProductName, 
+  filterProductType, 
+  filterProductCategory, 
+  filterEnabled, 
+  setIsUpdateEnabled, 
+  isUpdateEnabled, 
+  setNewUpdateData, 
+  newUpdateData, 
+  collectionModeEnabled, 
+  setCollectionModeEnabled, 
+  chooseProducts, 
+  setChooseProducts, 
+  collectionAllData, 
+  setCollectionAllData,  
+  collectionTypes, 
+  setCollectionTypes
+}) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
   const [catagories, setCatagories] = useState(categoriesData);
@@ -34,6 +53,8 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili  
 
+
+
   useEffect(() => {
       if(selectedProduct && selectedProduct.selectedCategoryKey !== selectedCategory && selectedCategory){
         setAllFeatureData([]);
@@ -43,6 +64,7 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
 
   useEffect(() => {
     getData("/createProduct/createProduct");
+    getDataCollection();
 
     setNewUpdateData("");
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,6 +87,42 @@ const ListFeatureTable = ({categoriesData, filterProductCode, filterProductName,
         console.log(error);
     }
 }
+
+const getDataCollection = async () => {
+  try {
+    setIsloading(true);
+    const response = await getAPI('/createProduct/createProduct/createCollection');
+    
+
+    if(!response || response.status !== "success"){
+      throw new Error("Veri çekilemedi JJKY7TB");
+    }
+    // tüm getirilen verileri collectionAllData içerisine atıyoruz.
+    setCollectionAllData(response.data);
+
+    // collectionTypes içerisine response.data içindeki tüm collectionTypes verilerini atıyoruz.
+
+      const uniqueCollectionTypes = [];
+      
+      response.data.forEach((item) => {
+        if (!uniqueCollectionTypes.includes(item.collectionType)) {
+          uniqueCollectionTypes.push(item.collectionType);
+        }
+      });
+  
+      // State'i güncelleyin
+      setCollectionTypes(uniqueCollectionTypes);
+    
+
+    setIsloading(false);
+
+  } catch (error) {
+    setIsloading(false);
+
+    //toast.error(error.message);
+    console.log(error);
+  }
+} 
 
 useEffect(() => {
   // Ürün filtreleme işlemleri
@@ -759,7 +817,7 @@ const renderFeaturesTable = () => {
       <div className="w-full overflow-auto">
         {
           collectionModeEnabled &&
-          <CreateCollection collectionProducts={chooseProducts} setIsloading={setIsloading}/>
+          <CreateCollection collectionProducts={chooseProducts} setIsloading={setIsloading} collectionAllData={collectionAllData} setCollectionAllData={setCollectionAllData} collectionTypes={collectionTypes} setCollectionTypes={setCollectionTypes}/>
           
         }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>

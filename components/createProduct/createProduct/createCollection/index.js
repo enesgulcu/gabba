@@ -8,9 +8,7 @@ import ResizeImage from '@/functions/others/resizeImage';
 import VisibleImage from '@/components/other/visibleImage';
 import { ToastContainer, toast } from "react-toastify";
 
-const CreateCollection = ({collectionProducts, setIsloading}) => {
-  const [addTypeEnabled, setAddTypeEnabled] = useState(false);
-  const [collectionTypes, setCollectionTypes] = useState("");
+const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, setCollectionAllData,  collectionTypes, setCollectionTypes}) => {
 
   const [collectionName , setCollectionName] = useState("");
   const [collectionType, setCollectionType] = useState("");
@@ -32,23 +30,16 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
   const [collectionTypeUA, setCollectionTypeUA] = useState("");
   const [collectionDescriptionUA, setCollectionDescriptionUA] = useState("");
 
-  const [collectionAllData, setCollectionAllData] = useState("");
+  const [addTypeEnabled, setAddTypeEnabled] = useState(false);
 
   useEffect(() => {
     getData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    console.log("collectionTypes :", collectionTypes);
-  }, [ collectionTypes])
-  
-  
-
-
   const getData = async () => {
     try {
-      //setIsloading(true);
+      setIsloading(true);
       const response = await getAPI('/createProduct/createProduct/createCollection');
       
 
@@ -72,10 +63,10 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
         setCollectionTypes(uniqueCollectionTypes);
       
 
-      //setIsloading(false);
+      setIsloading(false);
   
     } catch (error) {
-      //setIsloading(false);
+      setIsloading(false);
   
       //toast.error(error.message);
       console.log(error);
@@ -609,7 +600,7 @@ const CreateCollection = ({collectionProducts, setIsloading}) => {
       </div>
 
 
-      {true  &&
+      { collectionProducts &&
       <div className='bg-gray-900 p-2 rounded inline-block'>
         
         <h3 className='text-white text-xl'>

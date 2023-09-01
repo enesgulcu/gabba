@@ -8,6 +8,7 @@ import ListFeatureTable from "@/components/createProduct/createProduct/listFeatu
 import { RxPlusCircled, RxListBullet, RxTriangleRight } from "react-icons/rx";
 import { IoClose, IoCheckmarkDoneSharp, IoAddOutline, IoCloseOutline } from "react-icons/io5";
 import { BiFilterAlt } from "react-icons/bi";
+import ListCollection from "@/components/createProduct/createProduct/createCollection/listCollection";
 
 
 // özellikler ve alt özelliklerin verilerini çekmek için kullanılır yeni bir yapı eklenirse buraya eklenmelidir. enes dikkat !
@@ -48,7 +49,11 @@ const CreateProductComponent = () => {
   const [newUpdateData, setNewUpdateData] = useState({}); 
 
   const [collectionModeEnabled, setCollectionModeEnabled] = useState(false); // koleksiyon modu aktif mi ?
+  const [collectionListEnabled, setCollectionListEnabled] = useState(false); // koleksiyon listeleme modu aktif mi ?
   const [chooseProducts, setChooseProducts] = useState([]); // koleksiyon modu aktif ise seçilen ürünleri tutar.
+
+  const [collectionAllData, setCollectionAllData] = useState("");
+  const [collectionTypes, setCollectionTypes] = useState("");
 
   useEffect(() => {
     
@@ -120,7 +125,7 @@ const CreateProductComponent = () => {
     <>
       {isloading && <LoadingScreen isloading={isloading} />}
 
-      <div className="p-0 lg:p-2 w-full flex flex-col lg:flex-row justify-center lg:justify-between items-center shadow-lg lg:px-10 bg-gray-100 gap-2">
+      <div className="p-0 lg:p-2 w-full flex flex-col xl:flex-row justify-center lg:justify-between items-center shadow-lg lg:px-10 bg-gray-100 gap-2">
         
         {
           // Filtreleme butonu
@@ -177,61 +182,74 @@ const CreateProductComponent = () => {
             }
           </div>
         }
-        <div className="flex flex-row flex-wrap justify-center items-center">
-          {
-            // Kolleksiyon oluşturma butonu
-            listProductsEnabled &&
-            <button onClick={() => {
-              setCollectionModeEnabled(!collectionModeEnabled)
-            }}
-            className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
-              ${!collectionModeEnabled ? "bg-green-500" : "bg-red-600"}
-            `}
-            >
-  
-              {!collectionModeEnabled ? 
-                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+
+
+
+        {/*koleksiyon paneli - listesi - oluşturması işlemleri buradan yapılıyor. */}
+        <div className="flex flex-col lg:flex-row flex-wrap justify-center items-center lg:gap-2">
+              {listProductsEnabled && !collectionModeEnabled ?
+              <div className="flex flex-col lg:flex-row flex-wrap gap-2 lg:gap-4 justify-center items-center">
+                <div 
+                onClick={() => {
+                  setCollectionListEnabled(true)
+                  setListProductsEnabled(false)
+                }}
+                className={`bg-blue-500 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all rounded p-4 flex flex-row gap-2 flex-nowrap justify-center items-center`}>
+                  <RxListBullet size={25}/>  Koleksiyonları Listele <RxTriangleRight size={25} className="rotate-90"/>
+                </div> 
+
+                <div 
+                onClick={() => {
+                  setCollectionModeEnabled(true)
+                }}
+                className={`bg-green-500 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all rounded p-4 flex flex-row gap-2 flex-nowrap justify-center items-center`}>
                   <RxPlusCircled size={25}/>  Koleksiyon Oluştur <RxTriangleRight size={25} className="rotate-90"/>
-                </div> : 
-                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center"
+                </div>
+              </div> : 
+                <div className="bg-red-600 rounded text-white p-4 flex flex-row gap-2 flex-nowrap justify-center items-center hover:cursor-pointer hover:scale-105 transition-all"
                 onClick={() => {
                   setChooseProducts([]);
                   setCollectionModeEnabled(false);
+                  setCollectionListEnabled(false);
+                  setListProductsEnabled(true);
                 }}
                 >
                 <IoClose size={25}/>  İptal Et
               </div>
               }
-            </button>
-          }
-          
+           
+  
             {
+              // Collection listeleme aktif olduğunda diğer butonları gizle
+              !collectionListEnabled &&
+
               // ürün oluşturma sayfasına gider (button)
+              <button onClick={() => {
+                setListProductsEnabled(!listProductsEnabled)
+                setIsUpdateEnabled(false);
+                setNewUpdateData({});
+              }}
+              className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
+                ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
+              `}
+              >
+
+                {listProductsEnabled ? 
+                  <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                    <RxPlusCircled size={25}/>  Ürün Oluşturma Sayfasına Git <RxTriangleRight size={25}/>
+                  </div> :
+                  
+                  <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
+                  <RxListBullet size={25}/>  Ürün Listeleme Sayfasına Git <RxTriangleRight size={25}/>
+                </div>
+                }
+              </button>
             }
-            <button onClick={() => {
-              setListProductsEnabled(!listProductsEnabled)
-              setIsUpdateEnabled(false);
-              setNewUpdateData({});
-            }}
-            className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all
-              ${listProductsEnabled ? "bg-green-500" : "bg-blue-500"}
-            `}
-            >
-
-              {listProductsEnabled ? 
-                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
-                  <RxPlusCircled size={25}/>  Ürün Oluşturma Sayfasına Git <RxTriangleRight size={25}/>
-                </div> : 
-                <div className="p-2 flex flex-row gap-2 flex-nowrap justify-center items-center">
-                <RxListBullet size={25}/>  Ürün Listeleme Sayfasına Git <RxTriangleRight size={25}/>
-              </div>
-              }
-            </button>
           </div>
-      </div>
+        </div>
 
-      {
 
+        {
         listProductsEnabled ? 
         <div>
           <ListFeatureTable 
@@ -248,7 +266,11 @@ const CreateProductComponent = () => {
             collectionModeEnabled={collectionModeEnabled} 
             setCollectionModeEnabled={setCollectionModeEnabled}
             chooseProducts={chooseProducts}
-            setChooseProducts={setChooseProducts}            
+            setChooseProducts={setChooseProducts} 
+            collectionAllData = {collectionAllData}
+            setCollectionAllData = {setCollectionAllData}
+            collectionTypes = {collectionTypes}
+            setCollectionTypes = {setCollectionTypes}
             />
             
 
@@ -257,6 +279,12 @@ const CreateProductComponent = () => {
         </div>
 
         : 
+
+        collectionListEnabled ?
+        <ListCollection/>
+
+
+        :
 
         <div>
           {
