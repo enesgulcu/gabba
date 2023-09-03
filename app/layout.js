@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     { url: '/', text: 'Ana Sayfa' },
     {
       url: '/createProduct/createProduct',
-      text: 'Ürün Oluştur',
+      text: 'Ürün ve Kolleksiyon',
       submenu: [
         { url: '/createProduct/measurements', text: 'Ölçü Oluştur' },
         { url: '/createProduct/fabrics', text: 'Kartela Oluştur' },

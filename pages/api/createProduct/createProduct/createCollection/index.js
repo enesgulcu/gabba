@@ -136,6 +136,19 @@ const handler = async (req, res) => {
         throw new Error(collectionsData.message);
       }
 
+      const collectionProductsData = await getAllData("CollectionProducts");
+      
+      if (collectionProductsData.error || !collectionProductsData) {
+        throw new Error(collectionProductsData.message);
+      }
+
+      const collectionImagesData = await getAllData("CollectionImages");
+
+      // collectionsData içerisine collectionProducts ve collectionImages objelerini direkt ekle
+      await collectionsData.push({collectionProducts: collectionProductsData, collectionImages: collectionImagesData})
+
+      console.log(collectionsData);
+
       return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla getirildi.", data: collectionsData});
 
     }

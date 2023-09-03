@@ -40,11 +40,14 @@ const CreateProductComponent = () => {
   const [data, setData] = useState({});
   const [isloading, setIsloading] = useState(false);
   const [listProductsEnabled, setListProductsEnabled] = useState(true);
+
+
   const [filterEnabled, setFilterEnabled] = useState(false);
   const [filterProductName, setFilterProductName] = useState("");
   const [filterProductCode, setFilterProductCode] = useState("");
   const [filterProductType, setFilterProductType] = useState("");
   const [filterProductCategory, setFilterProductCategory] = useState("");
+  
   const [isUpdateEnabled, setIsUpdateEnabled] = useState(false);
   const [newUpdateData, setNewUpdateData] = useState({}); 
 
@@ -221,12 +224,14 @@ const CreateProductComponent = () => {
   
             {
               // Collection listeleme aktif olduğunda diğer butonları gizle
-              !collectionListEnabled &&
+              !collectionListEnabled && 
 
               // ürün oluşturma sayfasına gider (button)
               <button onClick={() => {
                 setListProductsEnabled(!listProductsEnabled)
                 setIsUpdateEnabled(false);
+                setCollectionModeEnabled(false);
+                setCollectionListEnabled(false);
                 setNewUpdateData({});
               }}
               className={`p-2 rounded m-2 text-white text-lg hover:cursor-pointer hover:scale-105 transition-all

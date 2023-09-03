@@ -302,7 +302,7 @@ const matchedFeatureOfProduct = async (prodcutItem, results, updateStatus) => {
 // seçilen ürünün özelliklerini en detaylı şekilde state e atar. (5)
 const prepareProductList = async (feature) => {
   
-  await setSelectedFeature(feature);
+  setSelectedFeature(feature);
   
   //feature ->  Ölçüler - Renkler - Ürünlar - Metaller - Extra - Image
   const readyForListData = [];
@@ -354,7 +354,7 @@ const deleteProdcut = async (id, process) => {
 
 
   const renderHead = () => {
-    const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Adı", "Seçilen Kategori", "Ürün Resmi","Dil Çevirisi", "Ürün Özellikleri", "işlem" ]
+    const tableHeaders = ["sıra","Ürün Kodu", "Ürün Adı", "Ürün Tipi", "Seçilen Kategori", "Ürün Resmi","Dil Çevirisi", "Ürün Özellikleri", "İşlem" ]
 
     // koleksiyon modu aktif ise header bölümüne "Seç" ifadesi eklenir.
     collectionModeEnabled && tableHeaders.unshift("Seç");
