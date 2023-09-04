@@ -1,8 +1,9 @@
-import {createNewDataMany, createNewData, getAllData} from "@/services/serviceOperations";
+import {createNewDataMany, createNewData, getAllData, deleteDataByMany, getDataByUnique} from "@/services/serviceOperations";
 
 /* 
   model Collections{
     id           String    @id @default(auto()) @map("_id") @db.ObjectId
+    collectionCode String
     collectionName String
     collectionType String
     collectionDescription String?
@@ -40,7 +41,7 @@ const handler = async (req, res) => {
   // extra ve image verileri içi boş olanları temizlenecek.
   const checkData = async (data) => {
     try {
-      
+            
       const collectionProductsData = await data.collectionProducts;
       const collectionImagesData = await data.collectionImages;
 
@@ -57,6 +58,49 @@ const handler = async (req, res) => {
         throw new Error("Koleksiyonda en az 1 ürün olmazı gerekmektedir.");
       }
 
+    // her ürün için uniq olarak bir ürün kodu oluşturuyoruz #########################
+    //################################################################################
+
+    // gün - ay - yıl - saat olarak türkiye zamanını al ve her bir veriyi ayrı değişkenlere string olarak kaydet. yılın sadece son 2 rakamını al.
+    const date = new Date().toLocaleString("tr-TR", {timeZone: "Europe/Istanbul"});
+    const day = date.split(" ")[0].split(".")[0];
+    const month = date.split(" ")[0].split(".")[1];
+    const year = date.split(" ")[0].split(".")[2].slice(2,4);
+    const hour = date.split(" ")[1].split(":")[0];
+    const minute = date.split(" ")[1].split(":")[1];
+
+    // collectionName değerinin ilk 2 ve son 2 harfini alarak ürün kodunu oluştur
+    let collectionName;
+    if(data.collectionName){
+      collectionName = data.collectionName.slice(0,3).toUpperCase();
+    }
+    else{
+      collectionName = "Name";
+    }
+    
+    let collectionType;
+    if(data.collectionType){
+      collectionType = data.collectionType.slice(0,3).toUpperCase();
+    }   
+    else{
+      collectionType = "Type";
+    } 
+
+        // resgele alfabeden iki büyük harf üret
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const randomAlphabet2 = alphabet[Math.floor(Math.random() * 26)] + alphabet[Math.floor(Math.random() * 26)];
+
+    // rasgele 3 tane tam sayı rakam oluştur sonra bunları string olarak yan yana yaz.
+    const randomAlphabet = Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + "" + randomAlphabet2;
+
+
+    // ürün kodunu oluştur
+      const collectionCode = (year + collectionName + month + collectionType + day + randomAlphabet).trim();
+      
+      // collectionsData içerisine oluşturulan collectionCode değerini ekle
+      collectionsData.collectionCode = collectionCode;
+
+
       return { collectionsData, collectionProductsData, collectionImagesData };
 
 
@@ -69,12 +113,13 @@ const handler = async (req, res) => {
     if (req.method === "POST"){
 
       const data = await req.body;
-      
-      const result = await checkData(data);
 
-      if (result.error || !result) {
-        throw new Error(result.message);
-      }
+      if(!data.processType && data.processType !== "delete"){
+        const result = await checkData(data);
+
+        if (result.error || !result) {
+          throw new Error(result.message);
+        }
 //____________________________________________________________________________________________________________________
 //collectionsData ####################################################################################################
       
@@ -88,44 +133,75 @@ const handler = async (req, res) => {
 
 //ProductsData #############################################################################################
 
-      if(result.collectionProductsData){
+        if(result.collectionProductsData){
+          
+          // collectionsData.id değerini collectionProductsData içerisine collectionId olarak ekle.
+          await result.collectionProductsData.map((item) => {
+            item.collectionId = collectionsData.id;
+        });
         
-        // collectionsData.id değerini collectionProductsData içerisine collectionId olarak ekle.
-        await result.collectionProductsData.map((item) => {
-          item.collectionId = collectionsData.id;
-      });
-      
-      // Koleksiyonun sahip olduğu ürünler oluşturuldu veri tabanına kaydedildi
-      const collectionProductsData = await createNewDataMany("CollectionProducts", result.collectionProductsData);
+        // Koleksiyonun sahip olduğu ürünler oluşturuldu veri tabanına kaydedildi
+        const collectionProductsData = await createNewDataMany("CollectionProducts", result.collectionProductsData);
 
-      if (collectionProductsData.error || !collectionProductsData) {
-        throw new Error(collectionProductsData.message);
-      }
-      }
+        if (collectionProductsData.error || !collectionProductsData) {
+          throw new Error(collectionProductsData.message);
+        }
+        }
 
 
 //ImagesData ###############################################################################################
       
-      let collectionImagesData;
-      if(result.collectionImagesData && result.collectionImagesData.length > 0){ 
+        let collectionImagesData;
+        if(result.collectionImagesData && result.collectionImagesData.length > 0){ 
 
-        //collectionsData.id değerini collectionImagesData içerisine collectionId olarak ekle.
-        await result.collectionImagesData.map((item) => {
-          item.collectionId = collectionsData.id;
-        });
+          //collectionsData.id değerini collectionImagesData içerisine collectionId olarak ekle.
+          await result.collectionImagesData.map((item) => {
+            item.collectionId = collectionsData.id;
+          });
 
-        // Koleksiyonun sahip olduğu resimler oluşturuldu veri tabanına kaydedildi
-        collectionImagesData = await createNewDataMany("CollectionImages", result.collectionImagesData);
+          // Koleksiyonun sahip olduğu resimler oluşturuldu veri tabanına kaydedildi
+          collectionImagesData = await createNewDataMany("CollectionImages", result.collectionImagesData);
 
 
-        if (collectionImagesData.error || !collectionImagesData) {
-          throw new Error(collectionImagesData.message);
+          if (collectionImagesData.error || !collectionImagesData) {
+            throw new Error(collectionImagesData.message);
+          }
         }
-      }
 //____________________________________________________________________________________________________________________
       
 
-      return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla oluşturuldu."});
+        return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla oluşturuldu."});
+      }
+
+
+// ### DELETE ############################################################################################################
+      else if(data.processType === "delete"){
+        
+        // deleteDataByAny(tableName, where)
+        const deleteCollection = await deleteDataByMany("Collections", {id: data.data});
+        console.log("deleteCollection :", deleteCollection);
+        
+        if(deleteCollection.error || !deleteCollection){
+          throw new Error(deleteCollection.message);
+        }
+
+        const deleteCollectionProducts = await deleteDataByMany("CollectionProducts", {collectionId: data.data});
+        console.log("deleteCollectionProducts :", deleteCollectionProducts);
+        if(deleteCollectionProducts.error || !deleteCollectionProducts){
+          throw new Error(deleteCollectionProducts.message);
+        }
+
+        // resim var mı veri tabanını sorgula. varsa eğer eşleşen id değerindeki tüm resimleri sil.
+        const deleteCollectionImages = await deleteDataByMany("CollectionImages", {collectionId: data.data});
+          console.log("deleteCollectionImages :", deleteCollectionImages);
+
+          if(deleteCollectionImages.error){
+            throw new Error(deleteCollectionImages.message);
+          }
+
+        return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla silindi."});       
+        
+      }
 
     }
 
@@ -145,11 +221,15 @@ const handler = async (req, res) => {
       const collectionImagesData = await getAllData("CollectionImages");
 
       // collectionsData içerisine collectionProducts ve collectionImages objelerini direkt ekle
-      await collectionsData.push({collectionProducts: collectionProductsData, collectionImages: collectionImagesData})
+      const collection = {
+        
+          collectionsData: collectionsData,
+          collectionProductsData: collectionProductsData,
+          collectionImagesData: collectionImagesData
+        
+      }
 
-      console.log(collectionsData);
-
-      return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla getirildi.", data: collectionsData});
+      return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla getirildi.", data: collection});
 
     }
 

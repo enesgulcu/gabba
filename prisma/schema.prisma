@@ -150,9 +150,10 @@ model ProductFeature {
 }
 
 model Collections{
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  collectionName String
-  collectionType String
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  collectionCode  String
+  collectionName  String
+  collectionType  String
   collectionDescription String?
 
   collectionNameTR String?

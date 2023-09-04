@@ -13,13 +13,15 @@ const ListCollection = () => {
   const [isloading, setIsloading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
+  const [collectionProductsData, setCollectionProductsData] = useState(null);
+  const [collectionImagesData, setCollectionImagesData] = useState(null);
   const [selectedCollectionLanguage, setSelectedCollectionLanguage] = useState("");
 
   const [data, setData] = useState("");
 
-  useEffect(() => {
-    console.log("data", data);
-  }, [data])
+  // useEffect(() => {
+  //   console.log("data", data);
+  // }, [data])
   
 
   useEffect(() => {
@@ -37,7 +39,9 @@ const ListCollection = () => {
         }
         
         setData(response.data);
-        setFilteredData(response.data);
+        setFilteredData(response.data.collectionsData);
+        setCollectionProductsData(response.data.collectionProductsData);
+        setCollectionImagesData(response.data.collectionImagesData);
         setIsloading(false);
     } catch (error) {
 
@@ -47,18 +51,18 @@ const ListCollection = () => {
 }
 
 
-  const deleteCollection = async (id, process) => {
-    // id -> productId ya da özelliğin orjinal id değeri.
-    // process -> deleteCollection | deleteFeature
+  const deleteCollection = async (id) => {
+    // id -> CollectionId
+    // process -> deleteCollection
+
     try {
       setIsloading(true);
-      const responseData = await postAPI("/createProduct/createProduct/CreateCollection",{data:id, processType:"delete", process});
+      const responseData = await postAPI("/createProduct/createProduct/createCollection",{data:id, processType:"delete"});
       if(!responseData || responseData.status !== "success"){
           throw new Error("Veri silinemedi");  
       }
-       await getData("/createCollection/createCollection");
-  
-        setReadyForListFeature([]);
+
+       await getData("/createProduct/createProduct/createCollection");
   
        toast.success("Veri başarıyla Silindi");
        setIsloading(false);
@@ -68,6 +72,9 @@ const ListCollection = () => {
         setIsloading(false);
     }
   }
+
+
+   
   
   
     const renderHead = () => {
@@ -89,7 +96,6 @@ const ListCollection = () => {
     
     return filteredData && (
       filteredData.map((item, index) => (
-        console.log(item),
         <tr key={index} className="border-b hover:bg-blue-50">
   
           {/* sıra numarası */}
@@ -128,27 +134,26 @@ const ListCollection = () => {
           }>
             <div>{item.collectionDescription}</div>
           </td>
+
   
           {/* koleksiyon resmi */}
-          {/* <td className={` text-center py-2 border-r border-b border-black` 
+          <td className={` text-center py-2 border-r border-b border-black` 
           }>
             <div className='w-full flex justify-center item-center flex-wrap'>
             {
-              data.productFeatures.map((featureItem, index) => (
-  
-                featureItem.productId === item.id && 
-                featureItem.feature.includes("Image" || "image") &&
-  
+              // collectionImagesData içindeki collectionId ile filteredData içindeki id eşit ise resmi göster.
+              collectionImagesData && collectionImagesData.length > 0 && collectionImagesData.map((imageItem, index) => (
+                imageItem.collectionId === item.id &&
                 <div key={index} className='lg:p-2 p-0 m-1 lg:m-2'>
-                  <Image width={100} height={100} src={featureItem.imageValue} alt={`image${index}`} 
-                  onClick={() => setSelectedImage(featureItem.imageValue)}
-                  className='hover:cursor-pointer hover:scale-125 transition-all'
+                  <Image width={100} height={100} src={imageItem.collectionImage} alt={`image${index}`}
+                    onClick={() => setSelectedImage(imageItem.collectionImage)}
+                    className='hover:cursor-pointer hover:scale-125 transition-all'
                   />
-                </div>              
+                </div>
               ))
             }
             </div>
-          </td> */}
+          </td>
   
           <td className={` text-center py-2 border-r border-b border-black` 
           }>
@@ -240,13 +245,25 @@ const ListCollection = () => {
                   </div>
                 }
           </td>
+
+          {/* koleksiyon ürünleri butona tıklayınca ürün bilgileri listelensin*/}
+          <td className={` text-center py-2 border-r border-b border-black`
+          }>
+            <div className='flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap'>
+              <button
+  
+                className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap bg-blue-600 text-white rounded shadow font-bold hover:scale-110 hover:cursor-pointer transition-all '>
+                  <FaEye size={20} /> <span className="hidden lg:block">Ürünleri Gör</span>
+              </button>
+            </div>
+          </td>
   
           {/* işlem */}
           <td className={` text-center py-2 border-r border-b border-black px-1` 
           }>
             <div className="flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap">
               <button 
-                onClick={() => deleteCollection(item.id, "deleteCollection")} 
+                onClick={() => deleteCollection(item.id)} 
                 className='bg-red-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                   <FaTrash size={20} />
               </button>
