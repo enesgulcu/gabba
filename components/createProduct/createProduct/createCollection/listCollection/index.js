@@ -16,18 +16,21 @@ const ListCollection = () => {
   const [collectionProductsData, setCollectionProductsData] = useState(null);
   const [collectionImagesData, setCollectionImagesData] = useState(null);
   const [selectedCollectionLanguage, setSelectedCollectionLanguage] = useState("");
+  const [selectedCollectionProducts, setSelectedCollectionProducts] = useState("");
+  const [showCollectionProducts, setShowCollectionProducts] = useState(false);
+  const [selectedCollectionData , setSelectedCollectionData] = useState(null);
 
   const [data, setData] = useState("");
 
-  // useEffect(() => {
-  //   console.log("data", data);
-  // }, [data])
+  useEffect(() => {
+    console.log("selectedCollectionProducts :", selectedCollectionProducts);
+  }, [selectedCollectionProducts])
   
 
   useEffect(() => {
     getData();
-
   }, [])
+
 
   // veritabanından verileri çek. (1)
   const getData = async (url) => {
@@ -48,7 +51,113 @@ const ListCollection = () => {
         setIsloading(false);
         console.log(error);
     }
-}
+  }
+
+  // selectedCollectionProducts -> seçilen koleksiyonun ürünlerini "ürünlerin çevirilerini gösterir" gibi  listeleriz ve gösteririz.
+  const listCollectionProducts = () => {
+    if(showCollectionProducts && selectedCollectionProducts && selectedCollectionProducts.length > 0){
+      return(
+        <div className='absolute top-0 left-0 w-full z-50 bg-black bg-opacity-60 h-screen flex justify-center item-start lg:items-center'>
+          <div className='absolute top-0 left-0 w-full bg-black bg-opacity-60'></div>
+            <div className='relative top-0 left-0 w-full flex justify-center item-center'>
+              <div className=' bg-white rounded-lg min-h-screen lg:min-h-min p-2'>
+                <div className='flex flex-row flex-nowrap justify-center items-center gap-2'>
+                  <div className='flex flex-col justify-center items-center gap-2 p-2'>
+
+                  {/* selectedCollectionData içindeki verileri listeleriz. */}
+
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-black lg:bg-opacity-0 p-2 rounded'>
+                      <div className=' rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className=' p-2 w-full bg-black rounded-lg text-white text-center text-xl'>
+                          Koleksiyon Bilgileri
+                        </h3>
+                      </div>
+                    </div>
+                    <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-blue-200 lg:bg-opacity-0 p-2 rounded'>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold text-black'>Koleksiyon Kodu :</h3>
+                        <h4 className='text-center text-black'>{selectedCollectionData.collectionCode}</h4>
+                      </div>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold text-black'>Koleksiyon Adı :</h3>
+                        <h4 className='text-center text-black'>{selectedCollectionData.collectionName}</h4>
+                      </div>
+                      <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
+                        <h3 className='text-center font-bold text-black'>Koleksiyon Tipi :</h3>
+                        <h4 className='text-center text-black'>{selectedCollectionData.collectionType}</h4>
+                      </div>
+                    </div>
+
+
+
+
+                    <h3 className='w-full p-2 flex justify-center items-center'>
+                      <span className='text-center font-bold text-black lg:text-xl'>Koleksiyonun Ürünleri</span>
+                    </h3>
+                    {
+                      selectedCollectionProducts && selectedCollectionProducts.length > 0 &&
+                      // seçilen koleksiyonun ürünlerini table ile listeleriz.
+                      selectedCollectionProducts.map((item, index) => (
+                        <table key={index} className="w-full text-sm text-left text-gray-500 dark:text-gray-400 m-2">
+                          <thead className='text-md text-gray-700  bg-blue-500 dark:text-white border-blue-600 border-2'>
+                            <tr className="bg-blue-600 w-full">
+                              <th className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">Sıra</th>
+                              <th className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">Ürün Kodu</th>
+                              <th className=" text-xs md:text-md lg:text-lg text-center py-4 border-l border-white p-2 text-white">Ürün Adı</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white border-b border-gray-200">
+                              <td className="text-center lg:p-2 border-l border-r border-b border-black w-6 lg:w-10">
+                                <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
+                                  <div className="bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center">
+                                    {index + 1}
+                                    {console.log(item)}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="text-center lg:p-2 border-r border-b border-black lg:w-40">
+                                <div className="text center flex justify-center item-center">
+                                  {item.productCode}
+                                </div>
+                              </td>
+                              <td className="text-center lg:p-2 border-r border-b border-black">
+                                <div className="text center flex justify-center item-center">
+                                  {item.productName}
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      ))
+                    }
+
+
+                    <div>
+                      <div className='bg-red-600 m-2 p-2 rounded-full cursor-pointer hover:scale-105 transition hover:rotate-6 hover:border-2 hover:border-white '
+                      onClick={()=>{
+                        setShowCollectionProducts(false);
+                        setSelectedCollectionProducts("");
+                        setSelectedCollectionData("");
+                      }}
+                      >
+                      <IoClose color="white" size={40} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      )
+    }
+
+    
+  }
+
+
+
+  
 
 
   const deleteCollection = async (id) => {
@@ -73,10 +182,6 @@ const ListCollection = () => {
     }
   }
 
-
-   
-  
-  
     const renderHead = () => {
       const tableHeaders = ["sıra","Koleksiyon Kodu", "Koleksiyon Adı", "Koleksiyon Tipi", "Koleksiyon Açıklaması", "Koleksiyon Resmi","Dil Çevirisi", "Koleksiyon Ürünleri", "İşlem" ]
       
@@ -92,11 +197,11 @@ const ListCollection = () => {
   };
   
   const renderData = () => {
-    
+    //
     
     return filteredData && (
       filteredData.map((item, index) => (
-        <tr key={index} className="border-b hover:bg-blue-50">
+        <tr key={index} className={`border-b hover:bg-blue-50`}>
   
           {/* sıra numarası */}
           {
@@ -134,7 +239,6 @@ const ListCollection = () => {
           }>
             <div>{item.collectionDescription}</div>
           </td>
-
   
           {/* koleksiyon resmi */}
           <td className={` text-center py-2 border-r border-b border-black` 
@@ -187,45 +291,45 @@ const ListCollection = () => {
                             <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-blue-200 lg:bg-opacity-0 p-2 rounded'>
                               <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Adı Türkçe :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productNameTR}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionNameTR}</h4>
                               </div>
                               <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Tipi Türkçe :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productTypeTR}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionTypeTR}</h4>
                               </div>
                               <div className='bg-blue-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Kategorisi Türkçe :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productDescriptionTR}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionDescriptionTR}</h4>
                               </div>
                             </div>
         
                             <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-orange-200 lg:bg-opacity-0 p-2 rounded'>
                               <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Adı İngilizce :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productNameUA}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionNameUA}</h4>
                               </div>
                               <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Tipi İngilizce :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productTypeUA}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionTypeUA}</h4>
                               </div>
                               <div className='bg-orange-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Kategorisi İngilizce :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productDescriptionUA}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionDescriptionUA}</h4>
                               </div>
                             </div>
         
                             <div className='w-full flex flex-row gap-2 justify-center item-center flex-wrap bg-green-200 lg:bg-opacity-0 p-2 rounded'>
                               <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Adı Ukraynaca :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productNameEN}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionNameEN}</h4>
                               </div>
                               <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Tipi Ukraynaca :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productTypeEN}</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionTypeEN}</h4>
                               </div>
                               <div className='bg-green-100 p-2 rounded flex flex-row flex-nowrap gap-2 w-full'>
                                 <h3 className='text-center font-bold text-black'>Koleksiyon Kategorisi Ukraynaca :</h3>
-                                <h4 className='text-center text-black'>{selectedCollectionLanguage.productDescriptionEN  }</h4>
+                                <h4 className='text-center text-black'>{selectedCollectionLanguage.collectionDescriptionEN  }</h4>
                               </div>
                             </div>
         
@@ -251,6 +355,20 @@ const ListCollection = () => {
           }>
             <div className='flex justify-center item-center flex-row gap-2 md:gap-4 lg:gap-6 lg:flex-nowrap'>
               <button
+                onClick={async () => {
+                  const productItems = [];
+                  // seçilen itemin içindeki id değeri ile collectionProductsData içerisindeki productId eşit ise o ürünün bilgilerini listele.
+                  collectionProductsData.map((productItem) => {
+                   // item.id -> seçilen koleksiyonun id si
+                   // Tüm eşleşenleri array olarak state 'e atıyoruz.
+                    if(productItem.collectionId === item.id){
+                      productItems.push(productItem);
+                    }
+                  })
+                  productItems && setSelectedCollectionProducts(productItems);
+                  setShowCollectionProducts(true);
+                  setSelectedCollectionData(item);
+                }}
   
                 className='p-2 flex flex-row justify-center items-center gap-2 whitespace-nowrap bg-blue-600 text-white rounded shadow font-bold hover:scale-110 hover:cursor-pointer transition-all '>
                   <FaEye size={20} /> <span className="hidden lg:block">Ürünleri Gör</span>
@@ -429,7 +547,10 @@ const ListCollection = () => {
   
         {/* ürünleri listelediğimiz tablomuz */}
         <div className="w-full overflow-auto">
-          <table className={`${selectedImage && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
+          {
+            listCollectionProducts() // seçilen koleksiyonun ürünlerini listeler.
+          }
+          <table className={`${showCollectionProducts && selectedCollectionProducts && "max-h-screen overflow-hidden blur" } ${selectedImage && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>
             <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
               {renderHead()}{" "}
             </thead>
