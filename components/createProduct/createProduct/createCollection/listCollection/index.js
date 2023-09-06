@@ -388,10 +388,7 @@ const ListCollection = () => {
               <button 
                 onClick={async () => {
                   
-                  // data -> tüm ürünler ve tüm özellikler
-                  // item -> seçilen koleksiyon
-                  // true -> update işlemi.
-                  await getCollectionFeatures(data, item, true);                               
+                                                
                 }} 
                 className='bg-blue-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>
                   <FaEdit size={20} />

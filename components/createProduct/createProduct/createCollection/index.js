@@ -53,12 +53,12 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
 
         const uniqueCollectionTypes = [];
         
-        response.data.forEach((item) => {
+        response.data.collectionsData.forEach((item) => {
           if (!uniqueCollectionTypes.includes(item.collectionType)) {
             uniqueCollectionTypes.push(item.collectionType);
           }
         });
-    
+        console.log("uniqueCollectionTypes :", uniqueCollectionTypes)
         // State'i güncelleyin
         setCollectionTypes(uniqueCollectionTypes);
       
