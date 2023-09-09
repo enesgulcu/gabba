@@ -15,6 +15,16 @@ export async function getAllData(tableName) {
   }
 }
 
+// GET BY UNIQUE MANY VALUE
+export async function getDataByUniqueMany(tableName, where) {
+  try {
+    const data = await prisma[tableName].findMany({ where:  where });
+    return data;
+  } catch (error) {
+    return { error: error.message};
+  }
+}
+
 // POST
 export async function createNewData(tableName, newData) {
   try {
@@ -160,6 +170,8 @@ export async function updateProduct(productId, updatedProductData) {
 
 export default {
   getAllData,
+
+  getDataByUniqueMany,
 
   createNewData,
 

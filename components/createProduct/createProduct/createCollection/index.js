@@ -8,8 +8,26 @@ import ResizeImage from '@/functions/others/resizeImage';
 import VisibleImage from '@/components/other/visibleImage';
 import { ToastContainer, toast } from "react-toastify";
 
-const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, setCollectionAllData,  collectionTypes, setCollectionTypes}) => {
+const CreateCollection = ({
+  collectionProducts, 
+  setIsloading, 
+  collectionAllData, 
+  setCollectionAllData, 
+  collectionTypes, 
+  setCollectionTypes,
+  setCollectionUpdateEnabled,
+  setCollectionUpdateData, 
+  setCollectionListEnabled, 
+  setListProductsEnabled,
+  setCollectionUpdateImageData,
+  setCollectionUpdateProductData,
 
+  collectionUpdateData,
+  collectionUpdateImageData,
+  collectionUpdateProductData,
+  collectionUpdateEnabled,
+}) => {
+  
   const [collectionName , setCollectionName] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [collectionDescription, setCollectionDescription] = useState("");
@@ -30,7 +48,47 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
   const [collectionTypeUA, setCollectionTypeUA] = useState("");
   const [collectionDescriptionUA, setCollectionDescriptionUA] = useState("");
 
+  const [collectionUpdateId, setCollectionUpdateId] = useState("");
+  const [collectionUpdateCode, setCollectionUpdateCode] = useState("");
+
   const [addTypeEnabled, setAddTypeEnabled] = useState(false);
+  
+
+  // Koleksiyon güncelleme işlemi için gerekli olan verileri state'e atıyoruz.   ## GÜNCELLEME İŞLEMİ İÇİN ##
+  useEffect(() => {
+    if(collectionUpdateEnabled){
+      
+      if(collectionUpdateImageData){
+        setCollectionImages(collectionUpdateImageData);
+      }
+  
+      if(collectionUpdateData){
+
+        setCollectionUpdateId(collectionUpdateData.id);
+        setCollectionUpdateCode(collectionUpdateData.collectionCode);
+
+        setCollectionName(collectionUpdateData.collectionName);
+        setCollectionType(collectionUpdateData.collectionType);
+        setCollectionDescription(collectionUpdateData.collectionDescription);
+
+        setCollectionNameTR(collectionUpdateData.collectionNameTR);
+        setCollectionTypeTR(collectionUpdateData.collectionTypeTR);
+        setCollectionDescriptionTR(collectionUpdateData.collectionDescriptionTR);
+
+        setCollectionNameEN(collectionUpdateData.collectionNameEN);
+        setCollectionTypeEN(collectionUpdateData.collectionTypeEN);
+        setCollectionDescriptionEN(collectionUpdateData.collectionDescriptionEN);
+
+        setCollectionNameUA(collectionUpdateData.collectionNameUA);
+        setCollectionTypeUA(collectionUpdateData.collectionTypeUA);
+        setCollectionDescriptionUA(collectionUpdateData.collectionDescriptionUA);
+      }
+      // NOT: collectionUpdateProductData bölümü bir üst component olan "ListFeatureTable" bölümünde tanımlanmaktadır.
+    }
+    
+
+
+  }, [collectionUpdateEnabled, collectionUpdateData, collectionUpdateImageData, collectionUpdateProductData])
 
   useEffect(() => {
     getData();
@@ -58,7 +116,6 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
             uniqueCollectionTypes.push(item.collectionType);
           }
         });
-        console.log("uniqueCollectionTypes :", uniqueCollectionTypes)
         // State'i güncelleyin
         setCollectionTypes(uniqueCollectionTypes);
       
@@ -76,23 +133,33 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
   const submitCollection = async () => {
     try {
       setIsloading(true);
-      const response = await postAPI('/createProduct/createProduct/createCollection', {
-        collectionName,
-        collectionType,
-        collectionDescription,
-        collectionImages,
-        collectionNameTR,
-        collectionTypeTR,
-        collectionDescriptionTR,
-        collectionNameEN,
-        collectionTypeEN,
-        collectionDescriptionEN,
-        collectionNameUA,
-        collectionTypeUA,
-        collectionDescriptionUA,
-        collectionProducts
-      });
-  
+      let response;
+
+
+      // YENİ KOLEKSİYON OLUŞTURMA İŞLEMİ İÇİN POST
+    
+        response = await postAPI('/createProduct/createProduct/createCollection',{
+          processType: collectionUpdateEnabled && collectionUpdateData ? "update" : "create",
+          collectionUpdateId, 
+          collectionUpdateCode,
+          collectionName,
+          collectionType,
+          collectionDescription,
+          collectionImages,
+          collectionNameTR,
+          collectionTypeTR,
+          collectionDescriptionTR,
+          collectionNameEN,
+          collectionTypeEN,
+          collectionDescriptionEN,
+          collectionNameUA,
+          collectionTypeUA,
+          collectionDescriptionUA,
+          collectionProducts
+        });
+     
+        
+      
       if(!response || response.status !== "success"){
         throw new Error("Veri eklenemedi JJKY7TB");
       }
@@ -128,7 +195,7 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
 
         <div className='w-full bg-gray-100 border-4 border-purple-600 p-2 lg:my-10 my-4 flex flex-col lg:flex-row flex-wrap gap-4 justify-center item-center rounded-md'>
         <div className='w-full flex justify-center items-center'>
-          <h3 className='text-lg md:text-2xl font-bold bg-purple-600 p-4 rounded text-white'>Koleksiyon Oluşturma</h3>
+          <h3 className='text-lg md:text-2xl font-bold bg-purple-600 p-4 rounded text-white'>{`${collectionUpdateEnabled && collectionUpdateData ? "Koleksiyonu Güncelle": "Koleksiyonu Oluştur"}`}</h3>
         </div>
         <div className='w-full flex justify-center item-center lg:items-end flex-col lg:flex-row flex-wrap gap-4'>
           <div className="flex flex-col justify-center items-center ">
@@ -575,7 +642,7 @@ const CreateCollection = ({collectionProducts, setIsloading, collectionAllData, 
           !collectionProducts || collectionProducts.length < 1 ||
           !collectionType || collectionType.trim().length < 1
         }
-        >Koleksiyon Oluştur</button>
+        >{`${collectionUpdateEnabled && collectionUpdateImageData ? "Koleksiyonu Güncelle" : "Koleksiyonu Oluştur"}`}</button>
         </div>
         {/* Koleksiyon uyarı mesaj bölümü */}         
         <div className='flex w-full justify-center items-center flex-wrap gap-4'>

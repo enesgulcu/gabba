@@ -31,7 +31,20 @@ const ListFeatureTable = ({
   collectionAllData, 
   setCollectionAllData,  
   collectionTypes, 
-  setCollectionTypes
+  setCollectionTypes,
+
+  setCollectionUpdateEnabled,
+  setCollectionUpdateData, 
+  setCollectionListEnabled, 
+  setListProductsEnabled,
+  setCollectionUpdateImageData,
+  setCollectionUpdateProductData,
+
+  collectionUpdateData,
+  collectionUpdateImageData,
+  collectionUpdateProductData,
+  collectionUpdateEnabled,
+  
 }) => {
 
   // categoriesData değerini bir state içerisine atıyoruz.
@@ -53,6 +66,19 @@ const ListFeatureTable = ({
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili  
 
+  useEffect(() => {
+    console.log("collectionUpdateData :", collectionUpdateData);
+  }, [collectionUpdateData])
+  
+
+  
+  useEffect(() => {
+    if(collectionUpdateEnabled && collectionUpdateProductData){
+      setChooseProducts(collectionUpdateProductData);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collectionUpdateEnabled, collectionUpdateProductData])
+  
 
 
   useEffect(() => {
@@ -92,9 +118,8 @@ const getDataCollection = async () => {
   try {
     setIsloading(true);
     const response = await getAPI('/createProduct/createProduct/createCollection');
-    
 
-    if(!response || response.status !== "success"){
+    if(!response || response.status !== "success" || !response.data){
       throw new Error("Veri çekilemedi JJKY7TB");
     }
     // tüm getirilen verileri collectionAllData içerisine atıyoruz.
@@ -104,7 +129,7 @@ const getDataCollection = async () => {
 
       const uniqueCollectionTypes = [];
       
-      response.data.forEach((item) => {
+      response.data.collectionsData.forEach((item) => {
         if (!uniqueCollectionTypes.includes(item.collectionType)) {
           uniqueCollectionTypes.push(item.collectionType);
         }
@@ -388,7 +413,7 @@ const renderData = () => {
             <input type="checkbox" className="form-checkbox h-6 w-6 text-blue-600 hover:cursor-pointer"
 
             // eğer seçilen ürün var ise checkbox'ı işaretler.
-            checked={chooseProducts.some(item => item.productId === prodcutItem.id)}
+            checked={chooseProducts && chooseProducts.length > 0 && chooseProducts.some(item => item.productId === prodcutItem.id)}
 
             onChange={
               (e) => {
@@ -817,7 +842,25 @@ const renderFeaturesTable = () => {
       <div className="w-full overflow-auto">
         {
           collectionModeEnabled &&
-          <CreateCollection collectionProducts={chooseProducts} setIsloading={setIsloading} collectionAllData={collectionAllData} setCollectionAllData={setCollectionAllData} collectionTypes={collectionTypes} setCollectionTypes={setCollectionTypes}/>
+          <CreateCollection 
+          collectionProducts={chooseProducts}
+          setIsloading={setIsloading}
+          collectionAllData={collectionAllData} 
+          setCollectionAllData={setCollectionAllData} 
+          collectionTypes={collectionTypes} 
+          setCollectionTypes={setCollectionTypes}
+
+          setCollectionUpdateEnabled={setCollectionUpdateEnabled}
+          setCollectionUpdateData={setCollectionUpdateData}
+          setCollectionListEnabled={setCollectionListEnabled}
+          setListProductsEnabled={setListProductsEnabled}
+          setCollectionUpdateImageData={setCollectionUpdateImageData}
+          setCollectionUpdateProductData={setCollectionUpdateProductData} 
+          collectionUpdateProductData={collectionUpdateProductData}
+          collectionUpdateImageData={collectionUpdateImageData}
+          collectionUpdateData={collectionUpdateData}
+          collectionUpdateEnabled={collectionUpdateEnabled}
+          />
           
         }
         <table className={`${selectedImage && "blur"} ${productFeatures && productFeatures.length > 0 && "blur"} w-full text-sm text-left text-gray-500 dark:text-gray-400`}>

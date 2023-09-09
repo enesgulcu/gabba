@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingScreen from '@/components/other/loading';
 import { getAPI, postAPI } from '@/services/fetchAPI';
 
-const ListCollection = () => {
+const ListCollection = ({setCollectionUpdateEnabled, setCollectionUpdateData, setCollectionModeEnabled, setCollectionListEnabled, setListProductsEnabled}) => {
 
   const [isloading, setIsloading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -21,10 +21,6 @@ const ListCollection = () => {
   const [selectedCollectionData , setSelectedCollectionData] = useState(null);
 
   const [data, setData] = useState("");
-
-  useEffect(() => {
-    console.log("selectedCollectionProducts :", selectedCollectionProducts);
-  }, [selectedCollectionProducts])
   
 
   useEffect(() => {
@@ -37,6 +33,7 @@ const ListCollection = () => {
     try {
         setIsloading(true);
         const response = await getAPI('/createProduct/createProduct/createCollection');
+        console.log(response);
         if(response.status !== "success"){
           throw new Error("Veri çekilemedi 1");
         }
@@ -387,7 +384,14 @@ const ListCollection = () => {
               </button>
               <button 
                 onClick={async () => {
-                  
+                  // listFeatureTable içine buradan güncellenecek koleksiyon verilerini göndeririz.
+                  // setCollectionUpdateData -> item
+                  // setCollectionUpdateEnabled -> true
+                  setCollectionUpdateData(item);
+                  setCollectionUpdateEnabled(true);
+                  setCollectionModeEnabled(true);
+                  setCollectionListEnabled(false);
+                  setListProductsEnabled(true);
                                                 
                 }} 
                 className='bg-blue-600 rounded hover:cursor-pointer hover:scale-110 transition-all inline-block text-white font-bold text-md shadow p-2'>

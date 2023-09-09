@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react";
-import { getAPI } from '@/services/fetchAPI';
+import { getAPI, postAPI } from '@/services/fetchAPI';
 import DropDownCatagories from "@/components/createProduct/createProduct/dropDownCatagories"
 import DynamicTable from "@/components/createProduct/createProduct/dynamicTable"
 import LoadingScreen from '@/components/other/loading';
@@ -58,6 +58,25 @@ const CreateProductComponent = () => {
   const [collectionAllData, setCollectionAllData] = useState("");
   const [collectionTypes, setCollectionTypes] = useState("");
 
+  const [collectionUpdateEnabled, setCollectionUpdateEnabled] = useState(false);
+  const [collectionUpdateData, setCollectionUpdateData] = useState({});
+  const [collectionUpdateImageData, setCollectionUpdateImageData] = useState({});
+  const [collectionUpdateProductData, setCollectionUpdateProductData] = useState({});
+
+  
+
+  
+  useEffect(() => {
+    // update işlemi sırasında koleksiyon resimlerini ve ürünlerini çekmek için yapılan işlem.
+    if(collectionUpdateEnabled && collectionUpdateData){
+      //koleksiyon id si ile "koleksiyonun ürünlerini" ve "resimleri" getiririz.
+      getUpdateCollectionData(collectionUpdateData.id);
+    }
+
+  }, [collectionUpdateEnabled, collectionUpdateData])
+  
+  
+
   useEffect(() => {
     
     if(isUpdateEnabled && newUpdateData && newUpdateData.createProducts && newUpdateData){
@@ -68,6 +87,31 @@ const CreateProductComponent = () => {
   }, [isUpdateEnabled, newUpdateData, setIsUpdateEnabled])
   
 
+  const getUpdateCollectionData = async (id) => {
+    // id -> CollectionId
+    // process -> deleteCollection
+
+    try {
+      setIsloading(true);
+      const responseData = await postAPI("/createProduct/createProduct/createCollection",{data:id, processType:"getUpdateCollectionData"});
+      if(!responseData || responseData.status !== "success"){
+          throw new Error("Veri getirilemedi");  
+      }
+
+      // burada 2 veri gelmeli -> 1. collectionData zaten buraya düşüyor.
+      // 2. collectionProductsData
+      // 3. collectionImagesData
+
+      setCollectionUpdateImageData(responseData.data.collectionImagesData);
+      setCollectionUpdateProductData(responseData.data.collectionProductsData);
+
+       setIsloading(false);
+  
+    } catch (error) {
+      console.log(error.message);
+        setIsloading(false);
+    }
+  }
   
 
   const getData = async (apiUrl) => {
@@ -215,6 +259,9 @@ const CreateProductComponent = () => {
                   setCollectionModeEnabled(false);
                   setCollectionListEnabled(false);
                   setListProductsEnabled(true);
+                  setCollectionUpdateEnabled(false);
+                  setCollectionUpdateData({});
+
                 }}
                 >
                 <IoClose size={25}/>  İptal Et
@@ -276,6 +323,21 @@ const CreateProductComponent = () => {
             setCollectionAllData = {setCollectionAllData}
             collectionTypes = {collectionTypes}
             setCollectionTypes = {setCollectionTypes}
+
+            setCollectionUpdateEnabled={setCollectionUpdateEnabled}
+            setCollectionUpdateData={setCollectionUpdateData}
+            setCollectionListEnabled={setCollectionListEnabled}
+            setListProductsEnabled={setListProductsEnabled}
+            setCollectionUpdateImageData={setCollectionUpdateImageData}
+            setCollectionUpdateProductData={setCollectionUpdateProductData} 
+            
+            collectionUpdateEnabled = {collectionUpdateEnabled}
+            collectionUpdateProductData={collectionUpdateProductData}
+            collectionUpdateImageData={collectionUpdateImageData}
+            collectionUpdateData={collectionUpdateData}
+            
+            
+            
             />
             
 
@@ -286,7 +348,7 @@ const CreateProductComponent = () => {
         : 
 
         collectionListEnabled ?
-        <ListCollection/>
+        <ListCollection setCollectionUpdateEnabled={setCollectionUpdateEnabled} setCollectionUpdateData={setCollectionUpdateData} setCollectionModeEnabled={setCollectionModeEnabled} setCollectionListEnabled={setCollectionListEnabled} setListProductsEnabled={setListProductsEnabled}/>
 
 
         :

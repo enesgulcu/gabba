@@ -1,53 +1,24 @@
 import {createNewDataMany, createNewData, getAllData, deleteDataByMany, getDataByUnique} from "@/services/serviceOperations";
 
-/* 
-  model Collections{
-    id           String    @id @default(auto()) @map("_id") @db.ObjectId
-    collectionCode String
-    collectionName String
-    collectionType String
-    collectionDescription String?
-
-    collectionNameTR String?
-    collectionTypeTR String?
-    collectionDescriptionTR String?
-
-    collectionNameUA String?
-    collectionTypeUA String?
-    collectionDescriptionUA String?
-
-    collectionNameEN String?
-    collectionTypeEN String?
-    collectionDescriptionEN String?
-  }
-
-  model CollectionProducts{
-    id           String    @id @default(auto()) @map("_id") @db.ObjectId
-    collectionId String
-    productId    String
-    productCode  String
-    productName  String
-  }
-
-  model collectionImages{
-    id              String    @id @default(auto()) @map("_id") @db.ObjectId
-    collectionId    String
-    collectionImage String
-  }
-*/
 
 const handler = async (req, res) => {
 
   // extra ve image verileri içi boş olanları temizlenecek.
   const checkData = async (data) => {
-    try {
-            
+    try {    
+      const processType = await data.processType;
+      const collectionUpdateId = await data.collectionUpdateId;
+      const collectionUpdateCode = await data.collectionUpdateCode;
       const collectionProductsData = await data.collectionProducts;
       const collectionImagesData = await data.collectionImages;
 
       // collectionProducts ve collectionImages verilerini data içerisinden sil.
+      delete data.processType;
+      delete data.collectionUpdateId;
+      delete data.collectionUpdateCode;
       delete data.collectionProducts;
       delete data.collectionImages;
+      
       const collectionsData = await data;
 
       if(!collectionsData.collectionName || !collectionsData.collectionType){
@@ -114,7 +85,7 @@ const handler = async (req, res) => {
 
       const data = await req.body;
 
-      if(!data.processType && data.processType !== "delete"){
+      if(data.processType == "create"){
         const result = await checkData(data);
 
         if (result.error || !result) {
@@ -125,7 +96,7 @@ const handler = async (req, res) => {
       
         // Koleksiyon oluşturuldu veri tabanına kaydedildi
         const collectionsData = await createNewData("Collections", result.collectionsData);
-
+        console.log(collectionsData);
         if (collectionsData.error || !collectionsData) {
           throw new Error(collectionsData.message);
         }
@@ -179,7 +150,6 @@ const handler = async (req, res) => {
         
         // deleteDataByAny(tableName, where)
         const deleteCollection = await deleteDataByMany("Collections", {id: data.data});
-        console.log("deleteCollection :", deleteCollection);
         
         if(deleteCollection.error || !deleteCollection){
           throw new Error(deleteCollection.message);
@@ -234,6 +204,7 @@ const handler = async (req, res) => {
     }
 
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: true, message: error.message });
   }
 
