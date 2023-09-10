@@ -65,10 +65,6 @@ const ListFeatureTable = ({
   const [filteredData, setFilteredData] = useState([]); // filtrelenmiş veriler
 
   const [selectedProductLanguage, setSelectedProductLanguage] = useState(""); // seçilen ürünün dili  
-
-  useEffect(() => {
-    console.log("collectionUpdateData :", collectionUpdateData);
-  }, [collectionUpdateData])
   
 
   

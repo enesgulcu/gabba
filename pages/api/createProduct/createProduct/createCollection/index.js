@@ -1,4 +1,4 @@
-import {createNewDataMany, createNewData, getAllData, deleteDataByMany, getDataByUnique} from "@/services/serviceOperations";
+import {createNewDataMany, createNewData, getAllData, getDataByUniqueMany, deleteDataByMany, getDataByUnique} from "@/services/serviceOperations";
 
 
 const handler = async (req, res) => {
@@ -28,7 +28,9 @@ const handler = async (req, res) => {
       if(!collectionProductsData || collectionProductsData.length < 1){
         throw new Error("Koleksiyonda en az 1 ürün olmazı gerekmektedir.");
       }
-
+    
+    // koleksiyon kodunun oluştuğu bölüm.
+    if(processType === "create"){
     // her ürün için uniq olarak bir ürün kodu oluşturuyoruz #########################
     //################################################################################
 
@@ -70,9 +72,14 @@ const handler = async (req, res) => {
       
       // collectionsData içerisine oluşturulan collectionCode değerini ekle
       collectionsData.collectionCode = collectionCode;
+    }
 
+    if(processType === "update"){
+      // collectionsData içerisine varolan collectionCode değerini ekle
+      collectionsData.collectionCode = collectionUpdateCode;
+    }
 
-      return { collectionsData, collectionProductsData, collectionImagesData };
+      return { collectionsData, collectionProductsData, collectionImagesData, collectionUpdateId, processType };
 
 
     } catch (error) {
@@ -83,45 +90,66 @@ const handler = async (req, res) => {
   try {
     if (req.method === "POST"){
 
-      const data = await req.body;
+      const data = await req.body;      
 
-      if(data.processType == "create"){
+      if(data.processType == "create" || data.processType == "update"){
+        
         const result = await checkData(data);
 
         if (result.error || !result) {
           throw new Error(result.message);
         }
+
+        if(result.processType === "update"){
+          
+          // SİLME İŞLEMİ -- ilk olarak var olan veriler result.collectionUpdateId ile eşleşenler silinecek.
+          const deleteCollection = await deleteDataByMany("Collections", {id: result.collectionUpdateId});
+          if(deleteCollection.error || !deleteCollection){
+            throw new Error(deleteCollection.message);
+          }
+
+          // SİLME İŞLEMİ
+          const deleteCollectionProducts = await deleteDataByMany("CollectionProducts", {collectionId: result.collectionUpdateId});
+          if(deleteCollectionProducts.error || !deleteCollectionProducts){
+            throw new Error(deleteCollectionProducts.message);
+          }
+
+          // SİLME İŞLEMİ -- resim var mı veri tabanını sorgula. varsa eğer eşleşen id değerindeki tüm resimleri sil.
+          const deleteCollectionImages = await deleteDataByMany("CollectionImages", {collectionId: result.collectionUpdateId});
+          if(deleteCollectionImages.error){
+            throw new Error(deleteCollectionImages.message);
+          }
+
+          // Silme işlemi tamamlandı. Yeni verileri kaydetmeye geç. ---->>>>>
+
+        }
 //____________________________________________________________________________________________________________________
 //collectionsData ####################################################################################################
-      
         // Koleksiyon oluşturuldu veri tabanına kaydedildi
         const collectionsData = await createNewData("Collections", result.collectionsData);
-        console.log(collectionsData);
         if (collectionsData.error || !collectionsData) {
           throw new Error(collectionsData.message);
         }
 
 
 //ProductsData #############################################################################################
-
         if(result.collectionProductsData){
           
-          // collectionsData.id değerini collectionProductsData içerisine collectionId olarak ekle.
-          await result.collectionProductsData.map((item) => {
-            item.collectionId = collectionsData.id;
-        });
+            // collectionsData.id değerini collectionProductsData içerisine collectionId olarak ekle.
+            await result.collectionProductsData.map((item) => {
+              item.collectionId = collectionsData.id;
+          });
         
-        // Koleksiyonun sahip olduğu ürünler oluşturuldu veri tabanına kaydedildi
-        const collectionProductsData = await createNewDataMany("CollectionProducts", result.collectionProductsData);
+          // Koleksiyonun sahip olduğu ürünler oluşturuldu veri tabanına kaydedildi
+          const collectionProductsData = await createNewDataMany("CollectionProducts", result.collectionProductsData);
 
-        if (collectionProductsData.error || !collectionProductsData) {
-          throw new Error(collectionProductsData.message);
-        }
+          if (collectionProductsData.error || !collectionProductsData) {
+            throw new Error(collectionProductsData.message);
+          }
         }
 
 
 //ImagesData ###############################################################################################
-      
         let collectionImagesData;
         if(result.collectionImagesData && result.collectionImagesData.length > 0){ 
 
@@ -140,7 +168,6 @@ const handler = async (req, res) => {
         }
 //____________________________________________________________________________________________________________________
       
-
         return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla oluşturuldu."});
       }
 
@@ -156,21 +183,33 @@ const handler = async (req, res) => {
         }
 
         const deleteCollectionProducts = await deleteDataByMany("CollectionProducts", {collectionId: data.data});
-        console.log("deleteCollectionProducts :", deleteCollectionProducts);
         if(deleteCollectionProducts.error || !deleteCollectionProducts){
           throw new Error(deleteCollectionProducts.message);
         }
 
         // resim var mı veri tabanını sorgula. varsa eğer eşleşen id değerindeki tüm resimleri sil.
         const deleteCollectionImages = await deleteDataByMany("CollectionImages", {collectionId: data.data});
-          console.log("deleteCollectionImages :", deleteCollectionImages);
-
           if(deleteCollectionImages.error){
             throw new Error(deleteCollectionImages.message);
           }
 
         return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla silindi."});       
         
+      }
+
+      else if(data.processType === "getUpdateCollectionData"){
+
+          const collectionImagesData = await getDataByUniqueMany("CollectionImages", {collectionId: data.data});
+          if(collectionImagesData.error || !collectionImagesData){
+            throw new Error(collectionImagesData.message);
+          }
+
+          const collectionProductsData = await getDataByUniqueMany("CollectionProducts", {collectionId: data.data});
+          if(collectionProductsData.error || !collectionProductsData){
+            throw new Error(collectionProductsData.message);
+          }
+
+          return res.status(200).json({ error: false, status:"success", message: "Koleksiyon başarıyla getirildi.", data: {collectionImagesData, collectionProductsData}});
       }
 
     }

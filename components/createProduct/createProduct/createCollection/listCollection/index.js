@@ -33,7 +33,6 @@ const ListCollection = ({setCollectionUpdateEnabled, setCollectionUpdateData, se
     try {
         setIsloading(true);
         const response = await getAPI('/createProduct/createProduct/createCollection');
-        console.log(response);
         if(response.status !== "success"){
           throw new Error("Veri çekilemedi 1");
         }
@@ -109,7 +108,6 @@ const ListCollection = ({setCollectionUpdateEnabled, setCollectionUpdateData, se
                                 <div className="flex justify-center items-center h-full mt-2 w-full text-center py-2">
                                   <div className="bg-black text-white rounded-full flex justify-center items-center w-6 h-6 text-center">
                                     {index + 1}
-                                    {console.log(item)}
                                   </div>
                                 </div>
                               </td>
