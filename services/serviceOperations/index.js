@@ -3,7 +3,7 @@
 // where:     eşleşecek tablodaki verinin anahtar değeri örn: {email: "enes.gulcu@hotmail.com"} (mail) değeri oluyor.
 // newData:   yeni eklenecek veya güncellenecek veri
 
-import prisma from "@/lib/prisma/index";
+import prisma from '@/lib/prisma/index';
 
 // GET ALL
 export async function getAllData(tableName) {
@@ -11,17 +11,17 @@ export async function getAllData(tableName) {
     const data = await prisma[tableName].findMany();
     return data;
   } catch (error) {
-   return { error: error.message};
+    return { error: error.message };
   }
 }
 
 // GET BY UNIQUE MANY VALUE
 export async function getDataByUniqueMany(tableName, where) {
   try {
-    const data = await prisma[tableName].findMany({ where:  where });
+    const data = await prisma[tableName].findMany({ where: where });
     return data;
   } catch (error) {
-    return { error: error.message};
+    return { error: error.message };
   }
 }
 
@@ -31,43 +31,39 @@ export async function createNewData(tableName, newData) {
     const data = await prisma[tableName].create({ data: newData });
     return data;
   } catch (error) {
-   
-   return { error: error.message};
+    return { error: error.message };
   }
 }
-
 
 // POST MANY --> newData = [{}, {}, {}]
 export async function createNewDataMany(tableName, newData) {
   try {
-
-    const data = await prisma[tableName].createMany({ data: newData } );
+    const data = await prisma[tableName].createMany({ data: newData });
     return data;
   } catch (error) {
-   return { error: error.message};
+    return { error: error.message };
   }
 }
 
 // GET BY UNIQUE ONE VALUE
 export async function getDataByUnique(tableName, where) {
   try {
-    const data = await prisma[tableName].findUnique({ where:  where });
+    const data = await prisma[tableName].findUnique({ where: where });
     return data;
   } catch (error) {
-    return { error: error.message};
+    return { error: error.message };
   }
 }
 
 // GET BY UNIQUE MANY VALUE
 export async function getDataByMany(tableName, where) {
   try {
-    const data = await prisma[tableName].findMany({ where:  where });
+    const data = await prisma[tableName].findMany({ where: where });
     return data;
   } catch (error) {
-    return { error: error.message};
+    return { error: error.message };
   }
 }
-
 
 // UPDATE
 export async function updateDataByAny(tableName, where, newData) {
@@ -78,7 +74,7 @@ export async function updateDataByAny(tableName, where, newData) {
     });
     return data;
   } catch (error) {
-   return { error: error.message};
+    return { error: error.message };
   }
 }
 
@@ -91,12 +87,9 @@ export async function updateDataByMany(tableName, where, newData) {
     });
     return data;
   } catch (error) {
-    return { error: error.message};
+    return { error: error.message };
   }
 }
-
-
-
 
 //DELETE
 export async function deleteDataByAny(tableName, where) {
@@ -104,27 +97,27 @@ export async function deleteDataByAny(tableName, where) {
     const data = await prisma[tableName].delete({ where: where });
     return data;
   } catch (error) {
-   return  { error: error.message};
+    return { error: error.message };
   }
 }
 
 //DELETE MANY
 export async function deleteDataByMany(tableName, where) {
   try {
-    const data = await prisma[tableName].deleteMany({where: where})
+    const data = await prisma[tableName].deleteMany({ where: where });
     return data;
   } catch (error) {
-    return  { error: error.message};
+    return { error: error.message };
   }
 }
 
 //DELETE ALL
 export async function deleteDataAll(tableName) {
   try {
-    const data = await prisma[tableName].deleteMany({})
+    const data = await prisma[tableName].deleteMany({});
     return data;
   } catch (error) {
-    return  { error: error.message};
+    return { error: error.message };
   }
 }
 
@@ -156,8 +149,8 @@ export async function updateProduct(productId, updatedProductData) {
         // prisma - mon go db ye göre update işlemi uygula.
         productFeatures: {
           deleteMany: {}, // hepsini sil
-          create: updatedProductData.productFeatures // yeni verileri ekle
-        }
+          create: updatedProductData.productFeatures, // yeni verileri ekle
+        },
       },
     });
 
@@ -167,6 +160,74 @@ export async function updateProduct(productId, updatedProductData) {
   }
 }
 
+//  YENİ EKLENDİ!!!
+
+// findFirst (special service)
+export async function findFirstFinancialManagement(tableName) {
+  try {
+    const result = await prisma[tableName].findFirst({
+      select: {
+        orderValue: true,
+      },
+      orderBy: {
+        orderValue: 'desc',
+      },
+    });
+
+    console.log(result);
+
+    if (result) {
+      // En büyük değeri alıp +1 ekler.
+      return (result.orderValue = result.orderValue + 1);
+    }
+
+    // Eğer veri yoksa veya çevirme işlemi başarısızsa başlangıç bir değer belirleyebilirsiniz, örneğin "1"
+    return 1;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+export async function findAndUpdateManyFinancialManagement(
+  tableName,
+  desiredOrder
+) {
+  try {
+    // Kullanıcının istediği sıradaki veriyi bulun
+    const existingData = await prisma[tableName].findFirst({
+      where: {
+        orderValue: desiredOrder,
+      },
+    });
+    console.log(desiredOrder);
+    // Kullanıcının istediği sıradan sonraki tüm verilere +1 ekleyin
+    if (existingData) {
+      const recordsToUpdate = await prisma[tableName].findMany({
+        where: {
+          orderValue: {
+            gte: desiredOrder,
+          },
+        },
+      });
+      for await (const record of recordsToUpdate) {
+        const currentOrder = parseInt(record.orderValue);
+        await prisma[tableName].update({
+          where: {
+            id: record.id,
+          },
+          data: {
+            orderValue: currentOrder + 1,
+          },
+        });
+      }
+      return existingData;
+    } else {
+      return 'Böyle bir veri bulunamadı.';
+    }
+  } catch (error) {
+    return { error: error.message };
+  }
+}
 
 export default {
   getAllData,
@@ -182,7 +243,7 @@ export default {
   updateDataByAny,
 
   updateDataByMany,
-  
+
   deleteDataByAny,
 
   deleteDataByMany,
@@ -193,6 +254,11 @@ export default {
   createNewProduct,
 
   // Special Service
-  updateProduct
-  
+  updateProduct,
+
+  // Special Service
+  findFirstFinancialManagement,
+
+  // Special Service
+  findAndUpdateManyFinancialManagement,
 };
