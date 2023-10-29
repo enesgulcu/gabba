@@ -4,36 +4,19 @@ import {postAPI, getAPI} from '@/services/fetchAPI';
 import { toast } from "react-toastify";
 import Image from 'next/image';
 
-/*  veri yapısındaki key değerleri
-[
-    colourType: "",
-    colourDescription: "",
-        
-    translateEnabled: false,
-    colourPickerEnabled: false,
-    colourHex: "",
-
-    colourTypeTurkish: "",
-    colourTypeUkrainian: "",
-    colourTypeEnglish: "",
-
-    colourDescriptionTurkish: "",
-    colourDescriptionUkrainian: "",
-    colourDescriptionEnglish: "",
-]
-*/
-
-const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsloading, setSelectedLanguageData, selectedLanguageData}) => {
+const CreateOfferComponent = () => {
 
     
     // tablo verisi bu state üzerinde tutulmaktadır.
+    const [newData, setNewData] = useState([]);
     const [colors, setColors] = useState([]);
+
 
     useEffect(() => {
       const sorted = [...NewData].sort((a, b) => a.colourType.localeCompare(b.colourType))
       setColors(sorted);
       
-      }, [NewData])
+      }, [newData])
 
 
     
@@ -58,13 +41,14 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     // tabloya veri çekme fonksiyonu
     const getData = async () => {
         try {
-            const response = await getAPI('/createProduct/colors');
+            const response = await getAPI('/createProduct/createOffer');
             setIsloading(false);
             if(response.status !== "success"){
                 
                 throw new Error("Veri çekilemedi 1");
             }
 
+            // isme göre sıralama, sıraya koyma işlemi
             const sorted = [response.data].sort((a, b) => a.colourType.localeCompare(b.colourType))
             setNewData(sorted);
             
@@ -172,23 +156,7 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     }
 
     return (
-      <>
-        {/* 
-        zaten parent componentinde mevcut olduğu için onu algılıyor ve onun çalışması yeterli oluyr
-        yoksa iki kere bildirim geliyor.
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        /> */}
-        
+      <>        
         <div className={`
         w-full relative overflow-x-auto
         ${isloading ? " blur max-h-screen overflow-hidden" : " blur-none"}
@@ -208,4 +176,6 @@ const ListComponent = ({NewData, setUpdateData, setNewData, isloading, setIsload
     );
 };
 
-export default ListComponent;
+export default CreateOfferComponent;
+
+
