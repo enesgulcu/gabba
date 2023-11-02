@@ -6,17 +6,17 @@ import Image from 'next/image';
 
 const CreateOfferComponent = () => {
 
-    
     // tablo verisi bu state üzerinde tutulmaktadır.
-    const [newData, setNewData] = useState([]);
+    const [NewData, setNewData] = useState([]);
     const [colors, setColors] = useState([]);
+    const [isloading, setIsloading] = useState(false);
 
 
     useEffect(() => {
       const sorted = [...NewData].sort((a, b) => a.colourType.localeCompare(b.colourType))
       setColors(sorted);
       
-      }, [newData])
+      }, [NewData])
 
 
     
