@@ -1,7 +1,7 @@
 import React from 'react';
 import CreateOfferComponent from '@/components/createOffer';
 
-const CreateOfferContainer = async () => {
+const CreateOfferContainer = () => {
   return (
     <>
       <CreateOfferComponent />

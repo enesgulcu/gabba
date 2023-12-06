@@ -165,11 +165,6 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
   const [productTypeUA, setProductTypeUA] = useState("");
   const [productCategoryUA, setProductCategoryUA] = useState("");
 
-  // useEffect(() => {
-  //   console.log("checkboxValues", checkboxValues);
-  // }, [checkboxValues])
-  
-
   useEffect( () => {
   if(newUpdateData){
     setCheckboxValues(newUpdateData.productFeatures);
@@ -535,13 +530,11 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     defaultValue={0}
                     placeholder='322'
                     min={1}
-                    value={checkboxValues && checkboxValues.find((value) => value.index === index && value.feature === selectedFeature) ?
-                      checkboxValues.find((value) => value.index === index && value.feature === selectedFeature).value : 0 }
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
                       handleCheckboxChange(index, selectedFeature, item.id, "plus",true, e.target.value.toString(), productName, productType, productPrice, selectedCategoryKey, selectedCategoryValues)
-                      console.log(handleCheckboxChange(index, selectedFeature, item.id, "plus",true, e.target.value.toString(), productName, productType, productPrice, selectedCategoryKey, selectedCategoryValues));
+
                     }}
                   />
                   : null
@@ -568,14 +561,8 @@ const DynamicTable = ({ data, selectedCategoryKey, selectedCategoryValues, newUp
                     ) ?
                     <input type="number"
                     defaultValue={0}
-                    
                     min={1}
                     placeholder='145'
-
-                    value = {checkboxValues && checkboxValues.find((value) => value.index === index && value.feature === selectedFeature) ?
-                      (checkboxValues.find((value) => value.index === index && value.feature === selectedFeature).value*-1).toString() : 0 }
-            
-
                     className="w-20 h-10 border border-gray-300 rounded-md ml-0 sm:ml-4 text-center"
                     onChange={(e) => {
                       e.target.value > 0 &&
