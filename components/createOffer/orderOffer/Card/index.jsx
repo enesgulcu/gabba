@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-const Card = ({ orderData, setOrderData }) => {
+const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
   console.log(orderData);
   return (
     <div className='grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3'>
@@ -8,7 +8,7 @@ const Card = ({ orderData, setOrderData }) => {
         orderData.length > 0 &&
         orderData.map((item) => (
           <div
-            key={item.Orders.id}
+            key={item.orderCode}
             className='border rounded-lg shadow bg-gray-800 border-gray-700'
           >
             <div className='flex flex-col items-center pt-4'>
@@ -20,7 +20,7 @@ const Card = ({ orderData, setOrderData }) => {
                 alt='Invoice icon'
               />
 
-              <h5 class='my-2 text-md font-medium text-white'>
+              <h5 className='my-2 text-md font-medium text-white'>
                 {item.orderCode}
               </h5>
               <ul className='divide-y divide-gray-700 text-gray-300'>
@@ -50,21 +50,30 @@ const Card = ({ orderData, setOrderData }) => {
               </ul>
               <div className='flex mt-4 gap-2'>
                 <Image
-                  className='w-10 h-10 mb-3 rounded-full shadow-lg'
+                onClick={() => {
+                  setSelectedOrder({data: item, lang: "en"});
+                }}
+                  className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/en_flag.svg'
                   width={100}
                   height={100}
                   alt='Invoice icon'
                 />
                 <Image
-                  className='w-10 h-10 mb-3 rounded-full shadow-lg'
+                onClick={() => {
+                  setSelectedOrder({data: item, lang: "ua"});
+                }}
+                  className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/ua_flag.svg'
                   width={100}
                   height={100}
                   alt='Invoice icon'
                 />
                 <Image
-                  className='w-10 h-10 mb-3 rounded-full shadow-lg'
+                onClick={() => {
+                  setSelectedOrder({data: item, lang: "tr"});                  
+                }}
+                  className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/tr_flag.svg'
                   width={100}
                   height={100}
