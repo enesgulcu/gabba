@@ -93,7 +93,10 @@ const CreateOfferComponent = () => {
           Filtrele
           </button>
           <button
-            onClick={() => setShowOrderOffer(true)}
+            onClick={() => {
+              setShowOrderOffer(true);
+              setShowBasketOffer(false);
+            }}
             className='bg-purple-600 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'
           >
             <FaFileInvoice size={25}/>

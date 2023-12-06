@@ -62,6 +62,7 @@ const ListBasket = ({
         orderNote: '',
         Customer: [
           {
+            companyName: '',
             name: '',
             surname: '',
             phoneNumber: '',

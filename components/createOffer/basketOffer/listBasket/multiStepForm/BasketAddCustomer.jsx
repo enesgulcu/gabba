@@ -52,6 +52,22 @@ const BasketAddCustomer = ({
               <div className='input-group'>
                 <input
                   onChange={FormProps.handleChange}
+                  id={`Customer[0].companyName`}
+                  name={`Customer[0].companyName`}
+                  value={FormProps.values.Customer[0].companyName}
+                  className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-full m-2]`}
+                  type='text'
+                  placeholder='Firma İsmi'
+                />
+                <ErrorMessage
+                  name='Customer[0].companyName'
+                  component='div'
+                  className='field-error text-red-600 m-1'
+                />
+              </div>
+              <div className='input-group'>
+                <input
+                  onChange={FormProps.handleChange}
                   id={`Customer[0].name`}
                   name={`Customer[0].name`}
                   value={FormProps.values.Customer[0].name}

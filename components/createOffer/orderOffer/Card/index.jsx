@@ -36,7 +36,7 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                         .join('.')
                   )}
                 </li>
-                <li className='py-2'>Firma İsmi: Ceday Holding</li>
+                <li className='py-2'>Firma İsmi: {item.Müşteri[0].companyName}</li>
                 <li className='py-2'>
                   Fiyat:{' '}
                   {item.Orders.reduce((total, order) => {
