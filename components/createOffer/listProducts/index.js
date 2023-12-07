@@ -7,6 +7,9 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import FinancialManagementCalculate from '@/functions/others/financialManagementCalculate';
 
+
+
+
 function ListProducts({
   toast,
   isloading,
