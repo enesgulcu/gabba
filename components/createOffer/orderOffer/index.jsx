@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAPI } from '@/services/fetchAPI';
 import Card from './Card';
-import PrintOrder from './PrintOrder/invoice';
+import PrintOrder from './PrintOrder';
 
 // 
 const OrderOffer = ({ setIsloading }) => {

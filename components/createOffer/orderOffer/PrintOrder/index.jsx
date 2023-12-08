@@ -2,9 +2,11 @@
 'use client'
 
 import {useRef, useState} from "react";
-import {useReactToPrint} from "react-to-print";
 
 import Image from "next/image";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import {useReactToPrint} from "react-to-print";
 
 const langs = {
     order: {
@@ -77,15 +79,20 @@ const langs = {
         ua: "Загальна сума",
         en: "Grand Total",
     },
+    indirmeButonu:{
+        tr: "Teklifi İndir",
+        ua: "Завантажити пропозицію",
+        en: "Download Offer",
+    }
 };
 
-const lang = "uk"
 
-const Invoice = ({ data, lang }) => {
+const Invoice = ({data, lang}) => {
     const printRef = useRef(null)
 
     function filterDataByOrderId() {
-        {/* Datayı başlangıç için hazırlıyoruz müşteri verileri */}
+        {/* Datayı başlangıç için hazırlıyoruz müşteri verileri */
+        }
         const res = {
             order_no: data.orderCode,
             musteri: {
@@ -97,20 +104,25 @@ const Invoice = ({ data, lang }) => {
             products: []
         }
 
-        {/* Data içindeki Oders ların hepsinin içinde geziyoruz */}
+        {/* Data içindeki Oders ların hepsinin içinde geziyoruz */
+        }
         data.Orders.forEach(value => {
-            {/* Orderımızın id'si */}
+            {/* Orderımızın id'si */
+            }
             const or_id = value.id
 
-            {/* Product'ın id si */}
+            {/* Product'ın id si */
+            }
             const pr_id = value.productId
 
-            {/* ürün datası için başlangıç verisi (ürün notu) */}
+            {/* ürün datası için başlangıç verisi (ürün notu) */
+            }
             let x_d = {
                 note: value.orderNote
             }
 
-            {/* tüm ürünler'de filter ile product id'miz ve ürün id si aynı olanların içerisinde gezip info, quantity gibi ürün bilgilerini x_d yani ürün datasına gönderiyoruz */}
+            {/* tüm ürünler'de filter ile product id'miz ve ürün id si aynı olanların içerisinde gezip info, quantity gibi ürün bilgilerini x_d yani ürün datasına gönderiyoruz */
+            }
             data.Ürünler
                 .filter(x_f => x_f.id === pr_id)
                 .forEach(x_m => {
@@ -126,7 +138,8 @@ const Invoice = ({ data, lang }) => {
                     }
                 })
 
-            {/* Extralar içerisinde gezip orderId product id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */}
+            {/* Extralar içerisinde gezip orderId product id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */
+            }
             data.Extralar
                 ?.filter(x_f => x_f.orderId === pr_id)
                 ?.forEach(x_k => {
@@ -142,7 +155,8 @@ const Invoice = ({ data, lang }) => {
                     }
                 })
 
-            {/* Kunaşlar içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */}
+            {/* Kunaşlar içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */
+            }
             data.Kumaşlar
                 ?.filter(x_f => x_f.orderId === or_id)
                 ?.forEach(x_k => {
@@ -158,7 +172,8 @@ const Invoice = ({ data, lang }) => {
                     }
                 })
 
-            {/* Metaller içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */}
+            {/* Metaller içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */
+            }
             data.Metaller
                 ?.filter(x_f => x_f.orderId === or_id)
                 ?.forEach(x_m => {
@@ -174,7 +189,8 @@ const Invoice = ({ data, lang }) => {
                     }
                 })
 
-            {/* Renkler içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */}
+            {/* Renkler içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */
+            }
             data.Renkler
                 .filter(x_f => x_f.orderId === or_id)
                 .forEach(x_m => {
@@ -190,7 +206,8 @@ const Invoice = ({ data, lang }) => {
                     }
                 })
 
-            {/* Ölçüler içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */}
+            {/* Ölçüler içerisinde gezip orderId - order id ile eşit olanların içerisinde gezip extras yani ürün özelliklerine bu datayı gödneriyoruz */
+            }
             data.Ölçüler
                 .filter(x_f => x_f.orderId === or_id)
                 .forEach(x_m => {
@@ -214,20 +231,18 @@ const Invoice = ({ data, lang }) => {
         return res;
     }
 
-    {/* Sayfanın print özelliğini tetikleyip yazdılacak divin referansını veriyorum content'de, ve pageStyle ile kenarlardan margin veriyoruz */}
+    {/* Sayfanın print özelliğini tetikleyip yazdılacak divin referansını veriyorum content'de, ve pageStyle ile kenarlardan margin veriyoruz */
+    }
+
     const handlePrint = useReactToPrint({
         content: () => printRef.current,
-        pageStyle: `
-        @page {
-            margin: 5%;
-        }
-        `,
-
+        pageStyle: `margin: 2.5%`
     })
 
-    {/* ücreti yani fiyatı normalize etme işlemi. */}
+    {/* ücreti yani fiyatı normalize etme işlemi. */
+    }
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat("uk-UA", {
+        return new Intl.NumberFormat("ua-UA", {
             currency: "UAH",
             minimumFractionDigits: 2,
         }).format(amount);
@@ -236,7 +251,8 @@ const Invoice = ({ data, lang }) => {
     {/* tüm products içinde gezip ürünlerin fiyatlarını hesaplayıp kdv ekliyoruz ve return ediyoruz
      output: total = kdv hariç,
      tax = kdv,
-     grandTotal = kdv dahil*/}
+     grandTotal = kdv dahil*/
+    }
     const calculateTotals = (taxRate, products) => {
         let total = 0;
         let tax = 0;
@@ -259,14 +275,14 @@ const Invoice = ({ data, lang }) => {
     const details = filterDataByOrderId()
     const total = calculateTotals(16, details.products)
 
-    return <div className="flex flex-col w-fit h-fit gap-6 relative">
+    return <div className="flex flex-col h-fit overflow-auto gap-6 relative m-auto w-[29.7cm]">
         <button
-            className="px-8 py-2 fixed top-8 right-8 bg-green-500 text-white font-bold rounded-md hover:opacity-75 transition-all duration-200 active:bg-green-400"
+            className="px-8 py-2 w-[29.7cm] bg-green-500 text-white font-bold rounded-md hover:opacity-75 transition-all duration-200 active:bg-green-400"
             onClick={handlePrint}>
-            Print Invoice
+            Download Invoice
         </button>
 
-        <div ref={printRef} className="a4">
+        <div ref={printRef} className="a4 overflow-y-auto">
 
             {/* Header */}
             <header className="flex items-start justify-end mb-6">
@@ -315,14 +331,14 @@ const Invoice = ({ data, lang }) => {
                 </tr>
                 </thead>
 
-                <thead className="bg-[#363B46] [&_tr_th]:text-center [&_tr_th]: [&_tr_th]:text-white">
-                <tr>
+                <thead className="bg-[#363B46] [&_tr_th]:text-center  [&_tr_th]:text-white">
+                <tr className="h-8">
                     <th className="px-1 w-fit !font-serif">{langs.order[lang]}</th>
                     <th className="px-1 w-min !font-serif">{langs.image[lang]}</th>
-                    <th className="max-h-[105px] !font-serif">{langs.productFeatures[lang]}</th>
-                    <th className="!w-fit !font-serif">{langs.price[lang]}</th>
-                    <th className="!w-fit !font-serif">{langs.quantity[lang]}</th>
-                    <th className="!w-fit !font-serif">{langs.total[lang]}</th>
+                    <th className="!font-serif">{langs.productFeatures[lang]}</th>
+                    <th className="!font-serif">{langs.price[lang]}</th>
+                    <th className="!font-serif">{langs.quantity[lang]}</th>
+                    <th className="!font-serif">{langs.total[lang]}</th>
                 </tr>
                 </thead>
                 <tbody className="[&_tr_td]:p-[6px] [&_tr_td]:text-center [&_tr_th]:text-[#363B46]">
@@ -332,10 +348,12 @@ const Invoice = ({ data, lang }) => {
                         <td className="border-r-2 border-b-2 border-dashed border-[#363B46]">
                             {product?.image ?
                                 <Image src={product?.image} height={75} alt="" className="object-contain m-auto"/> :
-                                <div>Not Found</div>}
+                                <Image src="/no-image2.png" width={200} height={50} alt="" className="object-contain m-auto max-h-16"/>
+                                }
                         </td>
                         <td className="border-r-2 border-b-2 border-dashed border-[#363B46] overflow-hidden">
                             <div className="!max-h-[99px] overflow-hidden gap-2 flex flex-wrap">
+
                                 <span className="px-2.5 py-1 bg-green-600 text-[9pt] text-white rounded-full w-fit">
                                 {product.name}
                             </span>
@@ -345,14 +363,13 @@ const Invoice = ({ data, lang }) => {
                                     className="px-2.5 py-1 bg-yellow-500 text-[9pt] text-white rounded-full w-fit">
                                 {product.info}
                             </span>
+
                                 {
-                                    product?.extras?.map((feature, index) => {
-                                        return <div
-                                            key={index}
-                                            className="px-2 py-1 bg-[#363B46] flex gap-1 [&_span]:text-white rounded-full [&_span]:text-[10pt] items-center">
-                                            <span>{feature.value}</span>
-                                        </div>
-                                    })
+                                    product?.extras?.map((feature, idx) => <div
+                                        key={"feature-"+idx}
+                                        className="px-2 py-1 bg-[#363B46] text-center align-middle flex gap-1 [&_span]:text-white rounded-full [&_span]:text-[10pt] items-center">
+                                        <span>{feature.value}</span>
+                                    </div>)
                                 }
 
                                 {
@@ -363,16 +380,16 @@ const Invoice = ({ data, lang }) => {
                                 }
                             </div>
                         </td>
-                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46]">{formatCurrency(product.price)} грн</td>
-                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46]">{product.quantity} грн</td>
-                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46]">{formatCurrency((product.quantity * product.price))} грн</td>
+                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46] whitespace-nowrap ">{formatCurrency(product.price)} грн</td>
+                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46] whitespace-nowrap">{product.quantity} грн</td>
+                        <td className="border-r-2 border-b-2 border-dashed border-[#363B46] whitespace-nowrap">{formatCurrency((product.quantity * product.price))} грн</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
 
             {/* Footer */}
-            <footer className="flex justify-between">
+            <footer className="flex justify-between break-inside-avoid">
                 <div className="mt-[24px] flex flex-col h-full">
                     <span className="text-[#363B46] text-[15pt] font-bold">{langs.firmaBilgileri[lang]}</span>
                     <span className="text-[10pt] text-[#647680] font-bold">Фізична особа-підприємець Дурал Онур код за ЄДРПОУ 2896224270 </span>
@@ -399,6 +416,14 @@ const Invoice = ({ data, lang }) => {
                 </div>
             </footer>
         </div>
+
+        <button
+            className="px-8 py-2 w-[29.7cm] bg-green-500 text-white font-bold rounded-md hover:opacity-75 transition-all duration-200 active:bg-green-400"
+            onClick={handlePrint}>
+            {
+                langs.indirmeButonu[lang]
+            }
+        </button>
     </div>
 }
 
