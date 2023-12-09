@@ -288,6 +288,8 @@ model OfferOrder {
   invalidDate         DateTime
   stock               Int
   orderNote           String?
+  ordersStatus        String
+  productOrderStatus  String
   productId           String
   productPrice        Float
   productFeaturePrice Float

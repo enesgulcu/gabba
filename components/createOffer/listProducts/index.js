@@ -5,10 +5,6 @@ import { getAPI, postAPI } from '@/services/fetchAPI';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoCloseOutline } from 'react-icons/io5';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
-import FinancialManagementCalculate from '@/functions/others/financialManagementCalculate';
-
-
-
 
 function ListProducts({
   toast,
@@ -19,14 +15,15 @@ function ListProducts({
   products,
   productFeatures,
   setHiddenBasketBar,
+  setAllFeatureValues,
+  allFeatureValues,
 }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedFeatures, setSelectedFeatures] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [allFeatureValues, setAllFeatureValues] = useState([]);
-  const [uniqueKeys, setUniqueKeys] = useState(null);
   const [productFeaturePrice, setProductFeaturePrice] = useState(0);
+  const [uniqueKeys, setUniqueKeys] = useState(null);
 
   const [test, setTest] = useState([]);
 
@@ -397,42 +394,39 @@ function ListProducts({
                       <div className='flex justify-center flex-col items-start px-6 gap-2 bg-gray-200 rounded border-dashed border-2 border-gray-400 py-2'>
                         <p className='p-2 rounded  border-2 border-dashed border-gray-300 bg-white'>
                           <span className='font-semibold'>Ürün Kodu: </span>
-                          <span className='bg-blue-600 p-1 rounded text-white'>{selectedProduct.productCode}</span>
-                          
+                          <span className='bg-blue-600 p-1 rounded text-white'>
+                            {selectedProduct.productCode}
+                          </span>
                         </p>
                         <p className='p-2 rounded  border-2 border-dashed border-gray-300 bg-white'>
                           <span className='font-semibold'>Ürün İsmi: </span>
                           <span className='bg-blue-600 p-1 rounded text-white'>
-                          {selectedProduct.productName}
+                            {selectedProduct.productName}
                           </span>
-                          
                         </p>
                         <p className='p-2 rounded  border-2 border-dashed border-gray-300 bg-white'>
                           <span className='font-semibold'>Ürün Tipi: </span>
                           <span className='bg-blue-600 p-1 rounded text-white'>
-                          {selectedProduct.productType}
+                            {selectedProduct.productType}
                           </span>
-                          
                         </p>
                         <p className='p-2 rounded  border-2 border-dashed border-gray-300 bg-white'>
                           <span className='font-semibold'>Liste Fiyatı: </span>
                           <span className='bg-blue-600 p-1 rounded text-white'>
-                          {selectedProduct.productPrice * props.values.stock}
+                            {selectedProduct.productPrice * props.values.stock}
                           </span>
-                         
                         </p>
-                        
+
                         {productFeaturePrice !== 0 && (
                           <p className='p-2 rounded  border-2 border-dashed border-gray-300 bg-white'>
                             <span className='font-semibold'>
                               Son Güncel Fiyatı:{' '}
                             </span>
                             <span className='bg-green-600 p-1 rounded text-white'>
-                            {(selectedProduct.productPrice +
-                              productFeaturePrice) *
-                              props.values.stock}
+                              {(selectedProduct.productPrice +
+                                productFeaturePrice) *
+                                props.values.stock}
                             </span>
-                            
                           </p>
                         )}
                       </div>
@@ -999,16 +993,16 @@ function ListProducts({
         )
       }
       <div className='w-full overflow-x-scroll lg:overflow-x-auto'>
-      <table
-        className={`${
-          selectedImage && 'blur'
-        } w-full text-sm text-left text-gray-500 dark:text-gray-400`}
-      >
-        <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
-          {renderHead()}
-        </thead>
-        <tbody>{renderData()}</tbody>
-      </table>
+        <table
+          className={`${
+            selectedImage && 'blur'
+          } w-full text-sm text-left text-gray-500 dark:text-gray-400`}
+        >
+          <thead className='text-md text-gray-700 bg-gray-50 dark:bg-blue-500 dark:text-white'>
+            {renderHead()}
+          </thead>
+          <tbody>{renderData()}</tbody>
+        </table>
       </div>
     </>
   );

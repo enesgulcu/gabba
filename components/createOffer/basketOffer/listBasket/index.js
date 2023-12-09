@@ -1,65 +1,36 @@
 'use client';
 import React, { useState } from 'react';
 import { postAPI } from '@/services/fetchAPI';
-import Image from 'next/image';
-import BasketAddCustomer from './multiStepForm/BasketAddCustomer';
-import BasketAddPersonel from './multiStepForm/BasketAddPersonel';
-import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
+import CustomerAndPersonel from '@/components/createOffer/basketOffer/listBasket/multiStepForm/CustomerAndPersonel';
+import { IoChevronForwardOutline } from 'react-icons/io5';
+import { Formik, Form, ErrorMessage } from 'formik';
+import BasketCard from './Card';
 
 const ListBasket = ({
   toast,
-  isloading,
   setIsloading,
   setBasketData,
   basketData,
   productFeatures,
+  setShowOrderOffer,
+  setShowBasketOffer,
+  setIsCustomerAndPersonel,
+  isCustomerAndPersonel,
+  setSelectedBasketData,
+  setIsSelectedBasket,
+  setHiddenBasketBar,
+  setUniqueKeys,
+  setSelectedBasketFeatures,
 }) => {
-  const [isBasketAddCustomer, setIsBasketAddCustomer] = useState(false);
-  const [addNewCustomer, setAddNewCustomer] = useState(false);
-  const [isBasketAddPersonel, setIsBasketAddPersonel] = useState(false);
-  const [addNewPersonel, setAddNewPersonel] = useState(false);
-
   console.log('basketData', basketData);
 
-  const deleteBasketItem = async (itemId) => {
-    setIsloading(true);
-    const response = await postAPI('/createOffer/basket', {
-      processType: 'delete',
-      id: itemId,
-    });
-
-    if (!response || response.status !== 'success') {
-      throw new Error('Veri silinemedi');
-    } else {
-      setIsloading(false);
-      toast.success(response.message);
-      const newBasketData = basketData.filter((item) => item.id !== itemId);
-      setBasketData(newBasketData);
-    }
-  };
-
-  const handleChangeStock = async (itemId, stock) => {
-    console.log(stock);
-    if(stock < 1){
-      return toast.error('Stok değeri 1 den küçük olamaz!');
-    }
-    setBasketData((prevBasketData) => {
-      const newBasketData = [...prevBasketData];
-      const itemIndex = newBasketData.findIndex((item) => item.id === itemId);
-      newBasketData[itemIndex].Stock = stock;
-      return newBasketData;
-    });
-    const response = await postAPI('/createOffer/basket', {
-      processType: 'update',
-      id: itemId,
-      stock,
-    });
-  };
   return (
     <Formik
       //validationSchema={FinancialManagementValidationSchema}
       initialValues={{
         orderNote: '',
+        ordersStatus: 'Onay Bekliyor',
+        productOrderStatus: 'Onay Bekliyor',
         Customer: [
           {
             companyName: '',
@@ -92,41 +63,28 @@ const ListBasket = ({
           setIsloading(false);
           toast.error(response.error);
         } else {
+          console.log(response);
           setIsloading(false);
           toast.success(response.message);
+          resetForm();
           setBasketData([]);
-          setIsBasketAddCustomer(false);
-          setIsBasketAddPersonel(false);
+          setShowOrderOffer(true);
           setShowBasketOffer(false);
+          setIsCustomerAndPersonel(false);
         }
       }}
     >
       {(FormProps) => (
         <Form onSubmit={FormProps.handleSubmit}>
           <div className='flex flex-col justify-center items-center'>
-            {isBasketAddCustomer ? (
-              <BasketAddCustomer
+            {isCustomerAndPersonel ? (
+              <CustomerAndPersonel
                 FormProps={FormProps}
                 ErrorMessage={ErrorMessage}
-                setIsBasketAddCustomer={setIsBasketAddCustomer}
-                setIsBasketAddPersonel={setIsBasketAddPersonel}
-                addNewCustomer={addNewCustomer}
-                setAddNewCustomer={setAddNewCustomer}
-              />
-            ) : isBasketAddPersonel ? (
-              <BasketAddPersonel
-                FormProps={FormProps}
-                ErrorMessage={ErrorMessage}
-                setIsBasketAddCustomer={setIsBasketAddCustomer}
-                setIsBasketAddPersonel={setIsBasketAddPersonel}
-                addNewPersonel={addNewPersonel}
-                setAddNewPersonel={setAddNewPersonel}
+                setIsCustomerAndPersonel={setIsCustomerAndPersonel}
               />
             ) : (
               <>
-                <h1 className='text-2xl font-bold text-center my-4 uppercase'>
-                  Sepet
-                </h1>
                 {basketData.length === 0 ? (
                   <div className='grid grid-cols-1 w-full'>
                     <div className='border p-3 mx-4 rounded shadow order-2 md:order-1'>
@@ -136,110 +94,42 @@ const ListBasket = ({
                     </div>
                   </div>
                 ) : (
-                  <div className='grid grid-cols-1 md:grid-cols-2'>
-                    <div className='border p-3 mx-4 rounded shadow order-2 md:order-1'>
+                  <>
+                    <h1 className='text-2xl font-bold text-center my-4 uppercase'>
+                      Sepet
+                    </h1>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4 p-4'>
                       {basketData.map((item) => (
-                        <div
+                        <BasketCard
                           key={item.id}
-                          className='flex flex-col mb-4 border p-3'
-                        >
-                          <div className='flex flex-row gap-4'>
-                            <div>
-                              {productFeatures.map(
-                                (productFeature, index) =>
-                                  productFeature.productId ===
-                                    item.Product.id &&
-                                  productFeature.feature.includes(
-                                    'Image' || 'image'
-                                  ) && (
-                                    <div
-                                      key={index}
-                                      className='lg:p-2 p-0 m-1 lg:m-2'
-                                    >
-                                      <Image
-                                        width={150}
-                                        height={200}
-                                        src={
-                                          productFeature.imageValue
-                                            ? productFeature.imageValue
-                                            : '/no-image.jpg'
-                                        }
-                                        alt={`image${index}`}
-                                        className='rounded hover:scale-125 transition duration-300 ease-in-out cursor-pointer'
-                                      />
-                                    </div>
-                                  )
-                              )}
-                            </div>
-                            <div className='flex flex-col w-full'>
-                              <p className='font-semibold text-center uppercase'>
-                                {item.Product.productName}
-                              </p>
-                              <div className='flex gap-2 mt-2 items-center justify-between'>
-                                <div className='flex gap-2 mt-2 items-center'>
-                                  <button
-                                    type='button'
-                                    className='w-8 h-8 bg-blue-500 rounded-full text-white'
-                                    onClick={() =>
-                                      handleChangeStock(item.id, item.Stock + 1)
-                                    }
-                                  >
-                                    +
-                                  </button>
-
-                                  <p>{item.Stock}</p>
-                                  <button
-                                    type='button'
-                                    className='w-8 h-8 bg-blue-500 rounded-full text-white'
-                                    onClick={() =>
-                                      handleChangeStock(item.id, item.Stock - 1)
-                                    }
-                                  >
-                                    -
-                                  </button>
-                                </div>
-                                <p className='mr-4 font-semibold text-red-600'>
-                                  {parseInt(
-                                    item.ProductPrice + item.ProductFeaturePrice
-                                  ) * item.Stock}
-                                </p>
-                              </div>
-                              <div className='flex gap-2'>
-                                <p className='mt-4 bg-blue-600 rounded text-center p-2 text-white cursor-pointer'>
-                                  Tüm Özellikleri Göster
-                                </p>
-                                <button
-                                  type='button'
-                                  onClick={() => deleteBasketItem(item.id)}
-                                  className='mt-4 bg-red-600 rounded text-center p-2 text-white cursor-pointer'
-                                >
-                                  Ürünü Sepetten Kaldır
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                          item={item}
+                          productFeatures={productFeatures}
+                          setBasketData={setBasketData}
+                          setIsloading={setIsloading}
+                          toast={toast}
+                          basketData={basketData}
+                          setSelectedBasketData={setSelectedBasketData}
+                          setIsSelectedBasket={setIsSelectedBasket}
+                          setHiddenBasketBar={setHiddenBasketBar}
+                          setSelectedBasketFeatures={setSelectedBasketFeatures}
+                        />
                       ))}
                     </div>
-                    <div className='border p-3 mx-4 rounded shadow order-1 md:order-2 h-fit flex flex-col gap-2 justify-center'>
-                      <textarea
-                        id='orderNote'
-                        name='orderNote'
-                        value={FormProps.values.orderNote}
-                        onChange={FormProps.handleChange}
-                        className={`hover:scale-105 transition-all border border-gray-300 rounded-md p-2 w-full m-2]`}
-                        placeholder='Sepetteki ürünleriniz için genel bir not bölümü ekleyin...'
-                      ></textarea>
-
+                    <div className='flex justify-center mb-3 items-center w-full'>
                       <button
+                        onClick={() => setIsCustomerAndPersonel(true)}
                         type='button'
-                        onClick={() => setIsBasketAddCustomer(true)}
-                        className='bg-blue-500 p-3 text-white rounded'
+                        className='hover:scale-105 transition-all flex justify-center items-center p-2 text-white font-semibold bg-gray-800 rounded group
+                  '
                       >
-                        Müşteri Bilgilerini Ekle
+                        İleri
+                        <IoChevronForwardOutline
+                          size={22}
+                          className='text-white transform translate-x-0 group-hover:translate-x-2 transition-transform'
+                        />
                       </button>
                     </div>
-                  </div>
+                  </>
                 )}
               </>
             )}

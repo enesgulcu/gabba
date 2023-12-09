@@ -56,6 +56,8 @@ const handler = async (req, res) => {
       const customer = values.Customer[0];
       const personel = values.Personel[0];
       const orderNote = values.orderNote;
+      const ordersStatus = values.ordersStatus;
+      const productOrderStatus = values.productOrderStatus;
 
       // 10 gün eklemek için yeni bir tarih oluştur
       const date = new Date();
@@ -86,6 +88,8 @@ const handler = async (req, res) => {
             invalidDate: invalidDate,
             stock: item.Stock,
             orderNote: orderNote,
+            ordersStatus: ordersStatus,
+            productOrderStatus: productOrderStatus,
             personelId: createdPersonelResult.id,
             customerId: createdCustomerResult.id,
             productPrice: item.ProductPrice,

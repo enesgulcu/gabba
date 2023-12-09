@@ -7,9 +7,12 @@ import BasketOffer from './basketOffer';
 import OrderOffer from './orderOffer';
 import { getAPI } from '@/services/fetchAPI';
 import FinancialManagementCalculate from '@/functions/others/financialManagementCalculate';
-import { BiFilterAlt } from "react-icons/bi";
-import { FaFileInvoice } from "react-icons/fa";
-import { BsCart3 } from "react-icons/bs";
+import { BiFilterAlt } from 'react-icons/bi';
+import { FaFileInvoice } from 'react-icons/fa';
+import { BsCart3 } from 'react-icons/bs';
+import { IoChevronForwardOutline } from 'react-icons/io5';
+import { IoIosSave } from 'react-icons/io';
+import { IoChevronBackOutline } from 'react-icons/io5';
 
 const CreateOfferComponent = () => {
   const [showOrderOffer, setShowOrderOffer] = useState(false);
@@ -18,6 +21,12 @@ const CreateOfferComponent = () => {
   const [products, setProducts] = useState([]);
   const [productFeatures, setProductFeatures] = useState([]);
   const [showBasketOffer, setShowBasketOffer] = useState(false);
+  const [isCustomerAndPersonel, setIsCustomerAndPersonel] = useState(false);
+  const [allFeatureValues, setAllFeatureValues] = useState([]);
+
+  // Yazdırma ekranına gönderilecek prop
+  const [selectedOrder, setSelectedOrder] = useState([]);
+
   // Sepetteki ürünleri tuttuğumuz state.
   const [basketData, setBasketData] = useState([]);
   // Sepetteki ürünlerin stok değerlerini tuttuğumuz state.
@@ -65,6 +74,8 @@ const CreateOfferComponent = () => {
     getAllBasketData();
   }, []);
 
+  console.log('selectedOrder', selectedOrder);
+
   return (
     <>
       {isloading && <LoadingScreen isloading={isloading} />}
@@ -84,26 +95,32 @@ const CreateOfferComponent = () => {
       <div
         className={`${
           hiddenBasketBar ? 'hidden' : 'flex'
-        } p-0 lg:p-2 w-full justify-between mb-4 items-center shadow-lg lg:px-10 bg-gray-100 gap-2 pr-4`
-      }
+        } flex-col md:flex-row p-2 lg:p-2 lg:px-10 w-full justify-between mb-4 items-center shadow-lg  bg-gray-100 gap-2 pr-4`}
       >
-        <div className='flex justify-center item-center flex-row lg:flex-row gap-2 px-4 my-2'>
-          <button className='bg-green-500 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'>
-          <BiFilterAlt size={25}/>
-          Filtrele
-          </button>
-          <button
-            onClick={() => {
-              setShowOrderOffer(true);
-              setShowBasketOffer(false);
-            }}
-            className='bg-purple-600 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'
-          >
-            <FaFileInvoice size={25}/>
-            Teklifler
-          </button>
-        </div>
-        {!showBasketOffer && !showOrderOffer ? (
+        {/* Filtreleme ve Teklifler Butonu */}
+        {!showBasketOffer && (
+          <div className='flex justify-center item-center flex-col md:flex-row gap-2 px-4 my-2'>
+            <button className='bg-green-500 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'>
+              <BiFilterAlt size={25} />
+              Filtrele
+            </button>
+            {!showOrderOffer && (
+              <button
+                onClick={() => {
+                  setShowOrderOffer(true);
+                  setShowBasketOffer(false);
+                }}
+                className='bg-purple-600 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'
+              >
+                <FaFileInvoice size={25} />
+                Teklifler
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Sepet Butonu */}
+        {!showBasketOffer && !showOrderOffer && (
           <div className='justify-end mr-4 flex center items-center gap-4'>
             <button onClick={() => setShowBasketOffer(true)}>
               <div className='relative py-2 hover:scale-110 transition-all'>
@@ -112,23 +129,91 @@ const CreateOfferComponent = () => {
                     {basketData.length}
                   </p>
                 </div>
-                <BsCart3 size={25} className='file: mt-4 h-6 w-6'/>
-   
+                <BsCart3 size={25} className='file: mt-4 h-6 w-6' />
               </div>
             </button>
           </div>
-        ) : (
+        )}
+
+        {isCustomerAndPersonel && (
           <button
-            onClick={() => {
-              setShowBasketOffer(false);
-              setShowOrderOffer(false);
-            }}
+            onClick={() => setIsCustomerAndPersonel(false)}
             type='button'
-            className='bg-green-600 rounded text-white p-4 flex flex-row gap-2 flex-nowrap justify-center items-center hover:cursor-pointer hover:scale-105 transition-all'
+            className='hover:scale-105 transition-all flex justify-center items-center p-2 text-white font-semibold bg-gray-800 rounded group
+'
           >
-            
-            Teklif Oluştur
+            <IoChevronBackOutline
+              size={22}
+              className='text-white transform translate-x-0 group-hover:-translate-x-2 transition-transform'
+            />
+            Geri
           </button>
+        )}
+        {/* Eğer sepet butonuna basılırsa */}
+        {showBasketOffer && (
+          <>
+            {!isCustomerAndPersonel && (
+              <button
+                onClick={() => {
+                  setShowBasketOffer(false);
+                  setShowOrderOffer(false);
+                }}
+                type='button'
+                className='bg-green-600 rounded text-white p-4 flex flex-row gap-2 flex-nowrap justify-center items-center hover:cursor-pointer hover:scale-105 transition-all'
+              >
+                Teklif Oluştur
+              </button>
+            )}
+            <p className='font-semibold text-lg'>
+              Toplam Ürün: {basketData.length}
+            </p>
+            <div className='flex justify-center item-center flex-row lg:flex-row gap-2 px-4 my-2'>
+              {!isCustomerAndPersonel && (
+                <button
+                  onClick={() => setIsCustomerAndPersonel(true)}
+                  type='button'
+                  className='hover:scale-105 transition-all flex justify-center items-center p-2 text-white font-semibold bg-gray-800 rounded group
+                  '
+                >
+                  İleri
+                  <IoChevronForwardOutline
+                    size={22}
+                    className='text-white transform translate-x-0 group-hover:translate-x-2 transition-transform'
+                  />
+                </button>
+              )}
+            </div>
+          </>
+        )}
+        {showOrderOffer && (
+          <>
+            {selectedOrder.data && (
+              <button
+                onClick={() => {
+                  setShowOrderOffer(true);
+                  setSelectedOrder([]);
+                  setShowBasketOffer(false);
+                }}
+                className='bg-purple-600 p-4 text-white rounded lg:text-lg flex flex-row gap-2 flex-nowrap hover:cursor-pointer hover:scale-105 transition-all mt-2 lg:mt-0'
+              >
+                <FaFileInvoice size={25} />
+                Teklifler
+              </button>
+            )}
+            {!selectedOrder.data && (
+              <button
+                onClick={() => {
+                  setShowOrderOffer(false);
+                  setShowBasketOffer(false);
+                  setSelectedOrder([]);
+                }}
+                type='button'
+                className='bg-green-600 rounded text-white p-4 flex flex-row gap-2 flex-nowrap justify-center items-center hover:cursor-pointer hover:scale-105 transition-all'
+              >
+                Teklif Oluştur
+              </button>
+            )}
+          </>
         )}
       </div>
       {showOrderOffer && (
@@ -137,6 +222,8 @@ const CreateOfferComponent = () => {
           showOrderOffer={showOrderOffer}
           setShowOrderOffer={setShowOrderOffer}
           setIsloading={setIsloading}
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
         />
       )}
       {showBasketOffer && (
@@ -148,6 +235,13 @@ const CreateOfferComponent = () => {
           setIsloading={setIsloading}
           productFeatures={productFeatures}
           getAllBasketData={getAllBasketData}
+          setShowOrderOffer={setShowOrderOffer}
+          setShowBasketOffer={setShowBasketOffer}
+          setIsCustomerAndPersonel={setIsCustomerAndPersonel}
+          isCustomerAndPersonel={isCustomerAndPersonel}
+          setHiddenBasketBar={setHiddenBasketBar}
+          setAllFeatureValues={setAllFeatureValues}
+          allFeatureValues={allFeatureValues}
         />
       )}
       {!showBasketOffer && !showOrderOffer && (
@@ -160,6 +254,8 @@ const CreateOfferComponent = () => {
           products={products}
           productFeatures={productFeatures}
           setHiddenBasketBar={setHiddenBasketBar}
+          setAllFeatureValues={setAllFeatureValues}
+          allFeatureValues={allFeatureValues}
         />
       )}
     </>

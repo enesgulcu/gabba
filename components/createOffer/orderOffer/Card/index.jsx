@@ -1,6 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
+const Card = ({
+  orderData,
+  setOrderData,
+  setSelectedOrder,
+  setShowOrderOffer,
+}) => {
   console.log(orderData);
   return (
     <div className='grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3'>
@@ -28,7 +33,7 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                   Oluşturma Tarihi:{' '}
                   {item.Orders.map(
                     (orders, index) =>
-                      index != 1 &&
+                      index == 0 &&
                       orders.createdAt
                         .split('T')[0]
                         .split('-')
@@ -36,7 +41,14 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                         .join('.')
                   )}
                 </li>
-                <li className='py-2'>Firma İsmi: {item.Müşteri[0].companyName}</li>
+                <li className='py-2'>
+                  Müşteri İsmi: {item.Personel[0].name}{' '}
+                  {item.Personel[0].surname}
+                </li>
+                <li className='py-2'>
+                  Firma İsmi: {item.Müşteri[0].companyName}
+                </li>
+                <li className='py-2'>Ürün Adedi: {item.Orders.length}</li>
                 <li className='py-2'>
                   Fiyat:{' '}
                   {item.Orders.reduce((total, order) => {
@@ -47,12 +59,18 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                     );
                   }, 0)}
                 </li>
+                <li>
+                  Durum:{' '}
+                  <span className='text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-blue-900 text-blue-300'>
+                    {item.Orders[0].ordersStatus}
+                  </span>
+                </li>
               </ul>
               <div className='flex mt-4 gap-2'>
                 <Image
-                onClick={() => {
-                  setSelectedOrder({data: item, lang: "en"});
-                }}
+                  onClick={() => {
+                    setSelectedOrder({ data: item, lang: 'en' });
+                  }}
                   className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/en_flag.svg'
                   width={100}
@@ -60,9 +78,9 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                   alt='Invoice icon'
                 />
                 <Image
-                onClick={() => {
-                  setSelectedOrder({data: item, lang: "ua"});
-                }}
+                  onClick={() => {
+                    setSelectedOrder({ data: item, lang: 'ua' });
+                  }}
                   className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/ua_flag.svg'
                   width={100}
@@ -70,9 +88,9 @@ const Card = ({ orderData, setOrderData, setSelectedOrder }) => {
                   alt='Invoice icon'
                 />
                 <Image
-                onClick={() => {
-                  setSelectedOrder({data: item, lang: "tr"});                  
-                }}
+                  onClick={() => {
+                    setSelectedOrder({ data: item, lang: 'tr' });
+                  }}
                   className='w-10 h-10 mb-3 rounded-full shadow-lg hover:cursor-pointer hover:scale-110 transition-all'
                   src='/tr_flag.svg'
                   width={100}
