@@ -73,11 +73,8 @@ const CreateOfferComponent = () => {
           item.productPrice = result[result.length - 1];
         })
       );
-
-      setProducts(createProductResult.data.createProducts);
-      setProductFeatures(createProductResult.data.productFeatures);
-      setBasketData(basketResult.data);
-      setCustomers(customerResult.data);
+      setProducts(response.data.createProducts);
+      setProductFeatures(response.data.productFeatures);
       setIsloading(false);
     } catch (error) {
       toast.error(error.message);
@@ -93,8 +90,9 @@ const CreateOfferComponent = () => {
       {isloading && <LoadingScreen isloading={isloading} />}
 
       <div
-        className={`${hiddenBasketBar ? "hidden" : "flex"
-          } flex-col md:flex-row p-2 lg:p-2 lg:px-10 w-full justify-between mb-4 items-center shadow-lg  bg-gray-100 gap-2 pr-4`}
+        className={`${
+          hiddenBasketBar ? 'hidden' : 'flex'
+        } flex-col md:flex-row p-2 lg:p-2 lg:px-10 w-full justify-between mb-4 items-center shadow-lg  bg-gray-100 gap-2 pr-4`}
       >
         {/* Filtreleme ve Teklifler Butonu */}
         {!showBasketOffer && (
